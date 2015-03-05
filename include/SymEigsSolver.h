@@ -76,24 +76,23 @@ protected:
         if(k >= ncv)
             return;
 
-        Matrix Q(ncv, ncv), R(ncv, ncv);
+        Matrix Q(ncv, ncv), R(ncv, ncv), Hcopy(ncv, ncv);
         Vector em(ncv, arma::fill::zeros);
         em[ncv - 1] = 1;
 
         for(int i = k; i < ncv; i++)
         {
-            Matrix H = fac_H;
+            // QR decomposition of H-mu*I, mu is the shift
+            Hcopy = fac_H;
             fac_H.diag() -= ritz_val[i];
             arma::qr(Q, R, fac_H);
 
             // V -> VQ
-            Matrix V = fac_V;
-            fac_V = V * Q;
+            fac_V = fac_V * Q;
             // H -> Q'HQ
-            fac_H = Q.t() * H * Q;
+            fac_H = Q.t() * Hcopy * Q;
             // em -> Q'em
-            Vector e = em;
-            em = Q.t() * e;
+            em = Q.t() * em;
         }
 
         Vector fk = fac_f * em[k - 1];
@@ -197,9 +196,9 @@ public:
     {
         Vector v(dim_n);
         matrix_operation(init_coef, v.memptr());
-        Vector w = arma::normalise(v);
-        v.swap(w);
+        v /= arma::norm(v);
 
+        Vector w(dim_n);
         matrix_operation(v.memptr(), w.memptr());
 
         fac_H(0, 0) = arma::dot(v, w);
