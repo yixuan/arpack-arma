@@ -230,8 +230,8 @@ public:
     // Initialization with random initial coefficients
     virtual void init()
     {
-        Vector init_coef(dim_n);
-        init_coef.randu();
+        Vector init_coef(dim_n, arma::fill::randu);
+        init_coef -= 0.5;
         init(init_coef.memptr());
     }
 
