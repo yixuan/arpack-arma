@@ -72,6 +72,7 @@ public:
         rot_sin[n - 2] = -xj / r;
     }
 
+    // Y -> QY = G1 * G2 * ... * Y
     void applyQY(Vector &Y)
     {
         Scalar c, s, Yi, Yi1;
@@ -89,6 +90,25 @@ public:
         }
     }
 
+    // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
+    void applyQtY(Vector &Y)
+    {
+        Scalar c, s, Yi, Yi1;
+        for(int i = 0; i < n - 1; i++)
+        {
+            // Y[i:(i + 1)] = Gi' * Y[i:(i + 1)]
+            // Gi = [ cos[i]  sin[i]]
+            //      [-sin[i]  cos[i]]
+            c = rot_cos[i];
+            s = rot_sin[i];
+            Yi = Y[i];
+            Yi1 = Y[i + 1];
+            Y[i] = c * Yi - s * Yi1;
+            Y[i + 1] = s * Yi + c * Yi1;
+        }
+    }
+
+    // Y -> QY = G1 * G2 * ... * Y
     void applyQY(Matrix &Y)
     {
         Matrix Gi(2, 2);
@@ -101,6 +121,54 @@ public:
             Gi(0, 1) = rot_sin[i];
             Gi(1, 0) = -rot_sin[i];
             Y.rows(i, i + 1) = Gi * Y.rows(i, i + 1);
+        }
+    }
+
+    // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
+    void applyQtY(Matrix &Y)
+    {
+        Matrix Git(2, 2);
+        for(int i = 0; i < n - 1; i++)
+        {
+            // Y[i:(i + 1), ] = Gi' * Y[i:(i + 1), ]
+            // Gi = [ cos[i]  sin[i]]
+            //      [-sin[i]  cos[i]]
+            Git(1, 1) = Git(0, 0) = rot_cos[i];
+            Git(0, 1) = -rot_sin[i];
+            Git(1, 0) = rot_sin[i];
+            Y.rows(i, i + 1) = Git * Y.rows(i, i + 1);
+        }
+    }
+
+    // Y -> YQ = Y * G1 * G2 * ...
+    void applyYQ(Matrix &Y)
+    {
+        Matrix Gi(2, 2);
+        for(int i = 0; i < n - 1; i++)
+        {
+            // Y[, i:(i + 1)] = Y[, i:(i + 1)] * Gi
+            // Gi = [ cos[i]  sin[i]]
+            //      [-sin[i]  cos[i]]
+            Gi(1, 1) = Gi(0, 0) = rot_cos[i];
+            Gi(0, 1) = rot_sin[i];
+            Gi(1, 0) = -rot_sin[i];
+            Y.cols(i, i + 1) = Y.cols(i, i + 1) * Gi;
+        }
+    }
+
+    // Y -> YQ' = Y * G_{n-1}' * ... * G2' * G1'
+    void applyYQt(Matrix &Y)
+    {
+        Matrix Git(2, 2);
+        for(int i = n - 2; i >= 0; i--)
+        {
+            // Y[, i:(i + 1)] = Y[, i:(i + 1)] * Gi'
+            // Gi = [ cos[i]  sin[i]]
+            //      [-sin[i]  cos[i]]
+            Git(1, 1) = Git(0, 0) = rot_cos[i];
+            Git(0, 1) = -rot_sin[i];
+            Git(1, 0) = rot_sin[i];
+            Y.cols(i, i + 1) = Y.cols(i, i + 1) * Git;
         }
     }
 };
