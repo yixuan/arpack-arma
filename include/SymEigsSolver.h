@@ -54,18 +54,19 @@ protected:
 
         Vector v(dim_n), w(dim_n);
         Scalar beta = 0.0, Hii = 0.0;
+        // Keep the upperleft k x k submatrix of H and set other elements to 0
+        fac_H.tail_cols(ncv - from_k).zeros();
+        fac_H.submat(arma::span(from_k, ncv - 1), arma::span(0, from_k - 1)).zeros();
         for(int i = from_k; i <= to_m - 1; i++)
         {
             beta = arma::norm(fac_f);
             v = fac_f / beta;
             fac_V.col(i) = v; // The (i+1)-th column
-            fac_H(i, arma::span(0, i - 1)).zeros();
             fac_H(i, i - 1) = beta;
 
             matrix_operation(v.memptr(), w.memptr());
 
             Hii = arma::dot(v, w);
-            fac_H(arma::span(0, i - 1), i).zeros();
             fac_H(i - 1, i) = beta;
             fac_H(i, i) = Hii;
 
@@ -77,7 +78,9 @@ protected:
             Scalar v1f = arma::dot(fac_f, fac_V.col(0));
             if(v1f > prec || v1f < -prec)
             {
-                Vector Vf = fac_V.head_cols(i + 1).t() * fac_f;
+                Vector Vf(i + 1);
+                Vf.tail(i) = fac_V.cols(1, i).t() * fac_f;
+                Vf[0] = v1f;
                 fac_f -= fac_V.head_cols(i + 1) * Vf;
             }
         }
