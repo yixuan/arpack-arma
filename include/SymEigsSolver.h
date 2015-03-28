@@ -9,7 +9,7 @@
 
 #include "MatOp.h"
 #include "SelectionRule.h"
-#include "TridiagQR.h"
+#include "UpperHessenbergQR.h"
 
 
 template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>

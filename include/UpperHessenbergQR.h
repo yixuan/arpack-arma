@@ -3,6 +3,7 @@
 
 #include <armadillo>
 
+// QR decomposition of an upper Hessenberg matrix
 template <typename Scalar = double>
 class UpperHessenbergQR
 {
@@ -23,6 +24,13 @@ public:
         n(0)
     {}
 
+    UpperHessenbergQR(int n_) :
+        n(n_),
+        mat_T(n, n),
+        rot_cos(n - 1),
+        rot_sin(n - 1)
+    {}
+
     UpperHessenbergQR(const Matrix &mat) :
         n(mat.n_rows),
         mat_T(n, n),
@@ -39,10 +47,7 @@ public:
         rot_cos.set_size(n - 1);
         rot_sin.set_size(n - 1);
 
-        mat_T.zeros();
-        mat_T.diag() = mat.diag();
-        mat_T.diag(1) = mat.diag(-1);
-        mat_T.diag(-1) = mat.diag(-1);
+        mat_T = mat;
 
         Scalar xi, xj, r, c, s;
         for(int i = 0; i < n - 2; i++)
@@ -61,6 +66,9 @@ public:
             // we only update T[i + 1, (i + 1):n]
             mat_T(i + 1, arma::span(i + 1, n - 1)) *= c;
             mat_T(i + 1, arma::span(i + 1, n - 1)) += s * mat_T(i, arma::span(i + 1, n - 1));
+            // Matrix Gt;
+            // Gt << c << -s << arma::endr << s << c << arma::endr;
+            // mat_T.rows(i, i + 1) = Gt * mat_T.rows(i, i + 1);
         }
         // For i = n - 2
         xi = mat_T(n - 2, n - 2);
@@ -168,6 +176,72 @@ public:
             Git(1, 0) = rot_sin[i];
             Y.cols(i, i + 1) = Y.cols(i, i + 1) * Git;
         }
+    }
+};
+
+
+
+// QR decomposition of a tridiagonal matrix as a special case of
+// upper Hessenberg matrix
+template <typename Scalar = double>
+class TridiagQR: public UpperHessenbergQR<Scalar>
+{
+private:
+    typedef arma::Mat<Scalar> Matrix;
+    typedef arma::Col<Scalar> Vector;
+
+public:
+    TridiagQR() :
+        UpperHessenbergQR<Scalar>()
+    {}
+
+    TridiagQR(int n_) :
+        UpperHessenbergQR<Scalar>(n_)
+    {}
+
+    TridiagQR(const Matrix &mat) :
+        UpperHessenbergQR<Scalar>(mat.n_rows)
+    {
+        this->compute(mat);
+    }
+
+    void compute(const Matrix &mat)
+    {
+        this->n = mat.n_rows;
+        this->mat_T.set_size(this->n, this->n);
+        this->rot_cos.set_size(this->n - 1);
+        this->rot_sin.set_size(this->n - 1);
+
+        this->mat_T.zeros();
+        this->mat_T.diag() = mat.diag();
+        this->mat_T.diag(1) = mat.diag(-1);
+        this->mat_T.diag(-1) = mat.diag(-1);
+
+        Scalar xi, xj, r, c, s;
+        for(int i = 0; i < this->n - 2; i++)
+        {
+            xi = this->mat_T(i, i);
+            xj = this->mat_T(i + 1, i);
+            r = std::sqrt(xi * xi + xj * xj);
+            this->rot_cos[i] = c = xi / r;
+            this->rot_sin[i] = s = -xj / r;
+            // For a complete QR decomposition,
+            // we first obtain the rotation matrix
+            // G = [ cos  sin]
+            //     [-sin  cos]
+            // and then do T[i:(i + 1), i:(i + 2)] = G' * T[i:(i + 1), i:(i + 2)]
+            // Since here we only want to obtain the cos and sin sequence,
+            // we only update T[i + 1, (i + 1):(i + 2)]
+            this->mat_T(i + 1, i + 1) = s * this->mat_T(i, i + 1) + c * this->mat_T(i + 1, i + 1);
+            this->mat_T(i + 1, i + 2) *= c;
+
+        }
+        // For i = n - 2
+        xi = this->mat_T(this->n - 2, this->n - 2);
+        xj = this->mat_T(this->n - 1, this->n - 2);
+        r = std::sqrt(xi * xi + xj * xj);
+        this->rot_cos[this->n - 2] = xi / r;
+        this->rot_sin[this->n - 2] = -xj / r;
     }
 };
 
