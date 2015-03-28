@@ -9,6 +9,7 @@
 
 #include "MatOp.h"
 #include "SelectionRule.h"
+#include "TridiagQR.h"
 
 
 template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
@@ -92,23 +93,24 @@ protected:
         if(k >= ncv)
             return;
 
-        Matrix Q(ncv, ncv), R(ncv, ncv), Hcopy(ncv, ncv);
+        TridiagQR<Scalar> decomp;
         Vector em(ncv, arma::fill::zeros);
         em[ncv - 1] = 1;
 
         for(int i = k; i < ncv; i++)
         {
             // QR decomposition of H-mu*I, mu is the shift
-            Hcopy = fac_H;
             fac_H.diag() -= ritz_val[i];
-            arma::qr(Q, R, fac_H);
+            decomp.compute(fac_H);
+            fac_H.diag() += ritz_val[i];
 
             // V -> VQ
-            fac_V = fac_V * Q;
+            decomp.applyYQ(fac_V);
             // H -> Q'HQ
-            fac_H = Q.t() * Hcopy * Q;
+            decomp.applyYQ(fac_H);
+            decomp.applyQtY(fac_H);
             // em -> Q'em
-            em = Q.t() * em;
+            decomp.applyQtY(em);
         }
 
         Vector fk = fac_f * em[k - 1];
