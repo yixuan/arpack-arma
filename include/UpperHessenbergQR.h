@@ -1,15 +1,16 @@
-#ifndef TRIDIAGQR_H
-#define TRIDIAGQR_H
+#ifndef UpperHessenbergQR_H
+#define UpperHessenbergQR_H
 
 #include <armadillo>
 
 template <typename Scalar = double>
-class TridiagQR
+class UpperHessenbergQR
 {
 private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
 
+protected:
     int n;
     Matrix mat_T;
     // Gi = [ cos[i]  sin[i]]
@@ -18,11 +19,11 @@ private:
     Vector rot_cos;
     Vector rot_sin;
 public:
-    TridiagQR() :
+    UpperHessenbergQR() :
         n(0)
     {}
 
-    TridiagQR(const Matrix &mat) :
+    UpperHessenbergQR(const Matrix &mat) :
         n(mat.n_rows),
         mat_T(n, n),
         rot_cos(n - 1),
@@ -55,14 +56,11 @@ public:
             // we first obtain the rotation matrix
             // G = [ cos  sin]
             //     [-sin  cos]
-            // and then do T[i:(i + 1), i:(i + 2)] = G' * T[i:(i + 1), i:(i + 2)]
+            // and then do T[i:(i + 1), i:n] = G' * T[i:(i + 1), i:n]
             // Since here we only want to obtain the cos and sin sequence,
-            // we only update T[i + 1, (i + 1):(i + 2)]
-            mat_T(i + 1, i + 1) = s * mat_T(i, i + 1) + c * mat_T(i + 1, i + 1);
-            mat_T(i + 1, i + 2) *= c;
-            //Matrix g;
-            //g << c << -s << arma::endr << s << c << arma::endr;
-            //mat_T.rows(i, i + 1) = g * mat_T.rows(i, i + 1);
+            // we only update T[i + 1, (i + 1):n]
+            mat_T(i + 1, arma::span(i + 1, n - 1)) *= c;
+            mat_T(i + 1, arma::span(i + 1, n - 1)) += s * mat_T(i, arma::span(i + 1, n - 1));
         }
         // For i = n - 2
         xi = mat_T(n - 2, n - 2);
@@ -174,4 +172,5 @@ public:
 };
 
 
-#endif // TRIDIAGQR_H
+
+#endif // UpperHessenbergQR_H
