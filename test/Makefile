@@ -7,4 +7,4 @@ SymEigs: SymEigs.cpp
 	g++ -O2 -I../include SymEigs.cpp -llapack -lblas -o SymEigs
 
 clean:
-	rm QR *.o
+	rm QR SymEigs *.o
