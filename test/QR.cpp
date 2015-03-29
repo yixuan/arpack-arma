@@ -20,19 +20,17 @@ void QR_UpperHessenberg()
 
     // Test orthogonality
     mat QtQ = Q.t() * Q;
-    QtQ.diag() -= 1.0;
-    std::cout << "||Q'Q - I||_inf = " << arma::abs(QtQ).max() << std::endl;
+    std::cout << "||Q'Q - I||_inf = " << arma::abs(QtQ - I).max() << std::endl;
 
     mat QQt = Q * Q.t();
-    QQt.diag() -= 1.0;
-    std::cout << "||QQ' - I||_inf = " << arma::abs(QQt).max() << std::endl;
+    std::cout << "||QQ' - I||_inf = " << arma::abs(QQt - I).max() << std::endl;
 
     // Calculate R = Q'H
     mat R = H;
     decomp.applyQtY(R);
     mat Rlower = arma::trimatl(R);
     Rlower.diag() *= 0.0;
-    std::cout << "whether R is lower triangular, error = "
+    std::cout << "whether R is upper triangular, error = "
               << arma::abs(Rlower).max() << std::endl;
 
     // Compare H and QR
@@ -89,7 +87,7 @@ void QR_Tridiagonal()
     decomp.applyQtY(R);
     mat Rlower = arma::trimatl(R);
     Rlower.diag() *= 0.0;
-    std::cout << "whether R is lower triangular, error = "
+    std::cout << "whether R is upper triangular, error = "
               << arma::abs(Rlower).max() << std::endl;
 
     // Compare H and QR
