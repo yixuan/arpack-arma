@@ -40,7 +40,7 @@ public:
         compute(mat);
     }
 
-    void compute(const Matrix &mat)
+    virtual void compute(const Matrix &mat)
     {
         n = mat.n_rows;
         mat_T.set_size(n, n);
@@ -79,7 +79,7 @@ public:
     }
 
     // Y -> QY = G1 * G2 * ... * Y
-    void applyQY(Vector &Y)
+    virtual void applyQY(Vector &Y)
     {
         Scalar c, s, Yi, Yi1;
         for(int i = n - 2; i >= 0; i--)
@@ -97,7 +97,7 @@ public:
     }
 
     // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
-    void applyQtY(Vector &Y)
+    virtual void applyQtY(Vector &Y)
     {
         Scalar c, s, Yi, Yi1;
         for(int i = 0; i < n - 1; i++)
@@ -115,7 +115,7 @@ public:
     }
 
     // Y -> QY = G1 * G2 * ... * Y
-    void applyQY(Matrix &Y)
+    virtual void applyQY(Matrix &Y)
     {
         Matrix Gi(2, 2);
         for(int i = n - 2; i >= 0; i--)
@@ -131,7 +131,7 @@ public:
     }
 
     // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
-    void applyQtY(Matrix &Y)
+    virtual void applyQtY(Matrix &Y)
     {
         Matrix Git(2, 2);
         for(int i = 0; i < n - 1; i++)
@@ -147,7 +147,7 @@ public:
     }
 
     // Y -> YQ = Y * G1 * G2 * ...
-    void applyYQ(Matrix &Y)
+    virtual void applyYQ(Matrix &Y)
     {
         Matrix Gi(2, 2);
         for(int i = 0; i < n - 1; i++)
@@ -163,7 +163,7 @@ public:
     }
 
     // Y -> YQ' = Y * G_{n-1}' * ... * G2' * G1'
-    void applyYQt(Matrix &Y)
+    virtual void applyYQt(Matrix &Y)
     {
         Matrix Git(2, 2);
         for(int i = n - 2; i >= 0; i--)
@@ -205,7 +205,7 @@ public:
         this->compute(mat);
     }
 
-    void compute(const Matrix &mat)
+    virtual void compute(const Matrix &mat)
     {
         this->n = mat.n_rows;
         this->mat_T.set_size(this->n, this->n);
