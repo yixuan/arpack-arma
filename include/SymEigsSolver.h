@@ -104,15 +104,17 @@ protected:
             // QR decomposition of H-mu*I, mu is the shift
             fac_H.diag() -= ritz_val[i];
             decomp.compute(fac_H);
-            fac_H.diag() += ritz_val[i];
 
             // V -> VQ
-            decomp.applyYQ(fac_V);
+            decomp.apply_YQ(fac_V);
             // H -> Q'HQ
-            decomp.applyYQ(fac_H);
-            decomp.applyQtY(fac_H);
+            // Since QR = H - mu * I, we have H = QR + mu * I
+            // and therefore Q'HQ = RQ + mu * I
+            fac_H = decomp.matrix_R();
+            decomp.apply_YQ(fac_H);
+            fac_H.diag() += ritz_val[i];
             // em -> Q'em
-            decomp.applyQtY(em);
+            decomp.apply_QtY(em);
         }
 
         Vector fk = fac_f * em[k - 1];
@@ -126,6 +128,9 @@ protected:
         // bound = tol * max(prec, abs(theta)), theta for ritz value
         Vector rv = arma::abs(ritz_val.head(nev));
         Vector bound = tol * arma::clamp(rv, prec, rv.max());
+        //Vector bound = arma::abs(ritz_val.head(nev)) * tol;
+        //Scalar Hnorm = prec * arma::abs(ritz_val).max();
+        //bound.elem(arma::find(bound < Hnorm)).fill(Hnorm);
         Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
         ritz_conv = (resid < bound);
 
