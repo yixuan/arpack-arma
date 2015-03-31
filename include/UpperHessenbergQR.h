@@ -20,23 +20,26 @@ protected:
     // Q = G1 * G2 * ... * G_{n-1}
     Vector rot_cos;
     Vector rot_sin;
+    bool computed;
 public:
     UpperHessenbergQR() :
-        n(0)
+        n(0), computed(false)
     {}
 
     UpperHessenbergQR(int n_) :
         n(n_),
         mat_T(n, n),
         rot_cos(n - 1),
-        rot_sin(n - 1)
+        rot_sin(n - 1),
+        computed(false)
     {}
 
     UpperHessenbergQR(const Matrix &mat) :
         n(mat.n_rows),
         mat_T(n, n),
         rot_cos(n - 1),
-        rot_sin(n - 1)
+        rot_sin(n - 1),
+        computed(false)
     {
         compute(mat);
     }
@@ -77,47 +80,68 @@ public:
         r = std::sqrt(xi * xi + xj * xj);
         rot_cos[n - 2] = xi / r;
         rot_sin[n - 2] = -xj / r;
+
+        this->computed = true;
     }
 
     // Y -> QY = G1 * G2 * ... * Y
     virtual void apply_QY(Vector &Y)
     {
-        Scalar c, s, Yi, Yi1;
+        if(!this->computed)
+            return;
+
+        Scalar *c = rot_cos.memptr() + n - 2,
+               *s = rot_sin.memptr() + n - 2,
+               *Yi = Y.memptr() + n - 2,
+               tmp;
         for(int i = n - 2; i >= 0; i--)
         {
             // Y[i:(i + 1)] = Gi * Y[i:(i + 1)]
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
-            c = rot_cos[i];
-            s = rot_sin[i];
-            Yi = Y[i];
-            Yi1 = Y[i + 1];
-            Y[i] = c * Yi + s * Yi1;
-            Y[i + 1] = -s * Yi + c * Yi1;
+            tmp = *Yi;
+            // Yi[0] == Y[i], Yi[1] == Y[i + 1]
+            Yi[0] =  (*c) * tmp + (*s) * Yi[1];
+            Yi[1] = -(*s) * tmp + (*c) * Yi[1];
+
+            Yi--;
+            c--;
+            s--;
         }
     }
 
     // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
     virtual void apply_QtY(Vector &Y)
     {
-        Scalar c, s, Yi, Yi1;
+        if(!computed)
+            return;
+
+        Scalar *c = rot_cos.memptr(),
+               *s = rot_sin.memptr(),
+               *Yi = Y.memptr(),
+               tmp;
         for(int i = 0; i < n - 1; i++)
         {
             // Y[i:(i + 1)] = Gi' * Y[i:(i + 1)]
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
-            c = rot_cos[i];
-            s = rot_sin[i];
-            Yi = Y[i];
-            Yi1 = Y[i + 1];
-            Y[i] = c * Yi - s * Yi1;
-            Y[i + 1] = s * Yi + c * Yi1;
+            tmp = *Yi;
+            // Yi[0] == Y[i], Yi[1] == Y[i + 1]
+            Yi[0] = (*c) * tmp - (*s) * Yi[1];
+            Yi[1] = (*s) * tmp + (*c) * Yi[1];
+
+            Yi++;
+            c++;
+            s++;
         }
     }
 
     // Y -> QY = G1 * G2 * ... * Y
     virtual void apply_QY(Matrix &Y)
     {
+        if(!computed)
+            return;
+
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2;
         RowVector Yi(Y.n_cols);
@@ -137,6 +161,9 @@ public:
     // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
     virtual void apply_QtY(Matrix &Y)
     {
+        if(!computed)
+            return;
+
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
         RowVector Yi(Y.n_cols);
@@ -156,6 +183,9 @@ public:
     // Y -> YQ = Y * G1 * G2 * ...
     virtual void apply_YQ(Matrix &Y)
     {
+        if(!computed)
+            return;
+
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
         Vector Yi(Y.n_rows);
@@ -175,6 +205,9 @@ public:
     // Y -> YQ' = Y * G_{n-1}' * ... * G2' * G1'
     virtual void apply_YQt(Matrix &Y)
     {
+        if(!computed)
+            return;
+
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2;
         Vector Yi(Y.n_rows);
@@ -231,17 +264,18 @@ public:
         this->mat_T.diag(-1) = mat.diag(-1);
 
         // A number of pointers to avoid repeated address calculation
-        Scalar *xi = this->mat_T.memptr(),        // xi points to T[i, i]
-               *xi_rel,                           // some location relative to xi
-               *c = this->rot_cos.memptr(),       // points to the cosine vector
-               *s = this->rot_sin.memptr(),       // points to the sine vector
+        Scalar *Tii = this->mat_T.memptr(),  // pointer to T[i, i]
+               *ptr,                         // some location relative to Tii
+               *c = this->rot_cos.memptr(),  // pointer to the cosine vector
+               *s = this->rot_sin.memptr(),  // pointer to the sine vector
                r, tmp;
         for(int i = 0; i < this->n - 2; i++)
         {
-            xi_rel = xi + 1;  // xi_rel now points to T[i + 1, i]
-            r = std::sqrt((*xi) * (*xi) + (*xi_rel) * (*xi_rel));
-            *c = (*xi) / r;
-            *s = -(*xi_rel) / r;
+            // Tii[0] == T[i, i]
+            // Tii[1] == T[i + 1, i]
+            r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
+            *c =  Tii[0] / r;
+            *s = -Tii[1] / r;
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
@@ -252,20 +286,24 @@ public:
             // Update T[i, i] and T[i + 1, i]
             // The updated value of T[i, i] is known to be r
             // The updated value of T[i + 1, i] is known to be 0
-            *xi = r;
-            *xi_rel = 0;
+            Tii[0] = r;
+            Tii[1] = 0;
             // Update T[i, i + 1] and T[i + 1, i + 1]
-            xi_rel = xi + this->n;  // points to T[i, i + 1]
-            tmp = *xi_rel;
-            *xi_rel       = (*c) * tmp - (*s) * xi_rel[1];
-            *(xi_rel + 1) = (*s) * tmp + (*c) * xi_rel[1];
+            // ptr[0] == T[i, i + 1]
+            // ptr[1] == T[i + 1, i + 1]
+            ptr = Tii + this->n;
+            tmp = *ptr;
+            ptr[0] = (*c) * tmp - (*s) * ptr[1];
+            ptr[1] = (*s) * tmp + (*c) * ptr[1];
             // Update T[i, i + 2] and T[i + 1, i + 2]
-            xi_rel += this->n;  // points to T[i, i + 2], which is known to be 0
-            *xi_rel = - (*s) * xi_rel[1];
-            *(xi_rel + 1) *= (*c);
+            // ptr[0] == T[i, i + 2] == 0
+            // ptr[1] == T[i + 1, i + 2]
+            ptr += this->n;
+            ptr[0] = -(*s) * ptr[1];
+            ptr[1] *= (*c);
 
             // Move from T[i, i] to T[i + 1, i + 1]
-            xi += this->n + 1;
+            Tii += this->n + 1;
             // Increase c and s by 1
             c++;
             s++;
@@ -278,20 +316,24 @@ public:
             // this->mat_T(i + 1, i + 2) *= (*c);
         }
         // For i = n - 2
-        xi_rel = xi + 1;
-        r = std::sqrt((*xi) * (*xi) + (*xi_rel) * (*xi_rel));
-        *c = (*xi) / r;
-        *s = -(*xi_rel) / r;
-        *xi = r;
-        *xi_rel = 0;
-        xi_rel = xi + this->n;  // points to T[i - 2, i - 1]
-        tmp = *xi_rel;
-        *xi_rel       = (*c) * tmp - (*s) * xi_rel[1];
-        *(xi_rel + 1) = (*s) * tmp + (*c) * xi_rel[1];
+        r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
+        *c =  Tii[0] / r;
+        *s = -Tii[1] / r;
+        Tii[0] = r;
+        Tii[1] = 0;
+        ptr = Tii + this->n;  // points to T[i - 2, i - 1]
+        tmp = *ptr;
+        ptr[0] = (*c) * tmp - (*s) * ptr[1];
+        ptr[1] = (*s) * tmp + (*c) * ptr[1];
+
+        this->computed = true;
     }
 
     Matrix matrix_R()
     {
+        if(!this->computed)
+            return Matrix();
+
         return this->mat_T;
     }
 };
