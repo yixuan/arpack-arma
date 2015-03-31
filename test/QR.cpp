@@ -16,7 +16,7 @@ void QR_UpperHessenberg()
     // Obtain Q matrix
     mat I(n, n, arma::fill::eye);
     mat Q = I;
-    decomp.applyQY(Q);
+    decomp.apply_QY(Q);
 
     // Test orthogonality
     mat QtQ = Q.t() * Q;
@@ -27,7 +27,7 @@ void QR_UpperHessenberg()
 
     // Calculate R = Q'H
     mat R = H;
-    decomp.applyQtY(R);
+    decomp.apply_QtY(R);
     mat Rlower = arma::trimatl(R);
     Rlower.diag() *= 0.0;
     std::cout << "whether R is upper triangular, error = "
@@ -40,19 +40,19 @@ void QR_UpperHessenberg()
     mat Y(n, n, arma::fill::randn);
 
     mat QY = Y;
-    decomp.applyQY(QY);
+    decomp.apply_QY(QY);
     std::cout << "max error of QY = " << arma::abs(QY - Q * Y).max() << std::endl;
 
     mat YQ = Y;
-    decomp.applyYQ(YQ);
+    decomp.apply_YQ(YQ);
     std::cout << "max error of YQ = " << arma::abs(YQ - Y * Q).max() << std::endl;
 
     mat QtY = Y;
-    decomp.applyQtY(QtY);
+    decomp.apply_QtY(QtY);
     std::cout << "max error of Q'Y = " << arma::abs(QtY - Q.t() * Y).max() << std::endl;
 
     mat YQt = Y;
-    decomp.applyYQt(YQt);
+    decomp.apply_YQt(YQt);
     std::cout << "max error of YQ' = " << arma::abs(YQt - Y * Q.t()).max() << std::endl;
 }
 
@@ -71,7 +71,7 @@ void QR_Tridiagonal()
     // Obtain Q matrix
     mat I(n, n, arma::fill::eye);
     mat Q = I;
-    decomp.applyQY(Q);
+    decomp.apply_QY(Q);
 
     // Test orthogonality
     mat QtQ = Q.t() * Q;
@@ -82,11 +82,10 @@ void QR_Tridiagonal()
     QQt.diag() -= 1.0;
     std::cout << "||QQ' - I||_inf = " << arma::abs(QQt).max() << std::endl;
 
-    // Calculate R = Q'H
-    mat R = H;
-    decomp.applyQtY(R);
+    // Whether R is upper triangular
+    mat R = decomp.matrix_R();
     mat Rlower = arma::trimatl(R);
-    Rlower.diag() *= 0.0;
+    Rlower.diag().zeros();
     std::cout << "whether R is upper triangular, error = "
               << arma::abs(Rlower).max() << std::endl;
 
@@ -97,19 +96,19 @@ void QR_Tridiagonal()
     mat Y(n, n, arma::fill::randn);
 
     mat QY = Y;
-    decomp.applyQY(QY);
+    decomp.apply_QY(QY);
     std::cout << "max error of QY = " << arma::abs(QY - Q * Y).max() << std::endl;
 
     mat YQ = Y;
-    decomp.applyYQ(YQ);
+    decomp.apply_YQ(YQ);
     std::cout << "max error of YQ = " << arma::abs(YQ - Y * Q).max() << std::endl;
 
     mat QtY = Y;
-    decomp.applyQtY(QtY);
+    decomp.apply_QtY(QtY);
     std::cout << "max error of Q'Y = " << arma::abs(QtY - Q.t() * Y).max() << std::endl;
 
     mat YQt = Y;
-    decomp.applyYQt(YQt);
+    decomp.apply_YQt(YQt);
     std::cout << "max error of YQ' = " << arma::abs(YQt - Y * Q.t()).max() << std::endl;
 }
 
