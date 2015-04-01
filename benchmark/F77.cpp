@@ -138,5 +138,8 @@ int run_F77(arma::mat &M, int k, int m)
     evecs(arma::span(0, 4), arma::span(0, nev - 1)).print("first 5 rows of computed eigenvectors U =");
     std::cout << "niter = " << niter << std::endl;
 
+    // arma::mat err = M * evecs.cols(0, nev - 1) - evecs.cols(0, nev - 1) * arma::diagmat(evals);
+    // std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
+
     return 0;
 }

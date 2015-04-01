@@ -17,5 +17,8 @@ int run_Cpp(arma::mat &M, int k, int m)
     evecs.head_rows(5).print("first 5 rows of computed eigenvectors U =");
     std::cout << "niter = " << niter << std::endl;
 
+    // arma::mat err = M * evecs - evecs * arma::diagmat(evals);
+    // std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
+
     return 0;
 }

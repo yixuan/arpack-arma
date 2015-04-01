@@ -172,6 +172,29 @@ protected:
         {
             ritz_vec.col(i) = evecs.col(pairs[i].second);
         }
+
+        // Sort ritz_val[nev:(ncv - 1)] according to ritz_est[nev:(ncv - 1)]
+        // Ritz values with largest Ritz estimates come first
+        // ritz_est = abs(last elements of the ritz vectors) * ||f||
+        /* Vector ritz_est_tail(ncv - nev);
+        for(int i = nev; i < ncv; i++)
+        {
+            ritz_est_tail[i - nev] = std::abs(evecs(ncv - 1, pairs[i].second));
+        }
+        ritz_est_tail *= arma::norm(fac_f);
+
+        pairs.resize(ncv - nev);
+        for(int i = 0; i < pairs.size(); i++)
+        {
+            pairs[i].first = ritz_est_tail[i];
+            pairs[i].second = i;
+        }
+        std::sort(pairs.begin(), pairs.end(), EigenvalueComparator<Scalar, LARGEST_ALGE>());
+        Vector shifts = ritz_val.tail(ncv - nev);
+        for(int i = 0; i < ncv - nev; i++)
+        {
+            ritz_val[nev + i] = shifts[pairs[i].second];
+        } */
     }
 
     // Sort the first nev Ritz pairs in decreasing magnitude order
