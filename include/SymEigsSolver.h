@@ -23,9 +23,10 @@ protected:
 
     MatOp<Scalar> *op;    // object to conduct matrix operation,
                           // e.g. matrix-vector product
-    int dim_n;            // dimension of matrix A
-    int nev;              // number of eigenvalues requested
-    int ncv;              // number of ritz values
+    const int dim_n;      // dimension of matrix A
+    const int nev;        // number of eigenvalues requested
+    int nev_updated;      // increase nev in factorization if needed
+    const int ncv;        // number of ritz values
     int nmatop;           // number of matrix operations called
 
     Matrix fac_V;         // V matrix in the Arnoldi factorization
@@ -124,16 +125,25 @@ protected:
     // Test convergence
     bool converged(Scalar tol)
     {
-        // bound = tol * max(prec, abs(theta)), theta for ritz value
+        // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Vector rv = arma::abs(ritz_val.head(nev));
-        Vector bound = tol * arma::clamp(rv, prec, rv.max());
+        Vector thresh = tol * arma::clamp(rv, prec, rv.max());
         //Vector bound = arma::abs(ritz_val.head(nev)) * tol;
         //Scalar Hnorm = prec * arma::abs(ritz_val).max();
         //bound.elem(arma::find(bound < Hnorm)).fill(Hnorm);
         Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
-        ritz_conv = (resid < bound);
+        ritz_conv = (resid < thresh);
 
-        return arma::all(ritz_conv);
+        // Converged "wanted" ritz values
+        int nconv = arma::sum(ritz_conv);
+        // Adjust nev_updated, according to dsaup2.f line 691~700 in ARPACK
+        nev_updated = nev + std::min(nconv, (ncv - nev) / 2);
+        if(nev == 1 && ncv >= 6)
+            nev_updated = ncv / 2;
+        else if(nev == 1 && ncv > 2)
+            nev_updated = 2;
+
+        return nconv >= nev;
     }
 
     // Retrieve and sort ritz values and ritz vectors
@@ -154,15 +164,26 @@ protected:
         // For BOTH_ENDS, the eigenvalues are sorted according
         // to the LARGEST_ALGE rule, so we need to move those smallest
         // values to the left
+        // The order would be
+        // Largest => Smallest => 2nd largest => 2nd smallest => ...
+        // We keep this order since the first k values will always be
+        // the wanted collection, no matter k is nev_updated (used in restart())
+        // or is nev (used in sort_ritzpair())
         if(SelectionRule == BOTH_ENDS)
         {
-            int offset = (nev + 1) / 2;
-            for(int i = 0; i < nev - offset; i++)
+            std::vector<SortPair> pairs_copy(pairs);
+            for(int i = 0; i < ncv; i++)
             {
-                std::swap(pairs[offset + i], pairs[ncv - 1 - i]);
+                // If i is even, pick values from the left (large values)
+                // If i is odd, pick values from the right (small values)
+                if(i % 2 == 0)
+                    pairs[i] = pairs_copy[i / 2];
+                else
+                    pairs[i] = pairs_copy[ncv - 1 - i / 2];
             }
         }
 
+        // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
         for(int i = 0; i < ncv; i++)
         {
             ritz_val[i] = pairs[i].first;
@@ -171,29 +192,6 @@ protected:
         {
             ritz_vec.col(i) = evecs.col(pairs[i].second);
         }
-
-        // Sort ritz_val[nev:(ncv - 1)] according to ritz_est[nev:(ncv - 1)]
-        // Ritz values with largest Ritz estimates come first
-        // ritz_est = abs(last elements of the ritz vectors) * ||f||
-        /* Vector ritz_est_tail(ncv - nev);
-        for(int i = nev; i < ncv; i++)
-        {
-            ritz_est_tail[i - nev] = std::abs(evecs(ncv - 1, pairs[i].second));
-        }
-        ritz_est_tail *= arma::norm(fac_f);
-
-        pairs.resize(ncv - nev);
-        for(int i = 0; i < pairs.size(); i++)
-        {
-            pairs[i].first = ritz_est_tail[i];
-            pairs[i].second = i;
-        }
-        std::sort(pairs.begin(), pairs.end(), EigenvalueComparator<Scalar, LARGEST_ALGE>());
-        Vector shifts = ritz_val.tail(ncv - nev);
-        for(int i = 0; i < ncv - nev; i++)
-        {
-            ritz_val[nev + i] = shifts[pairs[i].second];
-        } */
     }
 
     // Sort the first nev Ritz pairs in decreasing magnitude order
@@ -228,6 +226,7 @@ public:
         op(op_),
         dim_n(op->rows()),
         nev(nev_),
+        nev_updated(nev_),
         ncv(ncv_),
         nmatop(0),
         fac_V(dim_n, ncv, arma::fill::zeros),
@@ -274,7 +273,7 @@ public:
             if(converged(tol))
                 break;
 
-            restart(nev);
+            restart(nev_updated);
         }
         // Sorting results
         sort_ritzpair();
