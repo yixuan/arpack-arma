@@ -26,7 +26,7 @@ protected:
     int dim_n;            // dimension of matrix A
     int nev;              // number of eigenvalues requested
     int ncv;              // number of ritz values
-    int niter;            // number of matrix operations called
+    int nmatop;           // number of matrix operations called
 
     Matrix fac_V;         // V matrix in the Arnoldi factorization
     Matrix fac_H;         // H matrix in the Arnoldi factorization
@@ -45,7 +45,7 @@ protected:
     virtual void matrix_operation(Scalar *x_in, Scalar *y_out)
     {
         op->prod(x_in, y_out);
-        niter++;
+        nmatop++;
     }
 
     // Arnoldi factorization starting from step-k
@@ -229,7 +229,7 @@ public:
         dim_n(op->rows()),
         nev(nev_),
         ncv(ncv_),
-        niter(0),
+        nmatop(0),
         fac_V(dim_n, ncv, arma::fill::zeros),
         fac_H(ncv, ncv, arma::fill::zeros),
         fac_f(dim_n, arma::fill::zeros),
@@ -242,7 +242,7 @@ public:
     // Initialization and clean-up
     virtual void init(Scalar *init_resid)
     {
-        niter = 0;
+        nmatop = 0;
         Vector v(init_resid, dim_n);
         v /= arma::norm(v);
 
@@ -268,7 +268,8 @@ public:
         factorize_from(1, ncv, fac_f);
         retrieve_ritzpair();
         // Restarting
-        for(int i = 0; i < maxit; i++)
+        int i;
+        for(i = 0; i < maxit; i++)
         {
             if(converged(tol))
                 break;
@@ -278,7 +279,12 @@ public:
         // Sorting results
         sort_ritzpair();
 
-        return niter;
+        return i + 1;
+    }
+
+    void info(int &mat_ops)
+    {
+        mat_ops = nmatop;
     }
 
     // Return converged eigenvalues
