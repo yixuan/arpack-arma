@@ -25,6 +25,8 @@ void test(const Matrix &A, int k, int m)
     SymEigsSolver<double, SelectionRule> eigs(&op, k, m);
     eigs.init();
     int niter = eigs.compute();
+    int nops;
+    eigs.info(nops);
 
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
@@ -34,6 +36,7 @@ void test(const Matrix &A, int k, int m)
     Matrix err = mat * evecs - evecs * arma::diagmat(evals);
     std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
     std::cout << "niter = " << niter << std::endl;
+    std::cout << "nops = " << nops << std::endl;
 }
 
 int main()
