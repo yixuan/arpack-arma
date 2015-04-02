@@ -240,12 +240,10 @@ public:
     {}
 
     // Initialization and clean-up
-    virtual void init(Scalar *init_coef)
+    virtual void init(Scalar *init_resid)
     {
         niter = 0;
-        Vector v(dim_n);
-        matrix_operation(init_coef, v.memptr());
-        // Vector v(init_coef, dim_n);
+        Vector v(init_resid, dim_n);
         v /= arma::norm(v);
 
         Vector w(dim_n);
@@ -258,9 +256,9 @@ public:
     // Initialization with random initial coefficients
     virtual void init()
     {
-        Vector init_coef(dim_n, arma::fill::randu);
-        init_coef -= 0.5;
-        init(init_coef.memptr());
+        Vector init_resid(dim_n, arma::fill::randu);
+        init_resid -= 0.5;
+        init(init_resid.memptr());
     }
 
     // Compute Ritz pairs and return the number of iteration
