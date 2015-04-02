@@ -116,8 +116,7 @@ protected:
             // em -> Q'em
             decomp.apply_QtY(em);
         }
-
-        Vector fk = fac_f * em[k - 1];
+        Vector fk = fac_f * em[k - 1] + fac_V.col(k) * fac_H(k, k - 1);
         factorize_from(k, ncv, fk);
         retrieve_ritzpair();
     }
@@ -246,6 +245,7 @@ public:
         niter = 0;
         Vector v(dim_n);
         matrix_operation(init_coef, v.memptr());
+        // Vector v(init_coef, dim_n);
         v /= arma::norm(v);
 
         Vector w(dim_n);
