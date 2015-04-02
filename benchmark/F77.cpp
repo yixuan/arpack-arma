@@ -1,7 +1,7 @@
 #include <armadillo>
 #include "ArpackFun.h"
 
-int run_F77(arma::mat &M, int k, int m)
+int run_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
     // Begin ARPACK
     //
@@ -20,6 +20,7 @@ int run_F77(arma::mat &M, int k, int m)
     double tol = 1e-10;
     // Residual vector
     double *resid = new double[n]();
+    std::copy(init_resid.memptr(), init_resid.memptr() + n, resid);
     // Number of Ritz values used
     int ncv = m;
     // Vector of eigenvalues
@@ -48,7 +49,7 @@ int run_F77(arma::mat &M, int k, int m)
     double *workl = new double[lworkl]();
     // Error flag. 0 means random initialization,
     // otherwise using resid as initial value
-    int info = 0;
+    int info = 1;
 
     saupd(ido, bmat, n, which,
           nev, tol, resid,

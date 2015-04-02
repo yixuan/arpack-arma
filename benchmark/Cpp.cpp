@@ -3,11 +3,12 @@
 #include <MatOpDense.h>
 #include <iostream>
 
-int run_Cpp(arma::mat &M, int k, int m)
+int run_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
     MatOpDense<double> op(M);
     SymEigsSolver<double, LARGEST_MAGN> eigs(&op, k, m);
-    eigs.init();
+    eigs.init(init_resid.memptr());
+
     int niter = eigs.compute();
 
     arma::vec evals = eigs.eigenvalues();
