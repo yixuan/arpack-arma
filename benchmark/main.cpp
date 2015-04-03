@@ -16,8 +16,8 @@ int main()
     init_resid -= 0.5;
     init_resid = M * init_resid;
 
-    int k = 5;
-    int m = 10;
+    int k = 10;
+    int m = 20;
 
     clock_t t1, t2;
     t1 = clock();

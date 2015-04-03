@@ -81,13 +81,13 @@ public:
         rot_cos[n - 2] = xi / r;
         rot_sin[n - 2] = -xj / r;
 
-        this->computed = true;
+        computed = true;
     }
 
     // Y -> QY = G1 * G2 * ... * Y
     virtual void apply_QY(Vector &Y)
     {
-        if(!this->computed)
+        if(!computed)
             return;
 
         Scalar *c = rot_cos.memptr() + n - 2,
