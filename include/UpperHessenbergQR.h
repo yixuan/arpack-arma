@@ -341,6 +341,49 @@ public:
 
         this->computed = true;
     }
+
+    // Calculate RQ, which will also be a tridiagonal matrix
+    Matrix matrix_RQ()
+    {
+        if(!this->computed)
+            return Matrix();
+
+        // Make a copy of the R matrix
+        Matrix RQ(this->n, this->n, arma::fill::zeros);
+        RQ.diag() = this->mat_T.diag();
+        RQ.diag(1) = this->mat_T.diag(1);
+        if(this->n > 2)  RQ.diag(2) = this->mat_T.diag(2);
+
+        // [m11  m12] will point to RQ[i:(i+1), i:(i+1)]
+        // [m21  m22]
+        Scalar *m11 = RQ.memptr(), *m12, *m21, *m22,
+               *c = this->rot_cos.memptr(),
+               *s = this->rot_sin.memptr(),
+               tmp;
+        for(int i = 0; i < this->n - 1; i++)
+        {
+            m21 = m11 + 1;
+            m12 = m11 + this->n;
+            m22 = m12 + 1;
+            tmp = *m21;
+
+            // Update diagonal and the below-subdiagonal
+            *m11 = (*c) * (*m11) - (*s) * (*m12);
+            *m21 = (*c) * tmp - (*s) * (*m22);
+            *m22 = (*s) * tmp + (*c) * (*m22);
+
+            // Move m11 to RQ[i+1, i+1]
+            m11  = m22;
+            c++;
+            s++;
+        }
+
+        // Copy the below-subdiagonal to above-subdiagonal
+        RQ.diag(1) = RQ.diag(-1);
+        if(this->n > 2)  RQ.diag(2).zeros();
+
+        return RQ;
+    }
 };
 
 
