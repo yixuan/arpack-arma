@@ -36,7 +36,7 @@ void QR_UpperHessenberg()
     // Compare H and QR
     std::cout << "||H - QR||_inf = " << arma::abs(H - Q * R).max() << std::endl;
 
-    // Testing "apply" functions
+    // Test "apply" functions
     mat Y(n, n, arma::fill::randn);
 
     mat QY = Y;
@@ -55,7 +55,7 @@ void QR_UpperHessenberg()
     decomp.apply_YQt(YQt);
     std::cout << "max error of YQ' = " << arma::abs(YQt - Y * Q.t()).max() << std::endl;
 
-    // Testing "apply" functions for vectors
+    // Test "apply" functions for vectors
     vec y(n, arma::fill::randn);
 
     vec Qy = y;
@@ -103,7 +103,12 @@ void QR_Tridiagonal()
     // Compare H and QR
     std::cout << "||H - QR||_inf = " << arma::abs(H - Q * R).max() << std::endl;
 
-    // Testing "apply" functions
+    // Test RQ
+    mat rq = R;
+    decomp.apply_YQ(rq);
+    std::cout << "max error of RQ = " << arma::abs(decomp.matrix_RQ() - rq).max() << std::endl;
+
+    // Test "apply" functions
     mat Y(n, n, arma::fill::randn);
 
     mat QY = Y;
@@ -122,7 +127,7 @@ void QR_Tridiagonal()
     decomp.apply_YQt(YQt);
     std::cout << "max error of YQ' = " << arma::abs(YQt - Y * Q.t()).max() << std::endl;
 
-    // Testing "apply" functions for vectors
+    // Test "apply" functions for vectors
     vec y(n, arma::fill::randn);
 
     vec Qy = y;
