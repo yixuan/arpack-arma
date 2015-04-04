@@ -54,6 +54,7 @@ public:
         mat_T = mat;
 
         Scalar xi, xj, r, c, s;
+        Matrix Gt(2, 2);
         for(int i = 0; i < n - 2; i++)
         {
             xi = mat_T(i, i);
@@ -65,27 +66,39 @@ public:
             // we first obtain the rotation matrix
             // G = [ cos  sin]
             //     [-sin  cos]
-            // and then do T[i:(i + 1), i:n] = G' * T[i:(i + 1), i:n]
-            // Since here we only want to obtain the cos and sin sequence,
-            // we only update T[i + 1, (i + 1):n]
-            mat_T(i + 1, arma::span(i + 1, n - 1)) *= c;
-            mat_T(i + 1, arma::span(i + 1, n - 1)) += s * mat_T(i, arma::span(i + 1, n - 1));
-            // Matrix Gt;
-            // Gt << c << -s << arma::endr << s << c << arma::endr;
-            // mat_T.rows(i, i + 1) = Gt * mat_T.rows(i, i + 1);
+            // and then do T[i:(i + 1), i:(n - 1)] = G' * T[i:(i + 1), i:(n - 1)]
+
+            Gt << c << -s << arma::endr << s << c << arma::endr;
+            mat_T.submat(i, i, i + 1, n - 1) = Gt * mat_T.submat(i, i, i + 1, n - 1);
+
+            // If we do not need to calculate the R matrix, then
+            // only the cos and sin sequences are required.
+            // In such case we only update T[i + 1, (i + 1):(n - 1)]
+            // mat_T(i + 1, arma::span(i + 1, n - 1)) *= c;
+            // mat_T(i + 1, arma::span(i + 1, n - 1)) += s * mat_T(i, arma::span(i + 1, n - 1));
         }
         // For i = n - 2
         xi = mat_T(n - 2, n - 2);
         xj = mat_T(n - 1, n - 2);
         r = std::sqrt(xi * xi + xj * xj);
-        rot_cos[n - 2] = xi / r;
-        rot_sin[n - 2] = -xj / r;
+        rot_cos[n - 2] = c = xi / r;
+        rot_sin[n - 2] = s = -xj / r;
+        Gt << c << -s << arma::endr << s << c << arma::endr;
+        mat_T.submat(n - 2, n - 2, n - 1, n - 1) = Gt * mat_T.submat(n - 2, n - 2, n - 1, n - 1);
 
         computed = true;
     }
 
+    Matrix matrix_R()
+    {
+        if(!computed)
+            return Matrix();
+
+        return mat_T;
+    }
+
     // Y -> QY = G1 * G2 * ... * Y
-    virtual void apply_QY(Vector &Y)
+    void apply_QY(Vector &Y)
     {
         if(!computed)
             return;
@@ -111,7 +124,7 @@ public:
     }
 
     // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
-    virtual void apply_QtY(Vector &Y)
+    void apply_QtY(Vector &Y)
     {
         if(!computed)
             return;
@@ -137,7 +150,7 @@ public:
     }
 
     // Y -> QY = G1 * G2 * ... * Y
-    virtual void apply_QY(Matrix &Y)
+    void apply_QY(Matrix &Y)
     {
         if(!computed)
             return;
@@ -159,7 +172,7 @@ public:
     }
 
     // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
-    virtual void apply_QtY(Matrix &Y)
+    void apply_QtY(Matrix &Y)
     {
         if(!computed)
             return;
@@ -181,7 +194,7 @@ public:
     }
 
     // Y -> YQ = Y * G1 * G2 * ...
-    virtual void apply_YQ(Matrix &Y)
+    void apply_YQ(Matrix &Y)
     {
         if(!computed)
             return;
@@ -203,7 +216,7 @@ public:
     }
 
     // Y -> YQ' = Y * G_{n-1}' * ... * G2' * G1'
-    virtual void apply_YQt(Matrix &Y)
+    void apply_YQt(Matrix &Y)
     {
         if(!computed)
             return;
@@ -327,14 +340,6 @@ public:
         ptr[1] = (*s) * tmp + (*c) * ptr[1];
 
         this->computed = true;
-    }
-
-    Matrix matrix_R()
-    {
-        if(!this->computed)
-            return Matrix();
-
-        return this->mat_T;
     }
 };
 
