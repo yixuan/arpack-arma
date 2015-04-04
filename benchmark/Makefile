@@ -11,7 +11,7 @@ F77.o: F77.cpp
 wrapper.o: wrapper.f
 	gfortran -O3 -c wrapper.f
 
-Cpp.o: Cpp.cpp
+Cpp.o: $(HEADERS) Cpp.cpp
 	g++ -O2 -I../include -c Cpp.cpp
 
 clean:
