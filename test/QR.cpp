@@ -2,6 +2,7 @@
 #include <UpperHessenbergQR.h>
 
 using arma::mat;
+using arma::vec;
 
 void QR_UpperHessenberg()
 {
@@ -26,10 +27,9 @@ void QR_UpperHessenberg()
     std::cout << "||QQ' - I||_inf = " << arma::abs(QQt - I).max() << std::endl;
 
     // Calculate R = Q'H
-    mat R = H;
-    decomp.apply_QtY(R);
+    mat R = decomp.matrix_R();
     mat Rlower = arma::trimatl(R);
-    Rlower.diag() *= 0.0;
+    Rlower.diag().zeros();
     std::cout << "whether R is upper triangular, error = "
               << arma::abs(Rlower).max() << std::endl;
 
@@ -54,6 +54,17 @@ void QR_UpperHessenberg()
     mat YQt = Y;
     decomp.apply_YQt(YQt);
     std::cout << "max error of YQ' = " << arma::abs(YQt - Y * Q.t()).max() << std::endl;
+
+    // Testing "apply" functions for vectors
+    vec y(n, arma::fill::randn);
+
+    vec Qy = y;
+    decomp.apply_QY(Qy);
+    std::cout << "max error of Qy = " << arma::abs(Qy - Q * y).max() << std::endl;
+
+    vec Qty = y;
+    decomp.apply_QtY(Qty);
+    std::cout << "max error of Q'y = " << arma::abs(Qty - Q.t() * y).max() << std::endl;
 }
 
 void QR_Tridiagonal()
@@ -110,6 +121,17 @@ void QR_Tridiagonal()
     mat YQt = Y;
     decomp.apply_YQt(YQt);
     std::cout << "max error of YQ' = " << arma::abs(YQt - Y * Q.t()).max() << std::endl;
+
+    // Testing "apply" functions for vectors
+    vec y(n, arma::fill::randn);
+
+    vec Qy = y;
+    decomp.apply_QY(Qy);
+    std::cout << "max error of Qy = " << arma::abs(Qy - Q * y).max() << std::endl;
+
+    vec Qty = y;
+    decomp.apply_QtY(Qty);
+    std::cout << "max error of Q'y = " << arma::abs(Qty - Q.t() * y).max() << std::endl;
 }
 
 int main()
