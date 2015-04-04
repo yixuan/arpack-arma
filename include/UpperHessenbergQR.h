@@ -352,7 +352,6 @@ public:
         Matrix RQ(this->n, this->n, arma::fill::zeros);
         RQ.diag() = this->mat_T.diag();
         RQ.diag(1) = this->mat_T.diag(1);
-        if(this->n > 2)  RQ.diag(2) = this->mat_T.diag(2);
 
         // [m11  m12] will point to RQ[i:(i+1), i:(i+1)]
         // [m21  m22]
@@ -380,7 +379,6 @@ public:
 
         // Copy the below-subdiagonal to above-subdiagonal
         RQ.diag(1) = RQ.diag(-1);
-        if(this->n > 2)  RQ.diag(2).zeros();
 
         return RQ;
     }
