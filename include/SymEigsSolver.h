@@ -251,7 +251,7 @@ public:
 
         nmatop = 0;
         Vector v(init_resid, dim_n);
-        double vnorm = arma::norm(v);
+        Scalar vnorm = arma::norm(v);
         if(vnorm < prec)
             throw std::invalid_argument("initial residual vector cannot be zero");
         v /= vnorm;
