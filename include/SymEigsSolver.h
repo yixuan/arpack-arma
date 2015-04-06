@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <utility>
-#include <exception>
+#include <stdexcept>
 
 #include "MatOp.h"
 #include "SelectionRule.h"

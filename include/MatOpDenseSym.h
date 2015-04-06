@@ -2,6 +2,7 @@
 #define MATOPDENSESYM_H
 
 #include <armadillo>
+#include <stdexcept>
 #include "SymmetricLDL.h"
 
 template <typename Scalar>

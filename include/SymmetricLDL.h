@@ -2,6 +2,7 @@
 #define SYMMETRICLDL_H
 
 #include <armadillo>
+#include <stdexcept>
 #include "LapackWrapperExtra.h"
 
 // LDL decomposition of an symmetric (but possibly indefinite) matrix
