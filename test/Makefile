@@ -12,4 +12,4 @@ SymEigs: $(HEADERS) SymEigs.cpp
 	g++ -O2 -I../include SymEigs.cpp -llapack -lblas -o SymEigs
 
 clean:
-	rm QR LDL SymEigs *.o
+	rm QR LDL SymEigs
