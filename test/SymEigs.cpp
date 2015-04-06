@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include <SymEigsSolver.h>
-#include <MatOpDense.h>
+#include <MatOpDenseSym.h>
 
 typedef arma::mat Matrix;
 typedef arma::vec Vector;
@@ -21,7 +21,7 @@ void test(const Matrix &A, int k, int m)
     Vector all_eval = eig_sym(mat);
     all_eval.t().print("all eigenvalues =");
 
-    MatOpDense<double> op(mat);
+    MatOpDenseSym<double> op(mat);
     SymEigsSolver<double, SelectionRule> eigs(&op, k, m);
     eigs.init();
     int niter = eigs.compute();
