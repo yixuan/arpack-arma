@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <utility>
+#include <exception>
 
 #include "MatOp.h"
 #include "SelectionRule.h"
@@ -226,23 +227,34 @@ public:
         dim_n(op->rows()),
         nev(nev_),
         nev_updated(nev_),
-        ncv(ncv_),
+        ncv(ncv_ > dim_n ? dim_n : ncv_),
         nmatop(0),
-        fac_V(dim_n, ncv, arma::fill::zeros),
-        fac_H(ncv, ncv, arma::fill::zeros),
-        fac_f(dim_n, arma::fill::zeros),
-        ritz_val(ncv, arma::fill::zeros),
-        ritz_vec(ncv, nev, arma::fill::zeros),
-        ritz_conv(nev, arma::fill::zeros),
         prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0 / 3)))
-    {}
+    {
+        if(nev_ < 1 || nev_ >= dim_n)
+            throw std::invalid_argument("nev must be greater than zero and less than the size of the matrix");
+
+        if(ncv_ <= nev_)
+            throw std::invalid_argument("ncv must be greater than nev");
+    }
 
     // Initialization and clean-up
     virtual void init(Scalar *init_resid)
     {
+        // Reset all matrices/vectors to zero
+        fac_V.zeros(dim_n, ncv);
+        fac_H.zeros(ncv, ncv);
+        fac_f.zeros(dim_n);
+        ritz_val.zeros(ncv);
+        ritz_vec.zeros(ncv, nev);
+        ritz_conv.zeros(nev);
+
         nmatop = 0;
         Vector v(init_resid, dim_n);
-        v /= arma::norm(v);
+        double vnorm = arma::norm(v);
+        if(vnorm < prec)
+            throw std::invalid_argument("initial residual vector cannot be zero");
+        v /= vnorm;
 
         Vector w(dim_n);
         matrix_operation(v.memptr(), w.memptr());
