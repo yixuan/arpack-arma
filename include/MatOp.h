@@ -7,8 +7,7 @@ class MatOp
 private:
     // Dimension of the matrix
     // m rows and n columns
-    // In eigenvalue problems, they are assumed to be equal,
-    // and only n is used.
+    // In eigenvalue problems, they are assumed to be equal.
     const int m;
     const int n;
 
