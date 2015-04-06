@@ -15,17 +15,17 @@ private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
 
-    Matrix mat;
+    const Matrix mat;
     bool sigma_is_real;
 
     // shift solve for real sigma
-    virtual void real_shift_solve(Scalar *x_in, Scalar *y_out)
+    void real_shift_solve(Scalar *x_in, Scalar *y_out)
     {
         // TODO
     }
 
     // shift solve for complex sigma
-    virtual void complex_shift_solve(Scalar *x_in, Scalar *y_out)
+    void complex_shift_solve(Scalar *x_in, Scalar *y_out)
     {
         // TODO
     }
@@ -41,7 +41,7 @@ public:
     virtual ~MatOpDense() {}
 
     // y_out = A * x_in
-    virtual void prod(Scalar *x_in, Scalar *y_out)
+    void prod(Scalar *x_in, Scalar *y_out)
     {
         Vector x(x_in, mat.n_cols, false);
         Vector y(y_out, mat.n_rows, false);
@@ -49,7 +49,7 @@ public:
     }
 
     // y_out = A' * x_in
-    virtual void trans_prod(Scalar *x_in, Scalar *y_out)
+    void trans_prod(Scalar *x_in, Scalar *y_out)
     {
         Vector x(x_in, mat.n_rows, false);
         Vector y(y_out, mat.n_cols, false);
@@ -57,15 +57,18 @@ public:
     }
 
     // setting complex shift
-    virtual void set_shift(Scalar sigmar, Scalar sigmai)
+    void set_shift(Scalar sigmar, Scalar sigmai)
     {
         // TODO
     }
 
     // y_out = inv(A - sigma * I) * x_in
-    virtual void shift_solve(Scalar *x_in, Scalar *y_out)
+    void shift_solve(Scalar *x_in, Scalar *y_out)
     {
-        // TODO
+        if(sigma_is_real)
+            real_shift_solve(x_in, y_out);
+        else
+            complex_shift_solve(x_in, y_out);
     }
 };
 
