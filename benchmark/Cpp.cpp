@@ -9,15 +9,16 @@ int run_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
     SymEigsSolver<double, LARGEST_MAGN> eigs(&op, k, m);
     eigs.init(init_resid.memptr());
 
-    int niter = eigs.compute();
-    int nops;
-    eigs.info(nops);
+    int nconv = eigs.compute();
+    int niter, nops;
+    eigs.info(niter, nops);
 
     arma::vec evals = eigs.eigenvalues();
     arma::mat evecs = eigs.eigenvectors();
 
     evals.print("computed eigenvalues D =");
     evecs.head_rows(5).print("first 5 rows of computed eigenvectors U =");
+    std::cout << "nconv = " << nconv << std::endl;
     std::cout << "niter = " << niter << std::endl;
     std::cout << "nops = " << nops << std::endl;
 

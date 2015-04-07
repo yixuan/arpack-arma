@@ -24,9 +24,9 @@ void test(const Matrix &A, int k, int m)
     MatOpDenseSym<double> op(mat);
     SymEigsSolver<double, SelectionRule> eigs(&op, k, m);
     eigs.init();
-    int niter = eigs.compute();
-    int nops;
-    eigs.info(nops);
+    int nconv = eigs.compute();
+    int niter, nops;
+    eigs.info(niter, nops);
 
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
@@ -35,6 +35,7 @@ void test(const Matrix &A, int k, int m)
     //evecs.print("computed eigenvectors U =");
     Matrix err = mat * evecs - evecs * arma::diagmat(evals);
     std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
+    std::cout << "nconv = " << nconv << std::endl;
     std::cout << "niter = " << niter << std::endl;
     std::cout << "nops = " << nops << std::endl;
 }

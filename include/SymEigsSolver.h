@@ -29,6 +29,7 @@ protected:
     int nev_updated;      // increase nev in factorization if needed
     const int ncv;        // number of ritz values
     int nmatop;           // number of matrix operations called
+    int niter;            // number of restarting iterations
 
     Matrix fac_V;         // V matrix in the Arnoldi factorization
     Matrix fac_H;         // H matrix in the Arnoldi factorization
@@ -229,6 +230,7 @@ public:
         nev_updated(nev_),
         ncv(ncv_ > dim_n ? dim_n : ncv_),
         nmatop(0),
+        niter(0),
         prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0 / 3)))
     {
         if(nev_ < 1 || nev_ >= dim_n)
@@ -250,6 +252,8 @@ public:
         ritz_conv.zeros(nev);
 
         nmatop = 0;
+        niter = 0;
+
         Vector v(init_resid, dim_n);
         Scalar vnorm = arma::norm(v);
         if(vnorm < prec)
@@ -271,7 +275,7 @@ public:
         init(init_resid.memptr());
     }
 
-    // Compute Ritz pairs and return the number of iteration
+    // Compute Ritz pairs and return the number of converged eigenvalues
     int compute(int maxit = 1000, Scalar tol = 1e-10)
     {
         // The m-step Arnoldi factorization
@@ -289,11 +293,15 @@ public:
         // Sorting results
         sort_ritzpair();
 
-        return i + 1;
+        niter += i + 1;
+        int nconv = arma::sum(ritz_conv);
+
+        return std::min(nev, nconv);
     }
 
-    void info(int &mat_ops)
+    void info(int &iters, int &mat_ops)
     {
+        iters = niter;
         mat_ops = nmatop;
     }
 
