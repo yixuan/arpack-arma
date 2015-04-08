@@ -16,7 +16,7 @@
 template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
 class SymEigsSolver
 {
-protected:
+private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
     typedef arma::uvec BoolVector;
@@ -25,7 +25,11 @@ protected:
     MatOp<Scalar> *op;    // object to conduct matrix operation,
                           // e.g. matrix-vector product
     const int dim_n;      // dimension of matrix A
+
+protected:
     const int nev;        // number of eigenvalues requested
+
+private:
     int nev_updated;      // increase nev in factorization if needed
     const int ncv;        // number of ritz values
     int nmatop;           // number of matrix operations called
@@ -35,7 +39,10 @@ protected:
     Matrix fac_H;         // H matrix in the Arnoldi factorization
     Vector fac_f;         // residual in the Arnoldi factorization
 
+protected:
     Vector ritz_val;      // ritz values
+
+private:
     Matrix ritz_vec;      // ritz vectors
     BoolVector ritz_conv; // indicator of the convergence of ritz values
 
@@ -48,7 +55,6 @@ protected:
     virtual void matrix_operation(Scalar *x_in, Scalar *y_out)
     {
         op->prod(x_in, y_out);
-        nmatop++;
     }
 
     // Arnoldi factorization starting from step-k
@@ -71,6 +77,7 @@ protected:
             fac_H(i, i - 1) = beta;
 
             matrix_operation(v.memptr(), w.memptr());
+            nmatop++;
 
             Hii = arma::dot(v, w);
             fac_H(i - 1, i) = beta;
@@ -152,7 +159,7 @@ protected:
     {
         Vector evals(ncv);
         Matrix evecs(ncv, ncv);
-        eig_sym(evals, evecs, symmatl(fac_H));
+        arma::eig_sym(evals, evecs, arma::symmatl(fac_H));
 
         std::vector<SortPair> pairs(ncv);
         EigenvalueComparator<Scalar, SelectionRule> comp;
@@ -195,6 +202,7 @@ protected:
         }
     }
 
+protected:
     // Sort the first nev Ritz pairs in decreasing magnitude order
     // This is used to return the final results
     virtual void sort_ritzpair()
@@ -262,6 +270,7 @@ public:
 
         Vector w(dim_n);
         matrix_operation(v.memptr(), w.memptr());
+        nmatop++;
 
         fac_H(0, 0) = arma::dot(v, w);
         fac_f = w - v * fac_H(0, 0);
@@ -353,5 +362,41 @@ public:
     }
 };
 
+
+
+
+
+template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
+class SymEigsShiftSolver: public SymEigsSolver<Scalar, SelectionRule>
+{
+private:
+    typedef arma::Col<Scalar> Vector;
+
+    Scalar sigma;
+    MatOpWithRealShiftSolve<Scalar> *op_shift;
+
+    // Shift solve in this case
+    void matrix_operation(Scalar *x_in, Scalar *y_out)
+    {
+        op_shift->shift_solve(x_in, y_out);
+    }
+
+    // First transform back the ritz values, and then sort
+    void sort_ritzpair()
+    {
+        Vector ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev) + sigma;
+        this->ritz_val.head(this->nev) = ritz_val_org;
+        SymEigsSolver<Scalar, SelectionRule>::sort_ritzpair();
+    }
+public:
+    SymEigsShiftSolver(MatOpWithRealShiftSolve<Scalar> *op_,
+                       int nev_, int ncv_, Scalar sigma_) :
+        SymEigsSolver<Scalar, SelectionRule>(op_, nev_, ncv_),
+        sigma(sigma_),
+        op_shift(op_)
+    {
+        op_shift->set_shift(sigma);
+    }
+};
 
 #endif // SYMEIGSSOLVER_H
