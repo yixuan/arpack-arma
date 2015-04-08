@@ -1,15 +1,18 @@
 HEADERS = $(wildcard ../include/*.h)
 
-all: QR LDL SymEigs
+all: QR.out LDL.out SymEigs.out SymEigsShift.out
 
-QR: $(HEADERS) QR.cpp
-	g++ -O2 -I../include QR.cpp -llapack -lblas -o QR
+QR.out: $(HEADERS) QR.cpp
+	g++ -O2 -I../include QR.cpp -llapack -lblas -o QR.out
 
-LDL: $(HEADERS) LDL.cpp
-	g++ -O2 -I../include LDL.cpp -llapack -lblas -o LDL
+LDL.out: $(HEADERS) LDL.cpp
+	g++ -O2 -I../include LDL.cpp -llapack -lblas -o LDL.out
 
-SymEigs: $(HEADERS) SymEigs.cpp
-	g++ -O2 -I../include SymEigs.cpp -llapack -lblas -o SymEigs
+SymEigs.out: $(HEADERS) SymEigs.cpp
+	g++ -O2 -I../include SymEigs.cpp -llapack -lblas -o SymEigs.out
+
+SymEigsShift.out: $(HEADERS) SymEigsShift.cpp
+	g++ -O2 -I../include SymEigsShift.cpp -llapack -lblas -o SymEigsShift.out
 
 clean:
-	rm QR LDL SymEigs
+	rm *.out
