@@ -92,7 +92,7 @@ public:
     Matrix matrix_R()
     {
         if(!computed)
-            return Matrix();
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         return mat_T;
     }
@@ -101,7 +101,7 @@ public:
     void apply_QY(Vector &Y)
     {
         if(!computed)
-            return;
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2,
@@ -127,7 +127,7 @@ public:
     void apply_QtY(Vector &Y)
     {
         if(!computed)
-            return;
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr(),
@@ -153,7 +153,7 @@ public:
     void apply_QY(Matrix &Y)
     {
         if(!computed)
-            return;
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2;
@@ -175,7 +175,7 @@ public:
     void apply_QtY(Matrix &Y)
     {
         if(!computed)
-            return;
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
@@ -197,7 +197,7 @@ public:
     void apply_YQ(Matrix &Y)
     {
         if(!computed)
-            return;
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
@@ -219,7 +219,7 @@ public:
     void apply_YQt(Matrix &Y)
     {
         if(!computed)
-            return;
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2;
@@ -252,10 +252,6 @@ private:
 public:
     TridiagQR() :
         UpperHessenbergQR<Scalar>()
-    {}
-
-    TridiagQR(int n_) :
-        UpperHessenbergQR<Scalar>(n_)
     {}
 
     TridiagQR(const Matrix &mat) :
@@ -346,7 +342,7 @@ public:
     Matrix matrix_RQ()
     {
         if(!this->computed)
-            return Matrix();
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         // Make a copy of the R matrix
         Matrix RQ(this->n, this->n, arma::fill::zeros);
