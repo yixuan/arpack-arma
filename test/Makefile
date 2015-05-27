@@ -16,7 +16,7 @@ test:
 	./SymEigs.out
 	./SymEigsShift.out
 
-.cpp.out:
+%.out: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
 
 clean:

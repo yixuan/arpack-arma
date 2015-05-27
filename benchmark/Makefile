@@ -1,18 +1,26 @@
+CXX = g++
+CXXFLAGS = -Wall -O2
+CPPFLAGS = -I../include -I.
+FC = gfortran
+FFLAGS = -O3
+LDFLAGS =
+LIBS = -larpack -llapack -lblas -lgfortran
+
 HEADERS = $(wildcard ../include/*.h)
+OBJS = F77.o Cpp.o wrapper.o
 
-all: benchmark
+.PHONY: all clean
 
-benchmark: $(HEADERS) main.cpp F77.o Cpp.o wrapper.o
-	g++ -O2 -I../include main.cpp F77.o Cpp.o wrapper.o -o benchmark -larpack -llapack -lblas -lgfortran
+all: benchmark.out
 
-F77.o: F77.cpp
-	g++ -O2 -I../include -I. -c F77.cpp
+benchmark.out: $(OBJS) main.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) main.cpp $(OBJS) -o benchmark.out $(LDFLAGS) $(LIBS)
 
-wrapper.o: wrapper.f
-	gfortran -O3 -c wrapper.f
+%.o: %.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
-Cpp.o: $(HEADERS) Cpp.cpp
-	g++ -O2 -I../include -c Cpp.cpp
+%.o: %.f
+	$(FC) $(FFLAGS) -c $< -o $@
 
 clean:
-	rm benchmark *.o
+	rm *.out *.o
