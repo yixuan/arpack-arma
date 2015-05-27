@@ -137,7 +137,8 @@ int run_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 
     evals.print("computed eigenvalues D =");
     evecs(arma::span(0, 4), arma::span(0, nev - 1)).print("first 5 rows of computed eigenvectors U =");
-    std::cout << "niter = " << niter << std::endl;
+    std::cout << "nconv = " << nconv << std::endl;
+    std::cout << "nops = " << niter << std::endl;
 
     // arma::mat err = M * evecs.cols(0, nev - 1) - evecs.cols(0, nev - 1) * arma::diagmat(evals);
     // std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
