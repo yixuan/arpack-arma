@@ -103,23 +103,15 @@ public:
         if(!computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
-        Scalar *c = rot_cos.memptr() + n - 2,
-               *s = rot_sin.memptr() + n - 2,
-               *Yi = Y.memptr() + n - 2,
-               tmp;
+        Scalar tmp;
         for(int i = n - 2; i >= 0; i--)
         {
             // Y[i:(i + 1)] = Gi * Y[i:(i + 1)]
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
-            tmp = *Yi;
-            // Yi[0] == Y[i], Yi[1] == Y[i + 1]
-            Yi[0] =  (*c) * tmp + (*s) * Yi[1];
-            Yi[1] = -(*s) * tmp + (*c) * Yi[1];
-
-            Yi--;
-            c--;
-            s--;
+            tmp      =  Y[i];
+            Y[i]     =  rot_cos[i] * tmp + rot_sin[i] * Y[i + 1];
+            Y[i + 1] = -rot_sin[i] * tmp + rot_cos[i] * Y[i + 1];
         }
     }
 
@@ -129,23 +121,15 @@ public:
         if(!computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
-        Scalar *c = rot_cos.memptr(),
-               *s = rot_sin.memptr(),
-               *Yi = Y.memptr(),
-               tmp;
+        Scalar tmp;
         for(int i = 0; i < n - 1; i++)
         {
             // Y[i:(i + 1)] = Gi' * Y[i:(i + 1)]
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
-            tmp = *Yi;
-            // Yi[0] == Y[i], Yi[1] == Y[i + 1]
-            Yi[0] = (*c) * tmp - (*s) * Yi[1];
-            Yi[1] = (*s) * tmp + (*c) * Yi[1];
-
-            Yi++;
-            c++;
-            s++;
+            tmp      = Y[i];
+            Y[i]     = rot_cos[i] * tmp - rot_sin[i] * Y[i + 1];
+            Y[i + 1] = rot_sin[i] * tmp + rot_cos[i] * Y[i + 1];
         }
     }
 
