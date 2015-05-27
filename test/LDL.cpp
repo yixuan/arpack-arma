@@ -1,6 +1,9 @@
 // Test ../include/SymmetricLDL.h
 #include <SymmetricLDL.h>
 
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
+
 using arma::mat;
 using arma::vec;
 using arma::fmat;
@@ -9,37 +12,49 @@ using arma::fvec;
 template <typename Scalar>
 void run_test(arma::Mat<Scalar> &A, arma::Col<Scalar> &b)
 {
-    int n = A.n_rows;
+    const int n = A.n_rows;
 
-    std::cout << "========== Using Lower Triangular Part ==========\n";
-    arma::solve(arma::symmatl(A), b).t().print("solve(A, b) = ");
-
-    SymmetricLDL<Scalar> solver(A, 'L');
+    SymmetricLDL<Scalar> solver;
+    arma::Col<Scalar> x0;
     arma::Col<Scalar> x(n);
-    solver.solve(b, x);
-    x.t().print("x = ");
+    const Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0 / 3));
 
-    std::cout << "========== Using Upper Triangular Part ==========\n";
-    arma::solve(arma::symmatu(A), b).t().print("solve(A, b) = ");
+    SECTION( "Using Lower Triangular Part" )
+    {
+        x0 = arma::solve(arma::symmatl(A), b);
 
-    solver.compute(A, 'U');
-    solver.solve(b, x);
-    x.t().print("x = ");
+        solver.compute(A, 'L');
+        solver.solve(b, x);
+
+        INFO( "max|x - x0| = " << arma::abs(x - x0).max() );
+        REQUIRE( arma::abs(x - x0).max() == Approx(0.0).epsilon(prec) );
+    }
+    SECTION( "Using Upper Triangular Part" )
+    {
+        x0 = arma::solve(arma::symmatu(A), b);
+
+        solver.compute(A, 'U');
+        solver.solve(b, x);
+
+        INFO( "max|x - x0| = " << arma::abs(x - x0).max() );
+        REQUIRE( arma::abs(x - x0).max() == Approx(0.0).epsilon(prec) );
+    }
 }
 
-int main()
+TEST_CASE("LDL on 'double' type", "[LDL]")
 {
     arma::arma_rng::set_seed(123);
-    int n = 8;
+    int n = 100;
     mat A(n, n, arma::fill::randn);
     vec b(n, arma::fill::randn);
-
-    std::cout << ">>> Type = double\n\n";
     run_test<double>(A, b);
+}
 
-    fmat A2(n, n, arma::fill::randn);
-    fvec b2(n, arma::fill::randn);
-
-    std::cout << "\n\n>>> Type = float\n\n";
-    run_test<float>(A2, b2);
+TEST_CASE("LDL on 'float' type", "[LDL]")
+{
+    arma::arma_rng::set_seed(123);
+    int n = 100;
+    fmat A(n, n, arma::fill::randn);
+    fvec b(n, arma::fill::randn);
+    run_test<float>(A, b);
 }

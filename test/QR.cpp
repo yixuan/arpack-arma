@@ -7,7 +7,7 @@
 using arma::mat;
 using arma::vec;
 
-TEST_CASE("QR of upper Hessenberg matrix", "[qr]")
+TEST_CASE("QR of upper Hessenberg matrix", "[QR]")
 {
     arma::arma_rng::set_seed(123);
     int n = 100;
@@ -79,7 +79,7 @@ TEST_CASE("QR of upper Hessenberg matrix", "[qr]")
     REQUIRE( arma::abs(Qty - Q.t() * y).max() == Approx(0.0) );
 }
 
-TEST_CASE("QR of Tridiagonal matrix", "[qr]")
+TEST_CASE("QR of Tridiagonal matrix", "[QR]")
 {
     arma::arma_rng::set_seed(123);
     int n = 100;
