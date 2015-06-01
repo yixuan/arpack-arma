@@ -5,6 +5,7 @@
 #include <cmath>
 #include <complex>
 #include <limits>
+#include "MatOp.h"
 
 template <typename Scalar>
 class MatOpDense:
@@ -31,14 +32,14 @@ private:
     }
 public:
     MatOpDense(Matrix &mat_) :
-        MatOp<Scalar>(mat_.n_rows, mat_.n_cols),
-        MatOpWithTransProd<Scalar>(mat_.n_rows, mat_.n_cols),
-        MatOpWithComplexShiftSolve<Scalar>(mat_.n_rows, mat_.n_cols),
         mat(mat_.memptr(), mat_.n_rows, mat_.n_cols, false),
         sigma_is_real(false)
     {}
 
     virtual ~MatOpDense() {}
+
+    int rows() { return mat.n_rows; }
+    int cols() { return mat.n_cols; }
 
     // y_out = A * x_in
     void prod(Scalar *x_in, Scalar *y_out)
