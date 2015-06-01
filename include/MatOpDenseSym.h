@@ -3,6 +3,7 @@
 
 #include <armadillo>
 #include <stdexcept>
+#include "MatOp.h"
 #include "SymmetricLDL.h"
 
 template <typename Scalar>
@@ -19,9 +20,6 @@ private:
     SymmetricLDL<Scalar> solver;
 public:
     MatOpDenseSym(Matrix &mat_) :
-        MatOp<Scalar>(mat_.n_rows, mat_.n_cols),
-        MatOpWithTransProd<Scalar>(mat_.n_rows, mat_.n_cols),
-        MatOpWithRealShiftSolve<Scalar>(mat_.n_rows, mat_.n_cols),
         mat(mat_.memptr(), mat_.n_rows, mat_.n_cols, false),
         dim_n(mat_.n_rows)
     {
@@ -30,6 +28,9 @@ public:
     }
 
     virtual ~MatOpDenseSym() {}
+
+    int rows() { return dim_n; }
+    int cols() { return dim_n; }
 
     // y_out = A * x_in
     void prod(Scalar *x_in, Scalar *y_out)
