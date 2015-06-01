@@ -4,11 +4,14 @@
 #include <SymEigsSolver.h>
 #include <MatOpDenseSym.h>
 
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
+
 typedef arma::mat Matrix;
 typedef arma::vec Vector;
 
 template <int SelectionRule>
-void test(const Matrix &A, int k, int m)
+void run_test(const Matrix &A, int k, int m)
 {
     Matrix mat;
     if(SelectionRule == BOTH_ENDS)
@@ -18,8 +21,8 @@ void test(const Matrix &A, int k, int m)
         mat = A.t() * A;
     }
 
-    Vector all_eval = arma::eig_sym(mat);
-    all_eval.t().print("all eigenvalues =");
+    // Vector all_eval = arma::eig_sym(mat);
+    // all_eval.t().print("all eigenvalues =");
 
     MatOpDenseSym<double> op(mat);
     SymEigsSolver<double, SelectionRule> eigs(&op, k, m);
@@ -28,19 +31,23 @@ void test(const Matrix &A, int k, int m)
     int niter, nops;
     eigs.info(niter, nops);
 
+    REQUIRE( nconv > 0 );
+
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
 
-    evals.print("computed eigenvalues D =");
-    //evecs.print("computed eigenvectors U =");
+    // evals.print("computed eigenvalues D =");
+    // evecs.print("computed eigenvectors U =");
     Matrix err = mat * evecs - evecs * arma::diagmat(evals);
-    std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
-    std::cout << "nconv = " << nconv << std::endl;
-    std::cout << "niter = " << niter << std::endl;
-    std::cout << "nops = " << nops << std::endl;
+
+    INFO( "nconv = " << nconv );
+    INFO( "niter = " << niter );
+    INFO( "nops = " << nops );
+    INFO( "||AU - UD||_inf = " << arma::abs(err).max() );
+    REQUIRE( arma::abs(err).max() == Approx(0.0) );
 }
 
-int main()
+TEST_CASE("Eigensolver of symmetric real matrix", "[eigs_sym]")
 {
     arma::arma_rng::set_seed(123);
     Matrix A = arma::randu(10, 10);
@@ -48,20 +55,24 @@ int main()
     int k = 3;
     int m = 6;
 
-    std::cout << "===== Largest Magnitude =====\n";
-    test<LARGEST_MAGN>(A, k, m);
-
-    std::cout << "\n===== Largest Value =====\n";
-    test<LARGEST_ALGE>(A, k, m);
-
-    std::cout << "\n===== Smallest Magnitude =====\n";
-    test<SMALLEST_MAGN>(A, k, m);
-
-    std::cout << "\n===== Smallest Value =====\n";
-    test<SMALLEST_ALGE>(A, k, m);
-
-    std::cout << "\n===== Both Ends =====\n";
-    test<BOTH_ENDS>(A, k, m);
-
-    return 0;
+    SECTION( "Largest Magnitude" )
+    {
+        run_test<LARGEST_MAGN>(A, k, m);
+    }
+    SECTION( "Largest Value" )
+    {
+        run_test<LARGEST_ALGE>(A, k, m);
+    }
+    SECTION( "Smallest Magnitude" )
+    {
+        run_test<SMALLEST_MAGN>(A, k, m);
+    }
+    SECTION( "Smallest Value" )
+    {
+        run_test<SMALLEST_ALGE>(A, k, m);
+    }
+    SECTION( "Both Ends" )
+    {
+        run_test<BOTH_ENDS>(A, k, m);
+    }
 }
