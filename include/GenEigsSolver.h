@@ -14,42 +14,47 @@
 
 
 template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
-class SymEigsSolver
+class GenEigsSolver
 {
 private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
     typedef arma::uvec BoolVector;
-    typedef std::pair<Scalar, int> SortPair;
 
-    MatOp<Scalar> *op;    // object to conduct matrix operation,
-                          // e.g. matrix-vector product
-    const int dim_n;      // dimension of matrix A
+    typedef std::complex<Scalar> Complex;
+    typedef arma::Mat<Complex> ComplexMatrix;
+    typedef arma::Col<Complex> ComplexVector;
 
-protected:
-    const int nev;        // number of eigenvalues requested
+    typedef std::pair<Complex, int> SortPair;
 
-private:
-    int nev_updated;      // increase nev in factorization if needed
-    const int ncv;        // number of ritz values
-    int nmatop;           // number of matrix operations called
-    int niter;            // number of restarting iterations
-
-    Matrix fac_V;         // V matrix in the Arnoldi factorization
-    Matrix fac_H;         // H matrix in the Arnoldi factorization
-    Vector fac_f;         // residual in the Arnoldi factorization
+    MatOp<Scalar> *op;      // object to conduct matrix operation,
+                            // e.g. matrix-vector product
+    const int dim_n;        // dimension of matrix A
 
 protected:
-    Vector ritz_val;      // ritz values
+    const int nev;          // number of eigenvalues requested
 
 private:
-    Matrix ritz_vec;      // ritz vectors
-    BoolVector ritz_conv; // indicator of the convergence of ritz values
+    int nev_updated;        // increase nev in factorization if needed
+    const int ncv;          // number of ritz values
+    int nmatop;             // number of matrix operations called
+    int niter;              // number of restarting iterations
 
-    const Scalar prec;    // precision parameter used to test convergence
-                          // prec = epsilon^(2/3)
-                          // epsilon is the machine precision,
-                          // e.g. ~= 1e-16 for the "double" type
+    Matrix fac_V;           // V matrix in the Arnoldi factorization
+    Matrix fac_H;           // H matrix in the Arnoldi factorization
+    Vector fac_f;           // residual in the Arnoldi factorization
+
+protected:
+    ComplexVector ritz_val; // ritz values
+
+private:
+    ComplexMatrix ritz_vec; // ritz vectors
+    BoolVector ritz_conv;   // indicator of the convergence of ritz values
+
+    const Scalar prec;      // precision parameter used to test convergence
+                            // prec = epsilon^(2/3)
+                            // epsilon is the machine precision,
+                            // e.g. ~= 1e-16 for the "double" type
 
     // Matrix product in this case, and shift solve for SymEigsShiftSolver
     virtual void matrix_operation(Scalar *x_in, Scalar *y_out)
