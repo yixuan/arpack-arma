@@ -104,29 +104,54 @@ private:
         }
     }
 
+    static bool is_complex(Complex v, Scalar eps)
+    {
+        return std::abs(v.imag()) > eps;
+    }
+
+    static bool is_conj(Complex v1, Complex v2, Scalar eps)
+    {
+        return std::abs(v1 - std::conj(v2)) < prec;
+    }
+
     // Implicitly restarted Arnoldi factorization
     void restart(int k)
     {
         if(k >= ncv)
             return;
 
-        TridiagQR<Scalar> decomp;
+        UpperHessenbergQR<Scalar> decomp;
         Vector em(ncv, arma::fill::zeros);
         em[ncv - 1] = 1;
 
         for(int i = k; i < ncv; i++)
         {
-            // QR decomposition of H-mu*I, mu is the shift
-            fac_H.diag() -= ritz_val[i];
-            decomp.compute(fac_H);
+            if(is_complex(ritz_val[i]) && is_conj(ritz_val[i], ritz_val[i + 1]))
+            {
+                // H - mu * I = Q1 * R1
+                // H <- R1 * Q1 + mu * I = Q1' * H * Q1
+                // H - conj(mu) * I = Q2 * R2
+                // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
+                //
+                // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
+                Scalar re = ritz_val[i].real();
+                Scalar s = std::norm(ritz_val[i]);
+                Matrix HH = fac_H * fac_H - 2 * re * fac_H;
+                HH.diag() += s;
+                decomp.compute(HH);
+                i++
+            } else {
+                // QR decomposition of H - mu * I, mu is real
+                fac_H.diag() -= ritz_val[i].real();
+                decomp.compute(fac_H);
+                fac_H.diag() += ritz_val[i].real();
+            }
 
             // V -> VQ
             decomp.apply_YQ(fac_V);
             // H -> Q'HQ
-            // Since QR = H - mu * I, we have H = QR + mu * I
-            // and therefore Q'HQ = RQ + mu * I
-            fac_H = decomp.matrix_RQ();
-            fac_H.diag() += ritz_val[i];
+            decomp.apply_QtY(fac_H);
+            decomp.apply_YQ(fac_H);
             // em -> Q'em
             decomp.apply_QtY(em);
         }
