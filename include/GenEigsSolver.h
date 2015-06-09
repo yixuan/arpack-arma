@@ -178,39 +178,18 @@ private:
     // Retrieve and sort ritz values and ritz vectors
     void retrieve_ritzpair()
     {
-        Vector evals(ncv);
-        Matrix evecs(ncv, ncv);
-        arma::eig_sym(evals, evecs, arma::symmatl(fac_H));
+        ComplexVector evals(ncv);
+        ComplexMatrix evecs(ncv, ncv);
+        arma::eig_gen(evals, evecs, fac_H);
 
         std::vector<SortPair> pairs(ncv);
-        EigenvalueComparator<Scalar, SelectionRule> comp;
+        EigenvalueComparator<Complex, SelectionRule> comp;
         for(int i = 0; i < ncv; i++)
         {
             pairs[i].first = evals[i];
             pairs[i].second = i;
         }
         std::sort(pairs.begin(), pairs.end(), comp);
-        // For BOTH_ENDS, the eigenvalues are sorted according
-        // to the LARGEST_ALGE rule, so we need to move those smallest
-        // values to the left
-        // The order would be
-        // Largest => Smallest => 2nd largest => 2nd smallest => ...
-        // We keep this order since the first k values will always be
-        // the wanted collection, no matter k is nev_updated (used in restart())
-        // or is nev (used in sort_ritzpair())
-        if(SelectionRule == BOTH_ENDS)
-        {
-            std::vector<SortPair> pairs_copy(pairs);
-            for(int i = 0; i < ncv; i++)
-            {
-                // If i is even, pick values from the left (large values)
-                // If i is odd, pick values from the right (small values)
-                if(i % 2 == 0)
-                    pairs[i] = pairs_copy[i / 2];
-                else
-                    pairs[i] = pairs_copy[ncv - 1 - i / 2];
-            }
-        }
 
         // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
         for(int i = 0; i < ncv; i++)
@@ -220,6 +199,14 @@ private:
         for(int i = 0; i < nev; i++)
         {
             ritz_vec.col(i) = evecs.col(pairs[i].second);
+        }
+
+        // If ritz_val[nev_updated - 1] and ritz_val[nev_updated] are conjugate pairs,
+        // let nev_updated increase by 1
+        if(is_complex(ritz_val[nev_updated - 1], prec) &&
+           is_conj(ritz_val[nev_updated - 1], ritz_val[nev_updated], prec))
+        {
+            nev_updated++;
         }
     }
 
