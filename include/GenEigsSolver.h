@@ -112,7 +112,7 @@ private:
 
     static bool is_conj(Complex v1, Complex v2, Scalar eps)
     {
-        return std::abs(v1 - std::conj(v2)) < prec;
+        return std::abs(v1 - std::conj(v2)) < eps;
     }
 
     // Implicitly restarted Arnoldi factorization
@@ -140,7 +140,7 @@ private:
                 Matrix HH = fac_H * fac_H - 2 * re * fac_H;
                 HH.diag() += s;
                 decomp.compute(HH);
-                i++
+                i++;
             } else {
                 // QR decomposition of H - mu * I, mu is real
                 fac_H.diag() -= ritz_val[i].real();
