@@ -1,10 +1,11 @@
-#ifndef SYMEIGSSOLVER_H
-#define SYMEIGSSOLVER_H
+#ifndef GENEIGSSOLVER_H
+#define GENEIGSSOLVER_H
 
 #include <armadillo>
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <complex>
 #include <utility>
 #include <stdexcept>
 
@@ -408,4 +409,4 @@ public:
 };
 */
 
-#endif // SYMEIGSSOLVER_H
+#endif // GENEIGSSOLVER_H
