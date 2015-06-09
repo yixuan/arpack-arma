@@ -239,7 +239,7 @@ protected:
     }
 
 public:
-    SymEigsSolver(MatOp<Scalar> *op_, int nev_, int ncv_) :
+    GenEigsSolver(MatOp<Scalar> *op_, int nev_, int ncv_) :
         op(op_),
         dim_n(op->rows()),
         nev(nev_),
@@ -323,10 +323,10 @@ public:
     }
 
     // Return converged eigenvalues
-    Vector eigenvalues()
+    ComplexVector eigenvalues()
     {
         int nconv = arma::sum(ritz_conv);
-        Vector res(nconv);
+        ComplexVector res(nconv);
 
         if(!nconv)
             return res;
@@ -345,15 +345,15 @@ public:
     }
 
     // Return converged eigenvectors
-    Matrix eigenvectors()
+    ComplexMatrix eigenvectors()
     {
         int nconv = arma::sum(ritz_conv);
-        Matrix res(dim_n, nconv);
+        ComplexMatrix res(dim_n, nconv);
 
         if(!nconv)
             return res;
 
-        Matrix ritz_vec_conv(ncv, nconv);
+        ComplexMatrix ritz_vec_conv(ncv, nconv);
         int j = 0;
         for(int i = 0; i < nev; i++)
         {
@@ -373,7 +373,7 @@ public:
 
 
 
-
+/*
 template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
 class SymEigsShiftSolver: public SymEigsSolver<Scalar, SelectionRule>
 {
@@ -406,5 +406,6 @@ public:
         op_shift->set_shift(sigma);
     }
 };
+*/
 
 #endif // SYMEIGSSOLVER_H
