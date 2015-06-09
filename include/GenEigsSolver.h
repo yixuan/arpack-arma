@@ -216,7 +216,7 @@ protected:
     virtual void sort_ritzpair()
     {
         std::vector<SortPair> pairs(nev);
-        EigenvalueComparator<Scalar, LARGEST_MAGN> comp;
+        EigenvalueComparator<Complex, LARGEST_MAGN> comp;
         for(int i = 0; i < nev; i++)
         {
             pairs[i].first = ritz_val[i];
@@ -224,7 +224,7 @@ protected:
         }
         std::sort(pairs.begin(), pairs.end(), comp);
 
-        Matrix new_ritz_vec(ncv, nev);
+        ComplexMatrix new_ritz_vec(ncv, nev);
         BoolVector new_ritz_conv(nev);
 
         for(int i = 0; i < nev; i++)
