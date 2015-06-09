@@ -126,7 +126,7 @@ private:
 
         for(int i = k; i < ncv; i++)
         {
-            if(is_complex(ritz_val[i]) && is_conj(ritz_val[i], ritz_val[i + 1]))
+            if(is_complex(ritz_val[i], prec) && is_conj(ritz_val[i], ritz_val[i + 1], prec))
             {
                 // H - mu * I = Q1 * R1
                 // H <- R1 * Q1 + mu * I = Q1' * H * Q1
@@ -166,20 +166,11 @@ private:
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Vector rv = arma::abs(ritz_val.head(nev));
         Vector thresh = tol * arma::clamp(rv, prec, rv.max());
-        //Vector bound = arma::abs(ritz_val.head(nev)) * tol;
-        //Scalar Hnorm = prec * arma::abs(ritz_val).max();
-        //bound.elem(arma::find(bound < Hnorm)).fill(Hnorm);
         Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
         ritz_conv = (resid < thresh);
 
         // Converged "wanted" ritz values
         int nconv = arma::sum(ritz_conv);
-        // Adjust nev_updated, according to dsaup2.f line 691~700 in ARPACK
-        nev_updated = nev + std::min(nconv, (ncv - nev) / 2);
-        if(nev == 1 && ncv >= 6)
-            nev_updated = ncv / 2;
-        else if(nev == 1 && ncv > 2)
-            nev_updated = 2;
 
         return nconv >= nev;
     }
