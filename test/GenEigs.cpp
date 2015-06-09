@@ -1,0 +1,76 @@
+#include <armadillo>
+#include <iostream>
+
+#include <GenEigsSolver.h>
+#include <MatOpDense.h>
+
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
+
+typedef arma::mat Matrix;
+typedef arma::vec Vector;
+typedef arma::cx_mat ComplexMatrix;
+typedef arma::cx_vec ComplexVector;
+
+template <int SelectionRule>
+void run_test(Matrix &mat, int k, int m)
+{
+    // ComplexVector all_eval = arma::eig_gen(mat);
+    // all_eval.t().print("all eigenvalues =");
+
+    MatOpDense<double> op(mat);
+    GenEigsSolver<double, SelectionRule> eigs(&op, k, m);
+    eigs.init();
+    int nconv = eigs.compute();
+    int niter, nops;
+    eigs.info(niter, nops);
+
+    REQUIRE( nconv > 0 );
+
+    ComplexVector evals = eigs.eigenvalues();
+    ComplexMatrix evecs = eigs.eigenvectors();
+
+    // evals.print("computed eigenvalues D =");
+    // evecs.print("computed eigenvectors U =");
+    /*Matrix err = mat * evecs - evecs * arma::diagmat(evals);
+
+    INFO( "nconv = " << nconv );
+    INFO( "niter = " << niter );
+    INFO( "nops = " << nops );
+    INFO( "||AU - UD||_inf = " << arma::abs(err).max() );
+    REQUIRE( arma::abs(err).max() == Approx(0.0) );*/
+}
+
+TEST_CASE("Eigensolver of general real matrix", "[eigs_gen]")
+{
+    arma::arma_rng::set_seed(123);
+    Matrix A = arma::randu(10, 10);
+
+    int k = 3;
+    int m = 6;
+
+    SECTION( "Largest Magnitude" )
+    {
+        run_test<LARGEST_MAGN>(A, k, m);
+    }
+    SECTION( "Largest Real Part" )
+    {
+        run_test<LARGEST_REAL>(A, k, m);
+    }
+    SECTION( "Largest Imaginary Part" )
+    {
+        run_test<LARGEST_IMAG>(A, k, m);
+    }
+    SECTION( "Smallest Magnitude" )
+    {
+        run_test<SMALLEST_MAGN>(A, k, m);
+    }
+    SECTION( "Smallest Real Part" )
+    {
+        run_test<SMALLEST_REAL>(A, k, m);
+    }
+    SECTION( "Smallest Imaginary Part" )
+    {
+        run_test<SMALLEST_IMAG>(A, k, m);
+    }
+}
