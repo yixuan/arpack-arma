@@ -71,7 +71,7 @@ private:
         fac_f = fk;
 
         Vector v(dim_n), w(dim_n);
-        Scalar beta = 0.0, Hii = 0.0;
+        Scalar beta = 0.0;
         // Keep the upperleft k x k submatrix of H and set other elements to 0
         fac_H.tail_cols(ncv - from_k).zeros();
         fac_H.submat(arma::span(from_k, ncv - 1), arma::span(0, from_k - 1)).zeros();
@@ -85,11 +85,10 @@ private:
             matrix_operation(v.memptr(), w.memptr());
             nmatop++;
 
-            Hii = arma::dot(v, w);
-            fac_H(i - 1, i) = beta;
-            fac_H(i, i) = Hii;
+            Vector h = fac_V.head_cols(i + 1).t() * w;
+            fac_H(arma::span(0, i), i) = h;
 
-            fac_f = w - beta * fac_V.col(i - 1) - Hii * v;
+            fac_f = w - fac_V.head_cols(i + 1) * h;
             // Correct f if it is not orthogonal to V
             // Typically the largest absolute value occurs in
             // the first element, i.e., <v1, f>, so we use this
@@ -122,6 +121,7 @@ private:
             return;
 
         UpperHessenbergQR<Scalar> decomp;
+        Matrix Q, R;
         Vector em(ncv, arma::fill::zeros);
         em[ncv - 1] = 1;
 
@@ -139,22 +139,31 @@ private:
                 Scalar s = std::norm(ritz_val[i]);
                 Matrix HH = fac_H * fac_H - 2 * re * fac_H;
                 HH.diag() += s;
-                decomp.compute(HH);
+                // NOTE: HH is no longer upper Hessenburg
+                arma::qr(Q, R, HH);
+
+                // V -> VQ
+                fac_V = fac_V * Q;
+                // H -> Q'HQ
+                fac_H = Q.t() * fac_H * Q;
+                // em -> Q'em
+                em = Q.t() * em;
+
                 i++;
             } else {
                 // QR decomposition of H - mu * I, mu is real
                 fac_H.diag() -= ritz_val[i].real();
                 decomp.compute(fac_H);
                 fac_H.diag() += ritz_val[i].real();
-            }
 
-            // V -> VQ
-            decomp.apply_YQ(fac_V);
-            // H -> Q'HQ
-            decomp.apply_QtY(fac_H);
-            decomp.apply_YQ(fac_H);
-            // em -> Q'em
-            decomp.apply_QtY(em);
+                // V -> VQ
+                decomp.apply_YQ(fac_V);
+                // H -> Q'HQ
+                decomp.apply_QtY(fac_H);
+                decomp.apply_YQ(fac_H);
+                // em -> Q'em
+                decomp.apply_QtY(em);
+            }
         }
         Vector fk = fac_f * em[k - 1] + fac_V.col(k) * fac_H(k, k - 1);
         factorize_from(k, ncv, fk);
