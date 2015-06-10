@@ -32,13 +32,13 @@ void run_test(Matrix &mat, int k, int m)
 
     // evals.print("computed eigenvalues D =");
     // evecs.print("computed eigenvectors U =");
-    /*Matrix err = mat * evecs - evecs * arma::diagmat(evals);
+    ComplexMatrix err = mat * evecs - evecs * arma::diagmat(evals);
 
     INFO( "nconv = " << nconv );
     INFO( "niter = " << niter );
     INFO( "nops = " << nops );
     INFO( "||AU - UD||_inf = " << arma::abs(err).max() );
-    REQUIRE( arma::abs(err).max() == Approx(0.0) );*/
+    REQUIRE( arma::abs(err).max() == Approx(0.0) );
 }
 
 TEST_CASE("Eigensolver of general real matrix", "[eigs_gen]")
