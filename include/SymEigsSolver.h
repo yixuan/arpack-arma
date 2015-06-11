@@ -144,7 +144,7 @@ private:
 
         // Converged "wanted" ritz values
         int nconv = arma::sum(ritz_conv);
-        // Adjust nev_updated, according to dsaup2.f line 691~700 in ARPACK
+        // Adjust nev_updated, according to dsaup2.f line 677~684 in ARPACK
         nev_updated = nev + std::min(nconv, (ncv - nev) / 2);
         if(nev == 1 && ncv >= 6)
             nev_updated = ncv / 2;
