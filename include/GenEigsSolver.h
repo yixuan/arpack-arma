@@ -233,14 +233,6 @@ private:
         {
             ritz_vec.col(i) = evecs.col(pairs[i].second);
         }
-
-        // If ritz_val[nev_updated - 1] and ritz_val[nev_updated] are conjugate pairs,
-        // let nev_updated increase by 1
-        if(is_complex(ritz_val[nev_updated - 1], prec) &&
-           is_conj(ritz_val[nev_updated - 1], ritz_val[nev_updated], prec))
-        {
-            nev_updated++;
-        }
     }
 
 protected:
