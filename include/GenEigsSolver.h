@@ -36,7 +36,6 @@ protected:
     const int nev;          // number of eigenvalues requested
 
 private:
-    int nev_updated;        // increase nev in factorization if needed
     const int ncv;          // number of ritz values
     int nmatop;             // number of matrix operations called
     int niter;              // number of restarting iterations
@@ -171,41 +170,46 @@ private:
     }
 
     // Test convergence
-    bool converged(Scalar tol)
+    int num_converged(Scalar tol)
     {
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Vector rv = arma::abs(ritz_val.head(nev));
         Vector thresh = tol * arma::clamp(rv, prec, rv.max());
         Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
+        // Converged "wanted" ritz values
         ritz_conv = (resid < thresh);
 
-        // Converged "wanted" ritz values
-        int nconv = arma::sum(ritz_conv);
+        return arma::sum(ritz_conv);
+    }
+
+    int nev_updated(int nconv)
+    {
+        int nev_new = nev;
 
         // Increase nev by one if ritz_val[nev - 1] and
         // ritz_val[nev] are conjugate pairs
         if(is_complex(ritz_val[nev - 1], prec) &&
            is_conj(ritz_val[nev - 1], ritz_val[nev], prec))
         {
-            nev_updated = nev + 1;
+            nev_new = nev + 1;
         }
-        // Adjust nev_updated again, according to dnaup2.f line 660~674 in ARPACK
-        nev_updated = nev_updated + std::min(nconv, (ncv - nev_updated) / 2);
-        if(nev_updated == 1 && ncv >= 6)
-            nev_updated = ncv / 2;
-        else if(nev_updated == 1 && ncv > 3)
-            nev_updated = 2;
+        // Adjust nev_new again, according to dnaup2.f line 660~674 in ARPACK
+        nev_new = nev_new + std::min(nconv, (ncv - nev_new) / 2);
+        if(nev_new == 1 && ncv >= 6)
+            nev_new = ncv / 2;
+        else if(nev_new == 1 && ncv > 3)
+            nev_new = 2;
 
-        if(nev_updated > ncv - 2)
-            nev_updated = ncv - 2;
+        if(nev_new > ncv - 2)
+            nev_new = ncv - 2;
 
-        if(is_complex(ritz_val[nev_updated - 1], prec) &&
-           is_conj(ritz_val[nev_updated - 1], ritz_val[nev_updated], prec))
+        if(is_complex(ritz_val[nev_new - 1], prec) &&
+           is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
         {
-            nev_updated++;
+            nev_new++;
         }
 
-        return nconv >= nev;
+        return nev_new;
     }
 
     // Retrieve and sort ritz values and ritz vectors
@@ -268,7 +272,6 @@ public:
         op(op_),
         dim_n(op->rows()),
         nev(nev_),
-        nev_updated(nev_),
         ncv(ncv_ > dim_n ? dim_n : ncv_),
         nmatop(0),
         niter(0),
@@ -324,19 +327,20 @@ public:
         factorize_from(1, ncv, fac_f);
         retrieve_ritzpair();
         // Restarting
-        int i;
+        int i, nconv, nev_restart;
         for(i = 0; i < maxit; i++)
         {
-            if(converged(tol))
+            nconv = num_converged(tol);
+            if(nconv >= nev)
                 break;
 
-            restart(nev_updated);
+            nev_restart = nev_updated(nconv);
+            restart(nev_restart);
         }
         // Sorting results
         sort_ritzpair();
 
         niter += i + 1;
-        int nconv = arma::sum(ritz_conv);
 
         return std::min(nev, nconv);
     }
