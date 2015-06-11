@@ -30,7 +30,6 @@ protected:
     const int nev;        // number of eigenvalues requested
 
 private:
-    int nev_updated;      // increase nev in factorization if needed
     const int ncv;        // number of ritz values
     int nmatop;           // number of matrix operations called
     int niter;            // number of restarting iterations
@@ -239,7 +238,6 @@ public:
         op(op_),
         dim_n(op->rows()),
         nev(nev_),
-        nev_updated(nev_),
         ncv(ncv_ > dim_n ? dim_n : ncv_),
         nmatop(0),
         niter(0),
