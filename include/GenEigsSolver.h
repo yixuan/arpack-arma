@@ -182,6 +182,29 @@ private:
         // Converged "wanted" ritz values
         int nconv = arma::sum(ritz_conv);
 
+        // Increase nev by one if ritz_val[nev - 1] and
+        // ritz_val[nev] are conjugate pairs
+        if(is_complex(ritz_val[nev - 1], prec) &&
+           is_conj(ritz_val[nev - 1], ritz_val[nev], prec))
+        {
+            nev_updated = nev + 1;
+        }
+        // Adjust nev_updated again, according to dnaup2.f line 660~674 in ARPACK
+        nev_updated = nev_updated + std::min(nconv, (ncv - nev_updated) / 2);
+        if(nev_updated == 1 && ncv >= 6)
+            nev_updated = ncv / 2;
+        else if(nev_updated == 1 && ncv > 3)
+            nev_updated = 2;
+
+        if(nev_updated > ncv - 2)
+            nev_updated = ncv - 2;
+
+        if(is_complex(ritz_val[nev_updated - 1], prec) &&
+           is_conj(ritz_val[nev_updated - 1], ritz_val[nev_updated], prec))
+        {
+            nev_updated++;
+        }
+
         return nconv >= nev;
     }
 
