@@ -169,7 +169,7 @@ private:
         retrieve_ritzpair();
     }
 
-    // Test convergence
+    // Calculate the number of converged Ritz values
     int num_converged(Scalar tol)
     {
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
@@ -182,7 +182,8 @@ private:
         return arma::sum(ritz_conv);
     }
 
-    int nev_updated(int nconv)
+    // Return the adjusted nev for restarting
+    int nev_adjusted(int nconv)
     {
         int nev_new = nev;
 
@@ -203,6 +204,7 @@ private:
         if(nev_new > ncv - 2)
             nev_new = ncv - 2;
 
+        // Examine conjugate pairs again
         if(is_complex(ritz_val[nev_new - 1], prec) &&
            is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
         {
@@ -327,15 +329,15 @@ public:
         factorize_from(1, ncv, fac_f);
         retrieve_ritzpair();
         // Restarting
-        int i, nconv, nev_restart;
+        int i, nconv, nev_adj;
         for(i = 0; i < maxit; i++)
         {
             nconv = num_converged(tol);
             if(nconv >= nev)
                 break;
 
-            nev_restart = nev_updated(nconv);
-            restart(nev_restart);
+            nev_adj = nev_adjusted(nconv);
+            restart(nev_adj);
         }
         // Sorting results
         sort_ritzpair();
