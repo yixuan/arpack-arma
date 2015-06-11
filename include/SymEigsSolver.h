@@ -130,28 +130,32 @@ private:
         retrieve_ritzpair();
     }
 
-    // Test convergence
-    bool converged(Scalar tol)
+    // Calculate the number of converged Ritz values
+    int num_converged(Scalar tol)
     {
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Vector rv = arma::abs(ritz_val.head(nev));
         Vector thresh = tol * arma::clamp(rv, prec, rv.max());
-        //Vector bound = arma::abs(ritz_val.head(nev)) * tol;
-        //Scalar Hnorm = prec * arma::abs(ritz_val).max();
-        //bound.elem(arma::find(bound < Hnorm)).fill(Hnorm);
         Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
+        // Converged "wanted" ritz values
         ritz_conv = (resid < thresh);
 
-        // Converged "wanted" ritz values
-        int nconv = arma::sum(ritz_conv);
-        // Adjust nev_updated, according to dsaup2.f line 677~684 in ARPACK
-        nev_updated = nev + std::min(nconv, (ncv - nev) / 2);
-        if(nev == 1 && ncv >= 6)
-            nev_updated = ncv / 2;
-        else if(nev == 1 && ncv > 2)
-            nev_updated = 2;
+        return arma::sum(ritz_conv);
+    }
 
-        return nconv >= nev;
+    // Return the adjusted nev for restarting
+    int nev_adjusted(int nconv)
+    {
+        int nev_new = nev;
+
+        // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
+        nev_new = nev + std::min(nconv, (ncv - nev) / 2);
+        if(nev == 1 && ncv >= 6)
+            nev_new = ncv / 2;
+        else if(nev == 1 && ncv > 2)
+            nev_new = 2;
+
+        return nev_new;
     }
 
     // Retrieve and sort ritz values and ritz vectors
@@ -291,19 +295,20 @@ public:
         factorize_from(1, ncv, fac_f);
         retrieve_ritzpair();
         // Restarting
-        int i;
+        int i, nconv, nev_adj;
         for(i = 0; i < maxit; i++)
         {
-            if(converged(tol))
+            nconv = num_converged(tol);
+            if(nconv >= nev)
                 break;
 
-            restart(nev_updated);
+            nev_adj = nev_adjusted(nconv);
+            restart(nev_adj);
         }
         // Sorting results
         sort_ritzpair();
 
         niter += i + 1;
-        int nconv = arma::sum(ritz_conv);
 
         return std::min(nev, nconv);
     }
