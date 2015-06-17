@@ -3,7 +3,8 @@
 #include <MatOpDense.h>
 #include <iostream>
 
-int run_F77(arma::mat &M, arma::vec &init_resid, int k, int m);
+int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m);
+int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m);
 int run_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m);
 
 int main()
@@ -20,20 +21,27 @@ int main()
     int m = 20;
 
     clock_t t1, t2;
+
     t1 = clock();
-
-    run_F77(M, init_resid, k, m);
-
+    eigs_sym_F77(M, init_resid, k, m);
     t2 = clock();
-    std::cout << "elapsed time for F77 version: "
+    std::cout << "elapsed time for eigs_sym_F77: "
               << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
 
+
+
     t1 = clock();
-
     run_Cpp(M, init_resid, k, m);
-
     t2 = clock();
     std::cout << "elapsed time for C++ version: "
+              << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
+
+
+
+    t1 = clock();
+    eigs_gen_F77(A, init_resid, k, m);
+    t2 = clock();
+    std::cout << "elapsed time for eigs_gen_F77: "
               << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
 
     return 0;
