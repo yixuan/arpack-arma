@@ -1,7 +1,7 @@
 #include <armadillo>
 #include "ArpackFun.h"
 
-int run_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
+int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
     // Begin ARPACK
     //
