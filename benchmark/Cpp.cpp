@@ -1,9 +1,10 @@
 #include <armadillo>
 #include <SymEigsSolver.h>
+#include <GenEigsSolver.h>
 #include <MatOpDense.h>
 #include <iostream>
 
-int run_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
+int eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
     MatOpDense<double> op(M);
     SymEigsSolver<double, LARGEST_MAGN> eigs(&op, k, m);
@@ -24,6 +25,33 @@ int run_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 
     // arma::mat err = M * evecs - evecs * arma::diagmat(evals);
     // std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
+
+    return 0;
+}
+
+
+
+int eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
+{
+    MatOpDense<double> op(M);
+    GenEigsSolver<double, LARGEST_MAGN> eigs(&op, k, m);
+    eigs.init(init_resid.memptr());
+
+    int nconv = eigs.compute();
+    int niter, nops;
+    eigs.info(niter, nops);
+
+    arma::cx_vec evals = eigs.eigenvalues();
+    arma::cx_mat evecs = eigs.eigenvectors();
+
+    evals.print("computed eigenvalues D =");
+    evecs.head_rows(5).print("first 5 rows of computed eigenvectors U =");
+    std::cout << "nconv = " << nconv << std::endl;
+    std::cout << "niter = " << niter << std::endl;
+    std::cout << "nops = " << nops << std::endl;
+
+    arma::cx_mat err = M * evecs - evecs * arma::diagmat(evals);
+    std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
 
     return 0;
 }
