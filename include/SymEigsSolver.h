@@ -8,12 +8,14 @@
 #include <utility>
 #include <stdexcept>
 
-#include "MatOp.h"
 #include "SelectionRule.h"
 #include "UpperHessenbergQR.h"
+#include "MatOpDenseSym.h"
 
 
-template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
+template < typename Scalar = double,
+           int SelectionRule = LARGEST_MAGN,
+           typename OpType = MatOpDenseSym<double> >
 class SymEigsSolver
 {
 private:
@@ -22,8 +24,11 @@ private:
     typedef arma::uvec BoolVector;
     typedef std::pair<Scalar, int> SortPair;
 
-    MatOp<Scalar> *op;    // object to conduct matrix operation,
+protected:
+    OpType *op;           // object to conduct matrix operation,
                           // e.g. matrix-vector product
+
+private:
     const int dim_n;      // dimension of matrix A
 
 protected:
@@ -234,7 +239,7 @@ protected:
     }
 
 public:
-    SymEigsSolver(MatOp<Scalar> *op_, int nev_, int ncv_) :
+    SymEigsSolver(OpType *op_, int nev_, int ncv_) :
         op(op_),
         dim_n(op->rows()),
         nev(nev_),
@@ -369,19 +374,20 @@ public:
 
 
 
-template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
-class SymEigsShiftSolver: public SymEigsSolver<Scalar, SelectionRule>
+template <typename Scalar = double,
+          int SelectionRule = LARGEST_MAGN,
+          typename OpType = MatOpDenseSym<double> >
+class SymEigsShiftSolver: public SymEigsSolver<Scalar, SelectionRule, OpType>
 {
 private:
     typedef arma::Col<Scalar> Vector;
 
     Scalar sigma;
-    MatOpWithRealShiftSolve<Scalar> *op_shift;
 
     // Shift solve in this case
     void matrix_operation(Scalar *x_in, Scalar *y_out)
     {
-        op_shift->shift_solve(x_in, y_out);
+        this->op->shift_solve(x_in, y_out);
     }
 
     // First transform back the ritz values, and then sort
@@ -392,13 +398,11 @@ private:
         SymEigsSolver<Scalar, SelectionRule>::sort_ritzpair();
     }
 public:
-    SymEigsShiftSolver(MatOpWithRealShiftSolve<Scalar> *op_,
-                       int nev_, int ncv_, Scalar sigma_) :
-        SymEigsSolver<Scalar, SelectionRule>(op_, nev_, ncv_),
-        sigma(sigma_),
-        op_shift(op_)
+    SymEigsShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
+        SymEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
+        sigma(sigma_)
     {
-        op_shift->set_shift(sigma);
+        this->op->set_shift(sigma);
     }
 };
 
