@@ -3,13 +3,10 @@
 
 #include <armadillo>
 #include <stdexcept>
-#include "MatOp.h"
 #include "SymmetricLDL.h"
 
 template <typename Scalar>
-class MatOpDenseSym:
-    public MatOpWithTransProd<Scalar>,
-    public MatOpWithRealShiftSolve<Scalar>
+class MatOpDenseSym
 {
 private:
     typedef arma::Mat<Scalar> Matrix;
