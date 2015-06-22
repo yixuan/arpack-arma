@@ -25,7 +25,7 @@ void run_test(const Matrix &A, int k, int m)
     // all_eval.t().print("all eigenvalues =");
 
     MatOpDenseSym<double> op(mat);
-    SymEigsSolver<double, SelectionRule> eigs(&op, k, m);
+    SymEigsSolver<double, SelectionRule, MatOpDenseSym<double>> eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter, nops;

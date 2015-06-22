@@ -25,7 +25,7 @@ void run_test(const Matrix &A, int k, int m, double sigma)
     // all_eval.t().print("all eigenvalues =");
 
     MatOpDenseSym<double> op(mat);
-    SymEigsShiftSolver<double, SelectionRule> eigs(&op, k, m, sigma);
+    SymEigsShiftSolver<double, SelectionRule, MatOpDenseSym<double>> eigs(&op, k, m, sigma);
     eigs.init();
     int nconv = eigs.compute();
     int niter, nops;
