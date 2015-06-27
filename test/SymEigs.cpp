@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include <SymEigsSolver.h>
-#include <MatOpDenseSym.h>
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
@@ -24,8 +23,8 @@ void run_test(const Matrix &A, int k, int m)
     // Vector all_eval = arma::eig_sym(mat);
     // all_eval.t().print("all eigenvalues =");
 
-    MatOpDenseSym<double> op(mat);
-    SymEigsSolver<double, SelectionRule, MatOpDenseSym<double>> eigs(&op, k, m);
+    DenseMatProd<double> op(mat);
+    SymEigsSolver<double, SelectionRule, DenseMatProd<double>> eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter, nops;
