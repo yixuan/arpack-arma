@@ -9,13 +9,14 @@
 #include <stdexcept>
 
 #include "SelectionRule.h"
-#include "UpperHessenbergQR.h"
-#include "MatOpDenseSym.h"
+#include "LinAlg/UpperHessenbergQR.h"
+#include "MatOp/DenseMatProd.h"
+#include "MatOp/DenseSymShiftSolve.h"
 
 
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
-           typename OpType = MatOpDenseSym<double> >
+           typename OpType = DenseMatProd<double> >
 class SymEigsSolver
 {
 private:
@@ -55,12 +56,6 @@ private:
                           // epsilon is the machine precision,
                           // e.g. ~= 1e-16 for the "double" type
 
-    // Matrix product in this case, and shift solve for SymEigsShiftSolver
-    virtual void matrix_operation(Scalar *x_in, Scalar *y_out)
-    {
-        op->prod(x_in, y_out);
-    }
-
     // Arnoldi factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector &fk)
     {
@@ -80,7 +75,7 @@ private:
             fac_V.col(i) = v; // The (i+1)-th column
             fac_H(i, i - 1) = beta;
 
-            matrix_operation(v.memptr(), w.memptr());
+            op->perform_op(v.memptr(), w.memptr());
             nmatop++;
 
             Hii = arma::dot(v, w);
@@ -276,7 +271,7 @@ public:
         v /= vnorm;
 
         Vector w(dim_n);
-        matrix_operation(v.memptr(), w.memptr());
+        op->perform_op(v.memptr(), w.memptr());
         nmatop++;
 
         fac_H(0, 0) = arma::dot(v, w);
@@ -376,7 +371,7 @@ public:
 
 template <typename Scalar = double,
           int SelectionRule = LARGEST_MAGN,
-          typename OpType = MatOpDenseSym<double> >
+          typename OpType = DenseSymShiftSolve<double> >
 class SymEigsShiftSolver: public SymEigsSolver<Scalar, SelectionRule, OpType>
 {
 private:
@@ -384,18 +379,12 @@ private:
 
     Scalar sigma;
 
-    // Shift solve in this case
-    void matrix_operation(Scalar *x_in, Scalar *y_out)
-    {
-        this->op->shift_solve(x_in, y_out);
-    }
-
     // First transform back the ritz values, and then sort
     void sort_ritzpair()
     {
         Vector ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev) + sigma;
         this->ritz_val.head(this->nev) = ritz_val_org;
-        SymEigsSolver<Scalar, SelectionRule>::sort_ritzpair();
+        SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair();
     }
 public:
     SymEigsShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
