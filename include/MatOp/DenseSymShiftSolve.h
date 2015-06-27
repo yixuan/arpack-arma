@@ -29,6 +29,12 @@ public:
     int rows() { return dim_n; }
     int cols() { return dim_n; }
 
+    // setting real sigma
+    void set_shift(Scalar sigma)
+    {
+        solver.compute(mat - sigma * arma::eye<Matrix>(dim_n, dim_n));
+    }
+
     // y_out = inv(A - sigma * I) * x_in
     void perform_op(Scalar *x_in, Scalar *y_out)
     {
