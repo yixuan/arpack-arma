@@ -9,12 +9,14 @@
 #include <utility>
 #include <stdexcept>
 
-#include "MatOp.h"
 #include "SelectionRule.h"
-#include "UpperHessenbergQR.h"
+#include "LinAlg/UpperHessenbergQR.h"
+#include "MatOp/DenseMatProd.h"
 
 
-template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
+template < typename Scalar = double,
+           int SelectionRule = LARGEST_MAGN,
+           typename OpType = DenseMatProd<double> >
 class GenEigsSolver
 {
 private:
@@ -28,8 +30,11 @@ private:
 
     typedef std::pair<Complex, int> SortPair;
 
-    MatOp<Scalar> *op;      // object to conduct matrix operation,
+protected:
+    OpType *op;             // object to conduct matrix operation,
                             // e.g. matrix-vector product
+
+private:
     const int dim_n;        // dimension of matrix A
 
 protected:
@@ -56,12 +61,6 @@ private:
                             // epsilon is the machine precision,
                             // e.g. ~= 1e-16 for the "double" type
 
-    // Matrix product in this case, and shift solve for SymEigsShiftSolver
-    virtual void matrix_operation(Scalar *x_in, Scalar *y_out)
-    {
-        op->prod(x_in, y_out);
-    }
-
     // Arnoldi factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector &fk)
     {
@@ -81,7 +80,7 @@ private:
             fac_V.col(i) = v; // The (i+1)-th column
             fac_H(i, i - 1) = beta;
 
-            matrix_operation(v.memptr(), w.memptr());
+            op->perform_op(v.memptr(), w.memptr());
             nmatop++;
 
             Vector h = fac_V.head_cols(i + 1).t() * w;
@@ -270,7 +269,7 @@ protected:
     }
 
 public:
-    GenEigsSolver(MatOp<Scalar> *op_, int nev_, int ncv_) :
+    GenEigsSolver(OpType *op_, int nev_, int ncv_) :
         op(op_),
         dim_n(op->rows()),
         nev(nev_),
@@ -307,7 +306,7 @@ public:
         v /= vnorm;
 
         Vector w(dim_n);
-        matrix_operation(v.memptr(), w.memptr());
+        op->perform_op(v.memptr(), w.memptr());
         nmatop++;
 
         fac_H(0, 0) = arma::dot(v, w);
