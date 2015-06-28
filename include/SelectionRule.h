@@ -87,7 +87,7 @@ public:
 
     bool operator() (SortPair v1, SortPair v2)
     {
-        return v1.first.imag() > v2.first.imag();
+        return std::abs(v1.first.imag()) > std::abs(v2.first.imag());
     }
 };
 
@@ -129,7 +129,7 @@ public:
 
     bool operator() (SortPair v1, SortPair v2)
     {
-        return v1.first.imag() <= v2.first.imag();
+        return std::abs(v1.first.imag()) <= std::abs(v2.first.imag());
     }
 };
 
