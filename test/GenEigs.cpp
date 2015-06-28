@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include <GenEigsSolver.h>
-#include <MatOpDense.h>
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
@@ -18,8 +17,8 @@ void run_test(Matrix &mat, int k, int m)
     // ComplexVector all_eval = arma::eig_gen(mat);
     // all_eval.t().print("all eigenvalues =");
 
-    MatOpDense<double> op(mat);
-    GenEigsSolver<double, SelectionRule> eigs(&op, k, m);
+    DenseMatProd<double> op(mat);
+    GenEigsSolver<double, SelectionRule, DenseMatProd<double>> eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter, nops;
