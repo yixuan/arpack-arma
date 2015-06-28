@@ -60,8 +60,9 @@ public:
         vec_out = vec_in;
 
         int one = 1;
+        char no_trans = 'N';
         int info;
-        arma::lapack::getrs("N", &dim_n, &one, mat_fac.memptr(), &dim_n,
+        arma::lapack::getrs(&no_trans, &dim_n, &one, mat_fac.memptr(), &dim_n,
                             vec_fac.memptr(), vec_out.memptr(), &dim_n, &info);
         if(info < 0)
             throw std::invalid_argument("Lapack getrs: illegal value");
