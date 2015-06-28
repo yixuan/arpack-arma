@@ -11,12 +11,13 @@
 
 #include "SelectionRule.h"
 #include "LinAlg/UpperHessenbergQR.h"
-#include "MatOp/DenseMatProd.h"
+#include "MatOp/DenseGenMatProd.h"
+#include "MatOp/DenseGenShiftSolve.h"
 
 
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
-           typename OpType = DenseMatProd<double> >
+           typename OpType = DenseGenMatProd<double> >
 class GenEigsSolver
 {
 private:
@@ -411,19 +412,21 @@ class GenEigsRealShiftSolver: public GenEigsSolver<Scalar, SelectionRule, OpType
 {
 private:
     typedef arma::Col<Scalar> Vector;
+    typedef std::complex<Scalar> Complex;
+    typedef arma::Col<Complex> ComplexVector;
 
     Scalar sigma;
 
     // First transform back the ritz values, and then sort
     void sort_ritzpair()
     {
-        Vector ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev) + sigma;
+        ComplexVector ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev) + sigma;
         this->ritz_val.head(this->nev) = ritz_val_org;
         GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair();
     }
 public:
     GenEigsRealShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
-        GenEigsSolver<Scalar, SelectionRule>(op_, nev_, ncv_),
+        GenEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
         sigma(sigma_)
     {
         this->op->set_shift(sigma);
