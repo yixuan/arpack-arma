@@ -10,13 +10,13 @@
 
 #include "SelectionRule.h"
 #include "LinAlg/UpperHessenbergQR.h"
-#include "MatOp/DenseMatProd.h"
+#include "MatOp/DenseGenMatProd.h"
 #include "MatOp/DenseSymShiftSolve.h"
 
 
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
-           typename OpType = DenseMatProd<double> >
+           typename OpType = DenseGenMatProd<double> >
 class SymEigsSolver
 {
 private:

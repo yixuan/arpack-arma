@@ -23,8 +23,8 @@ void run_test(const Matrix &A, int k, int m)
     // Vector all_eval = arma::eig_sym(mat);
     // all_eval.t().print("all eigenvalues =");
 
-    DenseMatProd<double> op(mat);
-    SymEigsSolver<double, SelectionRule, DenseMatProd<double>> eigs(&op, k, m);
+    DenseGenMatProd<double> op(mat);
+    SymEigsSolver<double, SelectionRule, DenseGenMatProd<double>> eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter, nops;

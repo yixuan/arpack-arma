@@ -1,10 +1,10 @@
-#ifndef DENSEMATPROD_H
-#define DENSEMATPROD_H
+#ifndef DENSEGENMATPROD_H
+#define DENSEGENMATPROD_H
 
 #include <armadillo>
 
 template <typename Scalar>
-class DenseMatProd
+class DenseGenMatProd
 {
 private:
     typedef arma::Mat<Scalar> Matrix;
@@ -13,11 +13,11 @@ private:
     const Matrix mat;
 
 public:
-    DenseMatProd(Matrix &mat_) :
+    DenseGenMatProd(Matrix &mat_) :
         mat(mat_.memptr(), mat_.n_rows, mat_.n_cols, false)
     {}
 
-    virtual ~DenseMatProd() {}
+    virtual ~DenseGenMatProd() {}
 
     int rows() { return mat.n_rows; }
     int cols() { return mat.n_cols; }
@@ -32,4 +32,4 @@ public:
 };
 
 
-#endif // DENSEMATPROD_H
+#endif // DENSEGENMATPROD_H
