@@ -11,16 +11,16 @@ HEADERS = $(wildcard ../include/*.h)
 all: QR.out LDL.out LU.out SymEigs.out SymEigsShift.out GenEigs.out GenEigsRealShift.out
 
 test:
-	./QR.out
-	./LDL.out
-	./LU.out
-	./SymEigs.out
-	./SymEigsShift.out
-	./GenEigs.out
-	./GenEigsRealShift.out
+	-./QR.out
+	-./LDL.out
+	-./LU.out
+	-./SymEigs.out
+	-./SymEigsShift.out
+	-./GenEigs.out
+	-./GenEigsRealShift.out
 
 %.out: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
 
 clean:
-	rm *.out
+	-rm *.out

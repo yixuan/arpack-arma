@@ -23,4 +23,4 @@ benchmark.out: $(OBJS) main.cpp
 	$(FC) $(FFLAGS) -c $< -o $@
 
 clean:
-	rm *.out *.o
+	-rm *.out *.o
