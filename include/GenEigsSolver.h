@@ -403,39 +403,31 @@ public:
 
 
 
-/*
-template <typename Scalar = double, int SelectionRule = LARGEST_MAGN>
-class SymEigsShiftSolver: public SymEigsSolver<Scalar, SelectionRule>
+
+template <typename Scalar = double,
+          int SelectionRule = LARGEST_MAGN,
+          typename OpType = DenseGenShiftSolve<double> >
+class GenEigsRealShiftSolver: public GenEigsSolver<Scalar, SelectionRule, OpType>
 {
 private:
     typedef arma::Col<Scalar> Vector;
 
     Scalar sigma;
-    MatOpWithRealShiftSolve<Scalar> *op_shift;
-
-    // Shift solve in this case
-    void matrix_operation(Scalar *x_in, Scalar *y_out)
-    {
-        op_shift->shift_solve(x_in, y_out);
-    }
 
     // First transform back the ritz values, and then sort
     void sort_ritzpair()
     {
         Vector ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev) + sigma;
         this->ritz_val.head(this->nev) = ritz_val_org;
-        SymEigsSolver<Scalar, SelectionRule>::sort_ritzpair();
+        GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair();
     }
 public:
-    SymEigsShiftSolver(MatOpWithRealShiftSolve<Scalar> *op_,
-                       int nev_, int ncv_, Scalar sigma_) :
-        SymEigsSolver<Scalar, SelectionRule>(op_, nev_, ncv_),
-        sigma(sigma_),
-        op_shift(op_)
+    GenEigsRealShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
+        GenEigsSolver<Scalar, SelectionRule>(op_, nev_, ncv_),
+        sigma(sigma_)
     {
-        op_shift->set_shift(sigma);
+        this->op->set_shift(sigma);
     }
 };
-*/
 
 #endif // GENEIGSSOLVER_H
