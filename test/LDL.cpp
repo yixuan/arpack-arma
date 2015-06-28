@@ -1,5 +1,5 @@
-// Test ../include/SymmetricLDL.h
-#include <SymmetricLDL.h>
+// Test ../include/LinAlg/SymmetricLDL.h
+#include <LinAlg/SymmetricLDL.h>
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"

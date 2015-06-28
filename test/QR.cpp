@@ -1,5 +1,5 @@
-// Test ../include/UpperHessenbergQR.h
-#include <UpperHessenbergQR.h>
+// Test ../include/LinAlg/UpperHessenbergQR.h
+#include <LinAlg/UpperHessenbergQR.h>
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
