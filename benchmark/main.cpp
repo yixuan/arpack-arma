@@ -1,6 +1,4 @@
 #include <armadillo>
-#include <SymEigsSolver.h>
-#include <MatOpDense.h>
 #include <iostream>
 
 int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m);
