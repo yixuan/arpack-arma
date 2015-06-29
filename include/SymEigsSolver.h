@@ -251,7 +251,7 @@ public:
     }
 
     // Initialization and clean-up
-    virtual void init(Scalar *init_resid)
+    void init(Scalar *init_resid)
     {
         // Reset all matrices/vectors to zero
         fac_V.zeros(dim_n, ncv);
@@ -279,7 +279,7 @@ public:
         fac_V.col(0) = v;
     }
     // Initialization with random initial coefficients
-    virtual void init()
+    void init()
     {
         Vector init_resid(dim_n, arma::fill::randu);
         init_resid -= 0.5;
