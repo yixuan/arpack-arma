@@ -27,8 +27,8 @@ void run_test(const Matrix &A, int k, int m)
     SymEigsSolver<double, SelectionRule, DenseGenMatProd<double>> eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
-    int niter, nops;
-    eigs.info(niter, nops);
+    int niter = eigs.num_iterations();
+    int nops = eigs.num_operations();
 
     REQUIRE( nconv > 0 );
 

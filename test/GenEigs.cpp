@@ -21,8 +21,8 @@ void run_test(Matrix &mat, int k, int m)
     GenEigsSolver<double, SelectionRule, DenseGenMatProd<double>> eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
-    int niter, nops;
-    eigs.info(niter, nops);
+    int niter = eigs.num_iterations();
+    int nops = eigs.num_operations();
 
     REQUIRE( nconv > 0 );
 

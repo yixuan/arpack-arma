@@ -347,11 +347,11 @@ public:
         return std::min(nev, nconv);
     }
 
-    void info(int &iters, int &mat_ops)
-    {
-        iters = niter;
-        mat_ops = nmatop;
-    }
+    // Return the number of restarting iterations
+    int num_iterations() { return niter; }
+
+    // Return the number of matrix operations
+    int num_operations() { return nmatop; }
 
     // Return converged eigenvalues
     ComplexVector eigenvalues()
