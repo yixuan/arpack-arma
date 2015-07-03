@@ -46,14 +46,8 @@ void run_test(const Matrix &A, int k, int m)
     REQUIRE( arma::abs(err).max() == Approx(0.0) );
 }
 
-TEST_CASE("Eigensolver of symmetric real matrix", "[eigs_sym]")
+void run_test_sets(const Matrix &A, int k, int m)
 {
-    arma::arma_rng::set_seed(123);
-    Matrix A = arma::randu(10, 10);
-
-    int k = 3;
-    int m = 6;
-
     SECTION( "Largest Magnitude" )
     {
         run_test<LARGEST_MAGN>(A, k, m);
@@ -74,4 +68,34 @@ TEST_CASE("Eigensolver of symmetric real matrix", "[eigs_sym]")
     {
         run_test<BOTH_ENDS>(A, k, m);
     }
+}
+
+TEST_CASE("Eigensolver of symmetric real matrix [10x10]", "[eigs_sym]")
+{
+    arma::arma_rng::set_seed(123);
+
+    Matrix A = arma::randu(10, 10);
+    int k = 3;
+    int m = 6;
+    run_test_sets(A, k, m);
+}
+
+TEST_CASE("Eigensolver of symmetric real matrix [100x100]", "[eigs_sym]")
+{
+    arma::arma_rng::set_seed(123);
+
+    Matrix A = arma::randu(100, 100);
+    int k = 10;
+    int m = 20;
+    run_test_sets(A, k, m);
+}
+
+TEST_CASE("Eigensolver of symmetric real matrix [1000x1000]", "[eigs_sym]")
+{
+    arma::arma_rng::set_seed(123);
+
+    Matrix A = arma::randu(1000, 1000);
+    int k = 20;
+    int m = 50;
+    run_test_sets(A, k, m);
 }
