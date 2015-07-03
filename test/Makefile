@@ -4,7 +4,7 @@ CPPFLAGS = -I../include
 LDFLAGS =
 LIBS = -llapack -lblas
 
-HEADERS = $(wildcard ../include/*.h)
+HEADERS = $(wildcard ../include/LinAlg/*.h) $(wildcard ../include/MatOp/*.h) $(wildcard ../include/*.h)
 
 .PHONY: all test clean
 
