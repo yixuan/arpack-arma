@@ -134,7 +134,7 @@ private:
     {
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Vector rv = arma::abs(ritz_val.head(nev));
-        Vector thresh = tol * arma::clamp(rv, prec, rv.max());
+        Vector thresh = tol * arma::clamp(rv, prec, std::max(prec, rv.max()));
         Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
         // Converged "wanted" ritz values
         ritz_conv = (resid < thresh);
