@@ -17,8 +17,6 @@ public:
         mat(mat_.memptr(), mat_.n_rows, mat_.n_cols, false)
     {}
 
-    virtual ~DenseGenMatProd() {}
-
     int rows() { return mat.n_rows; }
     int cols() { return mat.n_cols; }
 

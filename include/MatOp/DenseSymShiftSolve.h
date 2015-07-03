@@ -24,8 +24,6 @@ public:
             throw std::invalid_argument("DenseSymShiftSolve: matrix must be square");
     }
 
-    virtual ~DenseSymShiftSolve() {}
-
     int rows() { return dim_n; }
     int cols() { return dim_n; }
 
