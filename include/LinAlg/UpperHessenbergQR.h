@@ -141,15 +141,16 @@ public:
 
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2;
-        RowVector Yi(Y.n_cols);
+        RowVector Yi(Y.n_cols), Yi1(Y.n_cols);
         for(int i = n - 2; i >= 0; i--)
         {
             // Y[i:(i + 1), ] = Gi * Y[i:(i + 1), ]
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
-            Yi = Y.row(i);
-            Y.row(i)     =  (*c) * Yi + (*s) * Y.row(i + 1);
-            Y.row(i + 1) = -(*s) * Yi + (*c) * Y.row(i + 1);
+            Yi  = Y.row(i);
+            Yi1 = Y.row(i + 1);
+            Y.row(i)     =  (*c) * Yi + (*s) * Yi1;
+            Y.row(i + 1) = -(*s) * Yi + (*c) * Yi1;
             c--;
             s--;
         }
@@ -163,15 +164,16 @@ public:
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
-        RowVector Yi(Y.n_cols);
+        RowVector Yi(Y.n_cols), Yi1(Y.n_cols);
         for(int i = 0; i < n - 1; i++)
         {
             // Y[i:(i + 1), ] = Gi' * Y[i:(i + 1), ]
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
-            Yi = Y.row(i);
-            Y.row(i)     = (*c) * Yi - (*s) * Y.row(i + 1);
-            Y.row(i + 1) = (*s) * Yi + (*c) * Y.row(i + 1);
+            Yi  = Y.row(i);
+            Yi1 = Y.row(i + 1);
+            Y.row(i)     = (*c) * Yi - (*s) * Yi1;
+            Y.row(i + 1) = (*s) * Yi + (*c) * Yi1;
             c++;
             s++;
         }
