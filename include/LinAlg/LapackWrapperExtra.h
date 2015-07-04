@@ -19,6 +19,14 @@ namespace arma
         #define arma_cgetrs cgetrs
         #define arma_zgetrs zgetrs
 
+        // Calculating eigenvalues of an upper Hessenberg matrix
+        #define arma_slahqr slahqr
+        #define arma_dlahqr dlahqr
+
+        // Calculating eigenvectors of a Schur form matrix
+        #define arma_strevc strevc
+        #define arma_dtrevc dtrevc
+
     #else
 
         #define arma_ssytrs SSYTRS
@@ -30,6 +38,12 @@ namespace arma
         #define arma_dgetrs DGETRS
         #define arma_cgetrs CGETRS
         #define arma_zgetrs ZGETRS
+
+        #define arma_slahqr SLAHQR
+        #define arma_dlahqr DLAHQR
+
+        #define arma_strevc STREVC
+        #define arma_dtrevc DTREVC
 
     #endif
 
@@ -46,6 +60,12 @@ namespace arma
         void arma_fortran(arma_dgetrs)(char* trans, blas_int* n, blas_int* nrhs, double* a, blas_int* lda, blas_int* ipiv, double* b, blas_int* ldb, blas_int* info);
         void arma_fortran(arma_cgetrs)(char* trans, blas_int* n, blas_int* nrhs, void*   a, blas_int* lda, blas_int* ipiv, void*   b, blas_int* ldb, blas_int* info);
         void arma_fortran(arma_zgetrs)(char* trans, blas_int* n, blas_int* nrhs, void*   a, blas_int* lda, blas_int* ipiv, void*   b, blas_int* ldb, blas_int* info);
+
+        void arma_fortran(arma_slahqr)(blas_int* wantt, blas_int* wantz, blas_int* n, blas_int* ilo, blas_int* ihi, float*  h, blas_int* ldh, float*  wr, float*  wi, blas_int* iloz, blas_int* ihiz, float*  z, blas_int* ldz, blas_int* info);
+        void arma_fortran(arma_dlahqr)(blas_int* wantt, blas_int* wantz, blas_int* n, blas_int* ilo, blas_int* ihi, double* h, blas_int* ldh, double* wr, double* wi, blas_int* iloz, blas_int* ihiz, double* z, blas_int* ldz, blas_int* info);
+
+        void arma_fortran(arma_strevc)(char* side, char* howmny, blas_int* select, blas_int* n, float*  t, blas_int* ldt, float*  vl, blas_int* ldvl, float*  vr, blas_int* ldvr, blas_int* mm, blas_int* m, float*  work, blas_int* info);
+        void arma_fortran(arma_dtrevc)(char* side, char* howmny, blas_int* select, blas_int* n, double* t, blas_int* ldt, double* vl, blas_int* ldvl, double* vr, blas_int* ldvr, blas_int* mm, blas_int* m, double* work, blas_int* info);
     }
 
 
@@ -111,6 +131,44 @@ namespace arma
             {
                 typedef std::complex<double> T;
                 arma_fortran(arma_zgetrs)(trans, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
+            }
+        }
+
+        template<typename eT>
+        inline
+        void
+        lahqr(blas_int* wantt, blas_int* wantz, blas_int* n, blas_int* ilo, blas_int* ihi, eT* h, blas_int* ldh, eT* wr, eT* wi, blas_int* iloz, blas_int* ihiz, eT* z, blas_int* ldz, blas_int* info)
+        {
+            arma_type_check(( is_supported_blas_type<eT>::value == false ));
+            if(is_float<eT>::value == true)
+            {
+                typedef float T;
+                arma_fortran(arma_slahqr)(wantt, wantz, n, ilo, ihi, (T*)h, ldh, (T*)wr, (T*)wi, iloz, ihiz, (T*)z, ldz, info);
+            }
+            else
+            if(is_double<eT>::value == true)
+            {
+                typedef double T;
+                arma_fortran(arma_dlahqr)(wantt, wantz, n, ilo, ihi, (T*)h, ldh, (T*)wr, (T*)wi, iloz, ihiz, (T*)z, ldz, info);
+            }
+        }
+
+        template<typename eT>
+        inline
+        void
+        trevc(char* side, char* howmny, blas_int* select, blas_int* n, eT* t, blas_int* ldt, eT* vl, blas_int* ldvl, eT* vr, blas_int* ldvr, blas_int* mm, blas_int* m, eT* work, blas_int* info)
+        {
+            arma_type_check(( is_supported_blas_type<eT>::value == false ));
+            if(is_float<eT>::value == true)
+            {
+                typedef float T;
+                arma_fortran(arma_strevc)(side, howmny, select, n, (T*)t, ldt, (T*)vl, ldvl, (T*)vr, ldvr, mm, m, (T*)work, info);
+            }
+            else
+            if(is_double<eT>::value == true)
+            {
+                typedef double T;
+                arma_fortran(arma_dtrevc)(side, howmny, select, n, (T*)t, ldt, (T*)vl, ldvl, (T*)vr, ldvr, mm, m, (T*)work, info);
             }
         }
     }
