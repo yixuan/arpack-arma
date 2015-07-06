@@ -24,11 +24,13 @@ class GenEigsSolver
 private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
+    typedef arma::Row<Scalar> RowVector;
     typedef arma::uvec BoolVector;
 
     typedef std::complex<Scalar> Complex;
     typedef arma::Mat<Complex> ComplexMatrix;
     typedef arma::Col<Complex> ComplexVector;
+    typedef arma::Row<Complex> ComplexRowVector;
 
     typedef std::pair<Complex, int> SortPair;
 
@@ -216,14 +218,12 @@ private:
     }
 
     // Retrieve and sort ritz values and ritz vectors
+    // Only the last components of ritz vectors are calculated
     void retrieve_ritzpair()
     {
-        /*ComplexVector evals(ncv);
-        ComplexMatrix evecs(ncv, ncv);
-        arma::eig_gen(evals, evecs, fac_H);*/
-        UpperHessenbergEigen<double> decomp(fac_H);
+        UpperHessenbergEigen<double> decomp(fac_H, true);
         ComplexVector evals = decomp.eigenvalues();
-        ComplexMatrix evecs = decomp.eigenvectors();
+        ComplexRowVector evecs_last = decomp.matrix_Z().tail_rows(1) * decomp.eigenvectors();
 
         std::vector<SortPair> pairs(ncv);
         EigenvalueComparator<Complex, SelectionRule> comp;
@@ -241,6 +241,29 @@ private:
         }
         for(int i = 0; i < nev; i++)
         {
+            ritz_vec(ncv - 1, i) = evecs_last[pairs[i].second];
+        }
+    }
+
+    // Retrieve and sort ritz values and ritz vectors
+    void retrieve_full_ritzvec()
+    {
+        UpperHessenbergEigen<double> decomp(fac_H);
+        ComplexVector evals = decomp.eigenvalues();
+        ComplexMatrix evecs = decomp.eigenvectors();
+
+        std::vector<SortPair> pairs(ncv);
+        EigenvalueComparator<Complex, SelectionRule> comp;
+        for(int i = 0; i < ncv; i++)
+        {
+            pairs[i].first = evals[i];
+            pairs[i].second = i;
+        }
+        std::sort(pairs.begin(), pairs.end(), comp);
+
+        // Copy the ritz vectors to ritz_vec
+        for(int i = 0; i < nev; i++)
+        {
             ritz_vec.col(i) = evecs.col(pairs[i].second);
         }
     }
@@ -250,6 +273,8 @@ protected:
     // This is used to return the final results
     virtual void sort_ritzpair()
     {
+        retrieve_full_ritzvec();
+
         std::vector<SortPair> pairs(nev);
         EigenvalueComparator<Complex, LARGEST_MAGN> comp;
         for(int i = 0; i < nev; i++)
