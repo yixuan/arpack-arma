@@ -98,6 +98,32 @@ public:
         return mat_T;
     }
 
+    // Calculate RQ, which will also be an upper Hessenberg matrix
+    virtual Matrix matrix_RQ()
+    {
+        if(!computed)
+            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
+
+        // Make a copy of the R matrix
+        Matrix RQ = arma::trimatu(mat_T);
+
+        Scalar *c = rot_cos.memptr(),
+               *s = rot_sin.memptr();
+        for(int i = 0; i < n - 1; i++)
+        {
+            // RQ[, i:(i + 1)] = RQ[, i:(i + 1)] * Gi
+            // Gi = [ cos[i]  sin[i]]
+            //      [-sin[i]  cos[i]]
+            Vector Yi = RQ(arma::span(0, i + 1), i);
+            RQ(arma::span(0, i + 1), i)     = (*c) * Yi - (*s) * RQ(arma::span(0, i + 1), i + 1);
+            RQ(arma::span(0, i + 1), i + 1) = (*s) * Yi + (*c) * RQ(arma::span(0, i + 1), i + 1);
+            c++;
+            s++;
+        }
+
+        return RQ;
+    }
+
     // Y -> QY = G1 * G2 * ... * Y
     void apply_QY(Vector &Y)
     {
@@ -247,7 +273,7 @@ public:
         this->compute(mat);
     }
 
-    virtual void compute(const Matrix &mat)
+    void compute(const Matrix &mat)
     {
         this->n = mat.n_rows;
         this->mat_T.set_size(this->n, this->n);
