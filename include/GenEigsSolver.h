@@ -1,5 +1,5 @@
-#ifndef GENEIGSSOLVER_H
-#define GENEIGSSOLVER_H
+#ifndef GEN_EIGS_SOLVER_H
+#define GEN_EIGS_SOLVER_H
 
 #include <armadillo>
 #include <vector>
@@ -11,6 +11,7 @@
 
 #include "SelectionRule.h"
 #include "LinAlg/UpperHessenbergQR.h"
+#include "LinAlg/UpperHessenbergEigen.h"
 #include "MatOp/DenseGenMatProd.h"
 #include "MatOp/DenseGenShiftSolve.h"
 
@@ -174,7 +175,7 @@ private:
     {
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Vector rv = arma::abs(ritz_val.head(nev));
-        Vector thresh = tol * arma::clamp(rv, prec, rv.max());
+        Vector thresh = tol * arma::clamp(rv, prec, std::max(prec, rv.max()));
         Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
         // Converged "wanted" ritz values
         ritz_conv = (resid < thresh);
@@ -217,9 +218,12 @@ private:
     // Retrieve and sort ritz values and ritz vectors
     void retrieve_ritzpair()
     {
-        ComplexVector evals(ncv);
+        /*ComplexVector evals(ncv);
         ComplexMatrix evecs(ncv, ncv);
-        arma::eig_gen(evals, evecs, fac_H);
+        arma::eig_gen(evals, evecs, fac_H);*/
+        UpperHessenbergEigen<double> decomp(fac_H);
+        ComplexVector evals = decomp.eigenvalues();
+        ComplexMatrix evecs = decomp.eigenvectors();
 
         std::vector<SortPair> pairs(ncv);
         EigenvalueComparator<Complex, SelectionRule> comp;
@@ -433,4 +437,4 @@ public:
     }
 };
 
-#endif // GENEIGSSOLVER_H
+#endif // GEN_EIGS_SOLVER_H
