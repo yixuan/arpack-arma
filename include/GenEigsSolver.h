@@ -139,7 +139,7 @@ private:
                 Scalar s = std::norm(ritz_val[i]);
                 Matrix HH = fac_H * fac_H - 2 * re * fac_H;
                 HH.diag() += s;
-                // NOTE: HH is no longer upper Hessenburg
+                // NOTE: HH is no longer upper Hessenberg
                 arma::qr(Q, R, HH);
 
                 // V -> VQ
