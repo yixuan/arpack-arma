@@ -19,9 +19,10 @@ private:
     typedef arma::Col<Complex> ComplexVector;
 
     int n;
-    Matrix mat_Z;         // In the first stage, H = ZTZ', Z is an orthogonal matrix
-                          // In the second stage, Z will be overwritten by the eigenvectors of H
+    Matrix mat_Z;         // H = ZTZ', Z is an orthogonal matrix
     Matrix mat_T;         // H = ZTZ', T is a Schur form matrix
+    Matrix mat_G;         // eigenvectors of T (schur = true) or H (schur = true),
+                          // in compact form
     ComplexVector evals;  // eigenvalues of H
 
     bool computed;
@@ -36,13 +37,13 @@ public:
         n(0), computed(false)
     {}
 
-    UpperHessenbergEigen(const Matrix &mat) :
+    UpperHessenbergEigen(const Matrix &mat, bool schur = false) :
         n(mat.n_rows), computed(false)
     {
-        compute(mat);
+        compute(mat, schur);
     }
 
-    void compute(const Matrix &mat)
+    void compute(const Matrix &mat, bool schur = false)
     {
         if(!mat.is_square())
             throw std::invalid_argument("UpperHessenbergEigen: matrix must be square");
@@ -50,6 +51,7 @@ public:
         n = mat.n_rows;
         mat_Z.set_size(n, n);
         mat_T.set_size(n, n);
+        mat_G.set_size(n, n);
         evals.set_size(n);
 
         mat_Z.eye();
@@ -74,18 +76,28 @@ public:
         if(info < 0)
             throw std::logic_error("Lapack lahqr: failed to compute all the eigenvalues");
 
-        char side = 'R', howmny = 'B';
+        char side = 'R', howmny = schur ? 'A' : 'B';
         Scalar *work = new Scalar[3 * n];
         int m;
 
+        if(!schur)  mat_G = mat_Z;
+
         arma::lapack::trevc(&side, &howmny, (int*) NULL, &n, mat_T.memptr(), &n,
-                            (Scalar*) NULL, &n, mat_Z.memptr(), &n, &n, &m, work, &info);
+                            (Scalar*) NULL, &n, mat_G.memptr(), &n, &n, &m, work, &info);
         delete [] work;
 
         if(info < 0)
             throw std::invalid_argument("Lapack trevc: illegal value");
 
         computed = true;
+    }
+
+    Matrix matrix_Z()
+    {
+        if(!computed)
+            throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
+
+        return mat_Z;
     }
 
     ComplexVector eigenvalues()
@@ -109,11 +121,11 @@ public:
             if(is_real(evals[i], prec))
             {
                 tmp.zeros();
-                tmp.set_real(mat_Z.col(i));
+                tmp.set_real(mat_G.col(i));
                 evecs.col(i) = arma::normalise(tmp);
             } else {
-                tmp.set_real(mat_Z.col(i));
-                tmp.set_imag(mat_Z.col(i + 1));
+                tmp.set_real(mat_G.col(i));
+                tmp.set_imag(mat_G.col(i + 1));
                 evecs.col(i)     = arma::normalise(tmp);
                 evecs.col(i + 1) = arma::conj(evecs.col(i));
 

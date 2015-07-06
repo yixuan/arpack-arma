@@ -26,6 +26,12 @@ TEST_CASE("Eigen decomposition of upper Hessenberg matrix", "[Eigen]")
     INFO( "||HU - UD||_inf = " << arma::abs(err).max() );
     REQUIRE( arma::abs(err).max() == Approx(0.0) );
 
+    decomp.compute(H, true);
+    mat Z = decomp.matrix_Z();
+    cx_mat Q = decomp.eigenvectors();
+    INFO( "||ZQ - evecs||_inf = " << arma::abs(Z * Q - evecs).max() );
+    REQUIRE( arma::abs(Z * Q - evecs).max() == Approx(0.0) );
+
     clock_t t1, t2;
     t1 = clock();
     for(int i = 0; i < 100; i++)
