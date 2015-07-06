@@ -328,7 +328,7 @@ public:
     Matrix matrix_RQ()
     {
         if(!this->computed)
-            throw std::logic_error("UpperHessenbergQR: need to call compute() first");
+            throw std::logic_error("TridiagQR: need to call compute() first");
 
         // Make a copy of the R matrix
         Matrix RQ(this->n, this->n, arma::fill::zeros);
