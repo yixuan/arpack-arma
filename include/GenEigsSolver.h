@@ -158,8 +158,7 @@ private:
                 // V -> VQ
                 decomp.apply_YQ(fac_V);
                 // H -> Q'HQ = RQ + mu * I
-                fac_H = decomp.matrix_R();
-                decomp.apply_YQ(fac_H);
+                fac_H = decomp.matrix_RQ();
                 fac_H.diag() += ritz_val[i].real();
                 // em -> Q'em
                 decomp.apply_QtY(em);
