@@ -1,5 +1,5 @@
-#ifndef UpperHessenbergQR_H
-#define UpperHessenbergQR_H
+#ifndef UPPER_HESSENBERG_QR_H
+#define UPPER_HESSENBERG_QR_H
 
 #include <armadillo>
 
@@ -395,4 +395,4 @@ public:
 
 
 
-#endif // UpperHessenbergQR_H
+#endif // UPPER_HESSENBERG_QR_H

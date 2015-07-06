@@ -1,5 +1,5 @@
-#ifndef DENSEGENSHIFTSOLVE_H
-#define DENSEGENSHIFTSOLVE_H
+#ifndef DENSE_GEN_SHIFT_SOLVE_H
+#define DENSE_GEN_SHIFT_SOLVE_H
 
 #include <armadillo>
 #include <stdexcept>
@@ -43,4 +43,4 @@ public:
 };
 
 
-#endif // DENSEGENSHIFTSOLVE_H
+#endif // DENSE_GEN_SHIFT_SOLVE_H

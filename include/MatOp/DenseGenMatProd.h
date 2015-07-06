@@ -1,5 +1,5 @@
-#ifndef DENSEGENMATPROD_H
-#define DENSEGENMATPROD_H
+#ifndef DENSE_GEN_MAT_PROD_H
+#define DENSE_GEN_MAT_PROD_H
 
 #include <armadillo>
 
@@ -30,4 +30,4 @@ public:
 };
 
 
-#endif // DENSEGENMATPROD_H
+#endif // DENSE_GEN_MAT_PROD_H

@@ -1,5 +1,5 @@
-#ifndef SYMMETRICLDL_H
-#define SYMMETRICLDL_H
+#ifndef SYMMETRIC_LDL_H
+#define SYMMETRIC_LDL_H
 
 #include <armadillo>
 #include <stdexcept>
@@ -80,4 +80,4 @@ public:
 
 
 
-#endif // SYMMETRICLDL_H
+#endif // SYMMETRIC_LDL_H

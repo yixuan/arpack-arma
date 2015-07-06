@@ -1,5 +1,5 @@
-#ifndef SYMEIGSSOLVER_H
-#define SYMEIGSSOLVER_H
+#ifndef SYM_EIGS_SOLVER_H
+#define SYM_EIGS_SOLVER_H
 
 #include <armadillo>
 #include <vector>
@@ -395,4 +395,4 @@ public:
     }
 };
 
-#endif // SYMEIGSSOLVER_H
+#endif // SYM_EIGS_SOLVER_H

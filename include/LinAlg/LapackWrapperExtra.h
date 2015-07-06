@@ -1,5 +1,5 @@
-#ifndef LAPACKWRAPPEREXTRA_H
-#define LAPACKWRAPPEREXTRA_H
+#ifndef LAPACK_WRAPPER_EXTRA_H
+#define LAPACK_WRAPPER_EXTRA_H
 
 namespace arma
 {
@@ -208,4 +208,4 @@ namespace arma
 
 
 
-#endif  // LAPACKWRAPPEREXTRA_H
+#endif  // LAPACK_WRAPPER_EXTRA_H

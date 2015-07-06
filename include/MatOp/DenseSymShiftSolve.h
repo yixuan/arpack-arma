@@ -1,5 +1,5 @@
-#ifndef DENSESYMSHIFTSOLVE_H
-#define DENSESYMSHIFTSOLVE_H
+#ifndef DENSE_SYM_SHIFT_SOLVE_H
+#define DENSE_SYM_SHIFT_SOLVE_H
 
 #include <armadillo>
 #include <stdexcept>

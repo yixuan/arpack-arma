@@ -1,5 +1,5 @@
-#ifndef GENERALLU_H
-#define GENERALLU_H
+#ifndef GENERAL_LU_H
+#define GENERAL_LU_H
 
 #include <armadillo>
 #include <stdexcept>
@@ -71,4 +71,4 @@ public:
 
 
 
-#endif // GENERALLU_H
+#endif // GENERAL_LU_H
