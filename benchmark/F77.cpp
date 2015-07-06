@@ -287,8 +287,7 @@ int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
         return 1;
     }
 
-    evals_re.print("real part of computed eigenvalues =");
-    evals_im.print("imaginary part of computed eigenvalues =");
+    arma::cx_vec(evals_re, evals_im).print("computed eigenvalues = ");
     evecs(arma::span(0, 4), arma::span(0, nev)).print("first 5 rows of computed eigenvectors =");
     std::cout << "nconv = " << nconv << std::endl;
     std::cout << "nops = " << niter << std::endl;
