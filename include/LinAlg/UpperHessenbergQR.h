@@ -51,7 +51,8 @@ public:
         rot_cos.set_size(n - 1);
         rot_sin.set_size(n - 1);
 
-        mat_T = mat;
+        mat_T = arma::trimatu(mat);
+        mat_T.diag(-1) = mat.diag(-1);
 
         Scalar xi, xj, r, c, s;
         Matrix Gt(2, 2);
