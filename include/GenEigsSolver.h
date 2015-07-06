@@ -154,13 +154,13 @@ private:
                 // QR decomposition of H - mu * I, mu is real
                 fac_H.diag() -= ritz_val[i].real();
                 decomp.compute(fac_H);
-                fac_H.diag() += ritz_val[i].real();
 
                 // V -> VQ
                 decomp.apply_YQ(fac_V);
-                // H -> Q'HQ
-                decomp.apply_QtY(fac_H);
+                // H -> Q'HQ = RQ + mu * I
+                fac_H = decomp.matrix_R();
                 decomp.apply_YQ(fac_H);
+                fac_H.diag() += ritz_val[i].real();
                 // em -> Q'em
                 decomp.apply_QtY(em);
             }
