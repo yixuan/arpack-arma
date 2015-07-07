@@ -137,7 +137,9 @@ private:
                 // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
                 Scalar re = ritz_val[i].real();
                 Scalar s = std::norm(ritz_val[i]);
-                Matrix HH = fac_H * fac_H - 2 * re * fac_H;
+                Matrix HH = fac_H;
+                HH.diag() -= 2 * re;
+                HH = fac_H * HH;
                 HH.diag() += s;
                 // NOTE: HH is no longer upper Hessenberg
                 arma::qr(Q, R, HH);
