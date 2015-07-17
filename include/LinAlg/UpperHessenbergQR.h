@@ -26,14 +26,6 @@ public:
         n(0), computed(false)
     {}
 
-    UpperHessenbergQR(int n_) :
-        n(n_),
-        mat_T(n, n),
-        rot_cos(n - 1),
-        rot_sin(n - 1),
-        computed(false)
-    {}
-
     UpperHessenbergQR(const Matrix &mat) :
         n(mat.n_rows),
         mat_T(n, n),
@@ -268,7 +260,7 @@ public:
     {}
 
     TridiagQR(const Matrix &mat) :
-        UpperHessenbergQR<Scalar>(mat.n_rows)
+        UpperHessenbergQR<Scalar>()
     {
         this->compute(mat);
     }
