@@ -5,7 +5,12 @@
 #include <stdexcept>
 #include "LapackWrapperExtra.h"
 
-// LDL decomposition of an symmetric (but possibly indefinite) matrix
+///
+/// Perform LDL decomposition of a symmetric (possibly indefinite) matrix.
+///
+/// \tparam Scalar The element type of the matrix.
+/// Currently supported types are `float` and `double`.
+///
 template <typename Scalar = double>
 class SymmetricLDL
 {
@@ -21,10 +26,25 @@ private:
     bool computed;      // whether factorization has been computed
 
 public:
+    ///
+    /// Default constructor to create an object that stores the
+    /// LDL decomposition of a symmetric matrix. Factorization can
+    /// be performed later by calling the compute() method.
+    ///
     SymmetricLDL() :
         dim_n(0), mat_uplo('L'), computed(false)
     {}
 
+    ///
+    /// Constructor to create an object that performs and stores the
+    /// LDL decomposition of a symmetric matrix `mat`.
+    ///
+    /// \param uplo 'L' to indicate using the lower triangular part of
+    ///             the matrix, and 'U' for upper triangular part.
+    ///
+    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     SymmetricLDL(const Matrix &mat, const char uplo = 'L') :
         dim_n(mat.n_rows),
         mat_uplo(uplo),
@@ -33,6 +53,15 @@ public:
         compute(mat, uplo);
     }
 
+    ///
+    /// Conduct the LDL factorization of a symmetric matrix.
+    ///
+    /// \param uplo 'L' to indicate using the lower triangular part of
+    ///             the matrix, and 'U' for upper triangular part.
+    ///
+    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     void compute(const Matrix &mat, const char uplo = 'L')
     {
         if(!mat.is_square())
@@ -62,6 +91,17 @@ public:
         computed = true;
     }
 
+    ///
+    /// Use the computed LDL factorization to solve linear equation \f$Ax=b\f$,
+    /// where \f$A\f$ is the matrix factorized.
+    ///
+    /// \param vec_in The vector \f$b\f$.
+    /// \param vec_out The vector \f$x\f$ to be solved, which will be overwritten
+    ///                by the calculated solution.
+    ///
+    /// Vector type can be `arma::vec` or `arma::fvec`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     void solve(Vector &vec_in, Vector &vec_out)
     {
         if(!computed)
