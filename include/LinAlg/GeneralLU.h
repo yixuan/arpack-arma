@@ -5,7 +5,12 @@
 #include <stdexcept>
 #include "LapackWrapperExtra.h"
 
-// LU decomposition of a square matrix
+///
+/// Perform LU decomposition of a square matrix.
+///
+/// \tparam Scalar The element type of the matrix.
+/// Currently supported types are `float` and `double`.
+///
 template <typename Scalar = double>
 class GeneralLU
 {
@@ -19,11 +24,24 @@ protected:
     Matrix mat_fac;     // storing factorization structures
     IntVector vec_fac;  // storing factorization structures
     bool computed;      // whether factorization has been computed
+
 public:
+    ///
+    /// Default constructor to create an object that stores the
+    /// LU decomposition of a square matrix. Factorization can
+    /// be performed later by calling the compute() method.
+    ///
     GeneralLU() :
         dim_n(0), computed(false)
     {}
 
+    ///
+    /// Constructor to create an object that performs and stores the
+    /// LU decomposition of a square matrix `mat`.
+    ///
+    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     GeneralLU(const Matrix &mat) :
         dim_n(mat.n_rows),
         computed(false)
@@ -31,6 +49,12 @@ public:
         compute(mat);
     }
 
+    ///
+    /// Conduct the LU factorization of a square matrix.
+    ///
+    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     void compute(const Matrix &mat)
     {
         if(!mat.is_square())
@@ -52,6 +76,17 @@ public:
         computed = true;
     }
 
+    ///
+    /// Use the computed LU factorization to solve linear equation \f$Ax=b\f$,
+    /// where \f$A\f$ is the matrix factorized.
+    ///
+    /// \param vec_in The vector \f$b\f$.
+    /// \param vec_out The vector \f$x\f$ to be solved, which will be overwritten
+    ///                by the calculated solution.
+    ///
+    /// Vector type can be `arma::vec` or `arma::fvec`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     void solve(Vector &vec_in, Vector &vec_out)
     {
         if(!computed)
