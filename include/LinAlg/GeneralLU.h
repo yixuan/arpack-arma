@@ -19,7 +19,6 @@ private:
     typedef arma::Col<Scalar> Vector;
     typedef arma::Col<int> IntVector;
 
-protected:
     int dim_n;          // size of the matrix
     Matrix mat_fac;     // storing factorization structures
     IntVector vec_fac;  // storing factorization structures

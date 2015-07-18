@@ -14,12 +14,12 @@ private:
     typedef arma::Col<Scalar> Vector;
     typedef arma::Col<int> IntVector;
 
-protected:
     int dim_n;          // size of the matrix
     char mat_uplo;      // whether using lower triangle or upper triangle
     Matrix mat_fac;     // storing factorization structures
     IntVector vec_fac;  // storing factorization structures
     bool computed;      // whether factorization has been computed
+
 public:
     SymmetricLDL() :
         dim_n(0), mat_uplo('L'), computed(false)
