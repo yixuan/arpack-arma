@@ -4,6 +4,8 @@
 #include <armadillo>
 
 ///
+/// \ingroup LinearAlgebra
+///
 /// Perform the QR decomposition of an upper Hessenberg matrix.
 ///
 /// \tparam Scalar The element type of the matrix.
@@ -332,6 +334,8 @@ public:
 
 
 
+///
+/// \ingroup LinearAlgebra
 ///
 /// Perform the QR decomposition of a tridiagonal matrix, a special
 /// case of upper Hessenberg matrices.

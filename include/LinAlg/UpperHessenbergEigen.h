@@ -6,6 +6,8 @@
 #include "LapackWrapperExtra.h"
 
 ///
+/// \ingroup LinearAlgebra
+///
 /// Calculate the eigenvalues and eigenvectors of an upper Hessenberg matrix.
 ///
 /// \tparam Scalar The element type of the matrix.

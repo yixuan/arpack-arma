@@ -6,6 +6,8 @@
 #include "LapackWrapperExtra.h"
 
 ///
+/// \ingroup LinearAlgebra
+///
 /// Perform the LDL decomposition of a symmetric (possibly indefinite) matrix.
 ///
 /// \tparam Scalar The element type of the matrix.

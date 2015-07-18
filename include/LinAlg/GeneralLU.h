@@ -6,6 +6,13 @@
 #include "LapackWrapperExtra.h"
 
 ///
+/// \defgroup LinearAlgebra Linear Algebra
+///
+/// A number of classes for linear algebra operations.
+///
+
+/// \ingroup LinearAlgebra
+///
 /// Perform the LU decomposition of a square matrix.
 ///
 /// \tparam Scalar The element type of the matrix.
