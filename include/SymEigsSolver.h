@@ -93,25 +93,39 @@ public:
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
     }
 
-    // Initialization and clean-up
+    ///
+    /// Initialization and clean-up
+    ///
     inline void init(Scalar *init_resid);
 
-    // Initialization with random initial coefficients
+    ///
+    /// Initialization with random initial coefficients
+    ///
     inline void init();
 
-    // Compute Ritz pairs and return the number of converged eigenvalues
+    ///
+    /// Compute Ritz pairs and return the number of converged eigenvalues
+    ///
     inline int compute(int maxit = 1000, Scalar tol = 1e-10);
 
-    // Return the number of restarting iterations
+    ///
+    /// Return the number of restarting iterations
+    ///
     inline int num_iterations() { return niter; }
 
-    // Return the number of matrix operations
+    ///
+    /// Return the number of matrix operations
+    ///
     inline int num_operations() { return nmatop; }
 
-    // Return converged eigenvalues
+    ///
+    /// Return converged eigenvalues
+    ///
     inline Vector eigenvalues();
 
-    // Return converged eigenvectors
+    ///
+    /// Return converged eigenvectors
+    ///
     inline Matrix eigenvectors();
 };
 
