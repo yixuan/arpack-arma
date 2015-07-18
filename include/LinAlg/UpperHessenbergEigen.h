@@ -51,8 +51,8 @@ public:
     /// Constructor to create an object that calculates the eigenvalues
     /// and eigenvectors of an upper Hessenberg matrix `mat`.
     ///
-    /// Only the upper triangular and the lower subdiagonal part of
-    /// the matrix is used.
+    /// Only the upper triangular and the lower subdiagonal parts of
+    /// the matrix are used.
     ///
     /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.
@@ -66,8 +66,8 @@ public:
     ///
     /// Compute the eigenvalue decomposition of an upper Hessenberg matrix.
     ///
-    /// Only the upper triangular and the lower subdiagonal part of
-    /// the matrix is used.
+    /// Only the upper triangular and the lower subdiagonal parts of
+    /// the matrix are used.
     ///
     /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.

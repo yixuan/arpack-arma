@@ -6,7 +6,7 @@
 #include "LapackWrapperExtra.h"
 
 ///
-/// Perform LDL decomposition of a symmetric (possibly indefinite) matrix.
+/// Perform the LDL decomposition of a symmetric (possibly indefinite) matrix.
 ///
 /// \tparam Scalar The element type of the matrix.
 /// Currently supported types are `float` and `double`.

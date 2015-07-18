@@ -6,7 +6,7 @@
 #include "LapackWrapperExtra.h"
 
 ///
-/// Perform LU decomposition of a square matrix.
+/// Perform the LU decomposition of a square matrix.
 ///
 /// \tparam Scalar The element type of the matrix.
 /// Currently supported types are `float` and `double`.
