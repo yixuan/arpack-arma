@@ -11,6 +11,8 @@
 /// \tparam Scalar The element type of the matrix.
 /// Currently supported types are `float` and `double`.
 ///
+/// This class is a wrapper of the Lapack functions `_sytrf` and `_sytrs`.
+///
 template <typename Scalar = double>
 class SymmetricLDL
 {

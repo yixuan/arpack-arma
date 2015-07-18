@@ -5,7 +5,14 @@
 #include <stdexcept>
 #include "LapackWrapperExtra.h"
 
-// Eigenvalues and eigenvectors of an upper Hessenberg matrix
+///
+/// Calculate the eigenvalues and eigenvectors of an upper Hessenberg matrix.
+///
+/// \tparam Scalar The element type of the matrix.
+/// Currently supported types are `float` and `double`.
+///
+/// This class is a wrapper of the Lapack functions `_lahqr` and `_trevc`.
+///
 template <typename Scalar = double>
 class UpperHessenbergEigen
 {
@@ -32,16 +39,39 @@ private:
     }
 
 public:
+    ///
+    /// Default constructor. Computation can
+    /// be performed later by calling the compute() method.
+    ///
     UpperHessenbergEigen() :
         n(0), computed(false)
     {}
 
+    ///
+    /// Constructor to create an object that calculates the eigenvalues
+    /// and eigenvectors of an upper Hessenberg matrix `mat`.
+    ///
+    /// Only the upper triangular and the lower subdiagonal part of
+    /// the matrix is used.
+    ///
+    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     UpperHessenbergEigen(const Matrix &mat) :
         n(mat.n_rows), computed(false)
     {
         compute(mat);
     }
 
+    ///
+    /// Compute the eigenvalue decomposition of an upper Hessenberg matrix.
+    ///
+    /// Only the upper triangular and the lower subdiagonal part of
+    /// the matrix is used.
+    ///
+    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     void compute(const Matrix &mat)
     {
         if(!mat.is_square())
@@ -88,6 +118,12 @@ public:
         computed = true;
     }
 
+    ///
+    /// Retrieve the eigenvalues.
+    ///
+    /// Returned vector type will be `arma::cx_vec` or `arma::cx_fvec`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     ComplexVector eigenvalues()
     {
         if(!computed)
@@ -96,6 +132,12 @@ public:
         return evals;
     }
 
+    ///
+    /// Retrieve the eigenvectors.
+    ///
+    /// Returned matrix type will be `arma::cx_mat` or `arma::cx_fmat`, depending on
+    /// the template parameter `Scalar` defined.
+    ///
     ComplexMatrix eigenvectors()
     {
         if(!computed)
