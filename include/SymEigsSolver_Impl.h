@@ -5,7 +5,9 @@ template < typename Scalar,
 inline void SymEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int from_k, int to_m, const Vector &fk)
 {
     if(to_m <= from_k) return;
+
     fac_f = fk;
+
     Vector v(dim_n), w(dim_n);
     Scalar beta = 0.0, Hii = 0.0;
     // Keep the upperleft k x k submatrix of H and set other elements to 0
@@ -17,11 +19,14 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
         v = fac_f / beta;
         fac_V.col(i) = v; // The (i+1)-th column
         fac_H(i, i - 1) = beta;
+
         op->perform_op(v.memptr(), w.memptr());
         nmatop++;
+
         Hii = arma::dot(v, w);
         fac_H(i - 1, i) = beta;
         fac_H(i, i) = Hii;
+
         fac_f = w - beta * fac_V.col(i - 1) - Hii * v;
         // Correct f if it is not orthogonal to V
         // Typically the largest absolute value occurs in
@@ -46,14 +51,17 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
 {
     if(k >= ncv)
         return;
+
     TridiagQR<Scalar> decomp;
     Vector em(ncv, arma::fill::zeros);
     em[ncv - 1] = 1;
+
     for(int i = k; i < ncv; i++)
     {
         // QR decomposition of H-mu*I, mu is the shift
         fac_H.diag() -= ritz_val[i];
         decomp.compute(fac_H);
+
         // V -> VQ
         decomp.apply_YQ(fac_V);
         // H -> Q'HQ
@@ -81,6 +89,7 @@ inline int SymEigsSolver<Scalar, SelectionRule, OpType>::num_converged(Scalar to
     Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
     // Converged "wanted" ritz values
     ritz_conv = (resid < thresh);
+
     return arma::sum(ritz_conv);
 }
 
@@ -91,12 +100,14 @@ template < typename Scalar,
 inline int SymEigsSolver<Scalar, SelectionRule, OpType>::nev_adjusted(int nconv)
 {
     int nev_new = nev;
+
     // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
     nev_new = nev + std::min(nconv, (ncv - nev) / 2);
     if(nev == 1 && ncv >= 6)
         nev_new = ncv / 2;
     else if(nev == 1 && ncv > 2)
         nev_new = 2;
+
     return nev_new;
 }
 
@@ -109,6 +120,7 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
     Vector evals(ncv);
     Matrix evecs(ncv, ncv);
     arma::eig_sym(evals, evecs, arma::symmatl(fac_H));
+
     std::vector<SortPair> pairs(ncv);
     EigenvalueComparator<Scalar, SelectionRule> comp;
     for(int i = 0; i < ncv; i++)
@@ -138,6 +150,7 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
                 pairs[i] = pairs_copy[ncv - 1 - i / 2];
         }
     }
+
     // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
     for(int i = 0; i < ncv; i++)
     {
@@ -166,6 +179,7 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair()
         pairs[i].second = i;
     }
     std::sort(pairs.begin(), pairs.end(), comp);
+
     Matrix new_ritz_vec(ncv, nev);
     BoolVector new_ritz_conv(nev);
     for(int i = 0; i < nev; i++)
@@ -174,6 +188,7 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair()
         new_ritz_vec.col(i) = ritz_vec.col(pairs[i].second);
         new_ritz_conv[i] = ritz_conv[pairs[i].second];
     }
+
     ritz_vec.swap(new_ritz_vec);
     ritz_conv.swap(new_ritz_conv);
 }
@@ -193,16 +208,20 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::init(Scalar *init_resi
     ritz_val.zeros(ncv);
     ritz_vec.zeros(ncv, nev);
     ritz_conv.zeros(nev);
+
     nmatop = 0;
     niter = 0;
+
     Vector v(init_resid, dim_n);
     Scalar vnorm = arma::norm(v);
     if(vnorm < prec)
         throw std::invalid_argument("initial residual vector cannot be zero");
     v /= vnorm;
+
     Vector w(dim_n);
     op->perform_op(v.memptr(), w.memptr());
     nmatop++;
+
     fac_H(0, 0) = arma::dot(v, w);
     fac_f = w - v * fac_H(0, 0);
     fac_V.col(0) = v;
@@ -235,12 +254,15 @@ inline int SymEigsSolver<Scalar, SelectionRule, OpType>::compute(int maxit, Scal
         nconv = num_converged(tol);
         if(nconv >= nev)
             break;
+
         nev_adj = nev_adjusted(nconv);
         restart(nev_adj);
     }
     // Sorting results
     sort_ritzpair();
+
     niter += i + 1;
+
     return std::min(nev, nconv);
 }
 
@@ -252,8 +274,10 @@ inline typename SymEigsSolver<Scalar, SelectionRule, OpType>::Vector SymEigsSolv
 {
     int nconv = arma::sum(ritz_conv);
     Vector res(nconv);
+
     if(!nconv)
         return res;
+
     int j = 0;
     for(int i = 0; i < nev; i++)
     {
@@ -263,6 +287,7 @@ inline typename SymEigsSolver<Scalar, SelectionRule, OpType>::Vector SymEigsSolv
             j++;
         }
     }
+
     return res;
 }
 
@@ -274,8 +299,10 @@ inline typename SymEigsSolver<Scalar, SelectionRule, OpType>::Matrix SymEigsSolv
 {
     int nconv = arma::sum(ritz_conv);
     Matrix res(dim_n, nconv);
+
     if(!nconv)
         return res;
+
     Matrix ritz_vec_conv(ncv, nconv);
     int j = 0;
     for(int i = 0; i < nev; i++)
@@ -286,6 +313,8 @@ inline typename SymEigsSolver<Scalar, SelectionRule, OpType>::Matrix SymEigsSolv
             j++;
         }
     }
+
     res = fac_V * ritz_vec_conv;
+
     return res;
 }
