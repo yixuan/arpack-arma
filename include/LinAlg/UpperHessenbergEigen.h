@@ -51,11 +51,10 @@ public:
     /// Constructor to create an object that calculates the eigenvalues
     /// and eigenvectors of an upper Hessenberg matrix `mat`.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     UpperHessenbergEigen(const Matrix &mat) :
         n(mat.n_rows), computed(false)
@@ -66,11 +65,10 @@ public:
     ///
     /// Compute the eigenvalue decomposition of an upper Hessenberg matrix.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     void compute(const Matrix &mat)
     {
@@ -121,7 +119,7 @@ public:
     ///
     /// Retrieve the eigenvalues.
     ///
-    /// Returned vector type will be `arma::cx_vec` or `arma::cx_fvec`, depending on
+    /// \return Returned vector type will be `arma::cx_vec` or `arma::cx_fvec`, depending on
     /// the template parameter `Scalar` defined.
     ///
     ComplexVector eigenvalues()
@@ -135,7 +133,7 @@ public:
     ///
     /// Retrieve the eigenvectors.
     ///
-    /// Returned matrix type will be `arma::cx_mat` or `arma::cx_fmat`, depending on
+    /// \return Returned matrix type will be `arma::cx_mat` or `arma::cx_fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
     ComplexMatrix eigenvectors()

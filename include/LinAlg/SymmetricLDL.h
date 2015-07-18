@@ -41,11 +41,10 @@ public:
     /// Constructor to create an object that performs and stores the
     /// LDL decomposition of a symmetric matrix `mat`.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    ///            the template parameter `Scalar` defined.
     /// \param uplo 'L' to indicate using the lower triangular part of
     ///             the matrix, and 'U' for upper triangular part.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     SymmetricLDL(const Matrix &mat, const char uplo = 'L') :
         dim_n(mat.n_rows),
@@ -58,11 +57,10 @@ public:
     ///
     /// Conduct the LDL factorization of a symmetric matrix.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    ///            the template parameter `Scalar` defined.
     /// \param uplo 'L' to indicate using the lower triangular part of
     ///             the matrix, and 'U' for upper triangular part.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     void compute(const Matrix &mat, const char uplo = 'L')
     {

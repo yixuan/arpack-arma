@@ -39,11 +39,10 @@ public:
     /// Constructor to create an object that performs and stores the
     /// QR decomposition of an upper Hessenberg matrix `mat`.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     UpperHessenbergQR(const Matrix &mat) :
         n(mat.n_rows),
@@ -58,11 +57,10 @@ public:
     ///
     /// Conduct the QR factorization of an upper Hessenberg matrix.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     virtual void compute(const Matrix &mat)
     {
@@ -114,7 +112,7 @@ public:
     /// Return the \f$R\f$ matrix in the QR decomposition, which is an
     /// upper triangular matrix.
     ///
-    /// Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
+    /// \return Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
     Matrix matrix_R()
@@ -129,7 +127,7 @@ public:
     /// Return the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$,
     /// which is an upper Hessenberg matrix.
     ///
-    /// Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
+    /// \return Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
     virtual Matrix matrix_RQ()
@@ -361,11 +359,10 @@ public:
     /// Constructor to create an object that performs and stores the
     /// QR decomposition of a tridiagonal matrix `mat`.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
     /// Only the major- and sub- diagonal parts of
     /// the matrix are used.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     TridiagQR(const Matrix &mat) :
         UpperHessenbergQR<Scalar>()
@@ -376,11 +373,10 @@ public:
     ///
     /// Conduct the QR factorization of a tridiagonal matrix.
     ///
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
     /// Only the major- and sub- diagonal parts of
     /// the matrix are used.
-    ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
-    /// the template parameter `Scalar` defined.
     ///
     void compute(const Matrix &mat)
     {
@@ -464,7 +460,7 @@ public:
     /// Return the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$,
     /// which is a tridiagonal matrix.
     ///
-    /// Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
+    /// \return Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
     Matrix matrix_RQ()

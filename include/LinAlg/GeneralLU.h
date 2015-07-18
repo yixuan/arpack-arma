@@ -40,7 +40,7 @@ public:
     /// Constructor to create an object that performs and stores the
     /// LU decomposition of a square matrix `mat`.
     ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
     GeneralLU(const Matrix &mat) :
@@ -53,7 +53,7 @@ public:
     ///
     /// Conduct the LU factorization of a square matrix.
     ///
-    /// Matrix type can be `arma::mat` or `arma::fmat`, depending on
+    /// \param mat Matrix type can be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
     void compute(const Matrix &mat)
