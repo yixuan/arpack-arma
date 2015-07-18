@@ -17,8 +17,8 @@ void run_test(Matrix &mat, int k, int m, double sigma)
     // ComplexVector all_eval = arma::eig_gen(mat);
     // all_eval.t().print("all eigenvalues =");
 
-    DenseGenShiftSolve<double> op(mat);
-    GenEigsRealShiftSolver<double, SelectionRule, DenseGenShiftSolve<double>> eigs(&op, k, m, sigma);
+    DenseGenRealShiftSolve<double> op(mat);
+    GenEigsRealShiftSolver<double, SelectionRule, DenseGenRealShiftSolve<double>> eigs(&op, k, m, sigma);
     eigs.init();
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();

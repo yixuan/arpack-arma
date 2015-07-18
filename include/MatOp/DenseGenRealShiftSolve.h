@@ -1,12 +1,12 @@
-#ifndef DENSE_GEN_SHIFT_SOLVE_H
-#define DENSE_GEN_SHIFT_SOLVE_H
+#ifndef DENSE_GEN_REAL_SHIFT_SOLVE_H
+#define DENSE_GEN_REAL_SHIFT_SOLVE_H
 
 #include <armadillo>
 #include <stdexcept>
 #include "../LinAlg/GeneralLU.h"
 
 template <typename Scalar>
-class DenseGenShiftSolve
+class DenseGenRealShiftSolve
 {
 private:
     typedef arma::Mat<Scalar> Matrix;
@@ -16,12 +16,12 @@ private:
     const int dim_n;
     GeneralLU<Scalar> solver;
 public:
-    DenseGenShiftSolve(Matrix &mat_) :
+    DenseGenRealShiftSolve(Matrix &mat_) :
         mat(mat_.memptr(), mat_.n_rows, mat_.n_cols, false),
         dim_n(mat_.n_rows)
     {
         if(!mat_.is_square())
-            throw std::invalid_argument("DenseGenShiftSolve: matrix must be square");
+            throw std::invalid_argument("DenseGenRealShiftSolve: matrix must be square");
     }
 
     int rows() { return dim_n; }
@@ -43,4 +43,4 @@ public:
 };
 
 
-#endif // DENSE_GEN_SHIFT_SOLVE_H
+#endif // DENSE_GEN_REAL_SHIFT_SOLVE_H
