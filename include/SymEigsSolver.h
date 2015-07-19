@@ -121,8 +121,6 @@
 /// }
 /// \endcode
 ///
-
-
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
            typename OpType = DenseGenMatProd<double> >
@@ -186,6 +184,18 @@ protected:
     inline virtual void sort_ritzpair();
 
 public:
+    ///
+    /// Constructor to create a solver object.
+    ///
+    /// \param op_  Pointer to the matrix operation object.
+    /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///             where \f$n\f$ is the size of matrix.
+    /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv_` means faster convergence, but it may
+    ///             also result in greater memory use and more matrix operations
+    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///             and is advised to take \f$ncv \ge 2\times nev\f$.
+    ///
     SymEigsSolver(OpType *op_, int nev_, int ncv_) :
         op(op_),
         dim_n(op->rows()),
