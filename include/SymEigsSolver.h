@@ -14,6 +14,115 @@
 #include "MatOp/DenseSymShiftSolve.h"
 
 
+///
+/// \defgroup EigenSolver Eigen Solvers
+///
+/// Eigen solvers for different types of problems.
+///
+
+///
+/// \ingroup EigenSolver
+///
+/// This class implements the eigen solver for real symmetric matrices.
+///
+/// \tparam Scalar The element type of the matrix.
+///                Currently supported types are `float` and `double`.
+/// \tparam SelectionRule An enumeration value indicating the selection rule of
+///                       the requested eigenvalues, for example `LARGEST_MAGN`
+///                       to retrieve eigenvalues with the largest magnitude.
+///                       The full list of enumeration values can be found in
+///                       SelectionRule.h .
+/// \tparam OpType The name of the matrix operation class. See explanations below.
+///
+/// **ARPACK-Armadillo** is designed to calculate a specified number (\f$k\f$)
+/// of eigenvalues of a large square matrix (\f$A\f$). Usually \f$k\f$ is much
+/// less than the size of the matrix (\f$n\f$), so that only a few eigenvalues
+/// and eigenvectors are computed.
+///
+/// This class implements the eigen solver of a real symmetric matrix, but
+/// rather than providing the whole matrix, the algorithm only requires the
+/// matrix-vector multiplication operation of \f$A\f$. Therefore, users of
+/// this solver need to supply a class that computes the result of \f$Av\f$
+/// for any given vector \f$v\f$. The name of this class should be given to
+/// the template parameter `OpType`, and instance of this class passed to
+/// the constructor of SymEigsSolver.
+///
+/// If the matrix \f$A\f$ is already stored as a matrix object in **Armadillo**,
+/// for example `arma::mat`, then there is an easy way to construct such
+/// matrix operation class, by using the built-in wrapper class DenseGenMatProd
+/// which wraps an existing matrix object in **Armadillo**. This is also the
+/// default choice of SymEigsSolver. See the example below.
+///
+/// \code{.cpp}
+/// #include <armadillo>
+/// #include <SymEigsSolver.h>
+/// #include <MatOp/DenseGenMatProd.h>
+///
+/// int main()
+/// {
+///     // We are going to calculate the eigenvalues of M
+///     arma::mat A = arma::randu(10, 10);
+///     arma::mat M = A + A.t();
+///
+///     // Construct matrix operation object using the wrapper class DenseGenMatProd
+///     DenseGenMatProd<double> op(M);
+///
+///     // Construct eigen solver object, requesting the largest three eigenvalues
+///     SymEigsSolver< double, LARGEST_ALGE, DenseGenMatProd<double> > eigs(&op, 3, 6);
+///
+///     // Initialize and compute
+///     eigs.init();
+///     int nconv = eigs.compute();
+///
+///     // Retrieve results
+///     arma::vec evalues;
+///     if(nconv > 0)
+///         evalues = eigs.eigenvalues();
+///
+///     evalues.print("Eigenvalues found:");
+///
+///     return 0;
+/// }
+/// \endcode
+///
+/// If the users need to define their own matrix operation class, it should
+/// impelement all the public member functions as in DenseGenMatProd. Below is
+/// a simple example.
+///
+/// \code{.cpp}
+/// #include <armadillo>
+/// #include <SymEigsSolver.h>
+///
+/// // A size-10 diagonal matrix with elements 1, 2, ..., 10
+/// class MyDiagonalTen
+/// {
+/// public:
+///     int rows() { return 10; }
+///     int cols() { return 10; }
+///     void perform_op(double *x_in, double *y_out)
+///     {
+///         for(int i = 0; i < rows(); i++)
+///         {
+///             y_out[i] = x_in[i] * (i + 1);
+///         }
+///     }
+/// };
+///
+/// int main()
+/// {
+///     MyDiagonalTen op;
+///     SymEigsSolver<double, LARGEST_ALGE, MyDiagonalTen> eigs(&op, 3, 6);
+///     eigs.init();
+///     eigs.compute();
+///     arma::vec evalues = eigs.eigenvalues();
+///     evalues.print("Eigenvalues found:");
+///
+///     return 0;
+/// }
+/// \endcode
+///
+
+
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
            typename OpType = DenseGenMatProd<double> >
@@ -94,37 +203,56 @@ public:
     }
 
     ///
-    /// Initialization and clean-up
+    /// Providing the initial residual vector for the algorithm.
+    ///
+    /// \param init_resid Pointer to the initial residual vector.
+    ///
+    /// **ARPACK-Armadillo** (and also **ARPACK**) uses an iterative algorithm
+    /// to find eigenvalues. This function allows the user to provide the initial
+    /// residual vector.
     ///
     inline void init(Scalar *init_resid);
 
     ///
-    /// Initialization with random initial coefficients
+    /// Providing a random initial residual vector.
+    ///
+    /// This overloaded function generates a random initial residual vector
+    /// for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5)
+    /// distributions.
     ///
     inline void init();
 
     ///
-    /// Compute Ritz pairs and return the number of converged eigenvalues
+    /// Conducting the major computation procedure.
+    ///
+    /// \param maxit Maximum number of iterations allowed in the algorithm.
+    /// \param tol Precision parameter for the calculated eigenvalues.
+    ///
+    /// \return Number of converged eigenvalues.
     ///
     inline int compute(int maxit = 1000, Scalar tol = 1e-10);
 
     ///
-    /// Return the number of restarting iterations
+    /// Returning the number of iterations used in the computation.
     ///
     inline int num_iterations() { return niter; }
 
     ///
-    /// Return the number of matrix operations
+    /// Returning the number of matrix operations used in the computation.
     ///
     inline int num_operations() { return nmatop; }
 
     ///
-    /// Return converged eigenvalues
+    /// Returning the converged eigenvalues.
+    ///
+    /// \return A vector containing the eigenvalues.
     ///
     inline Vector eigenvalues();
 
     ///
-    /// Return converged eigenvectors
+    /// Returning the eigenvectors associated with the converged eigenvalues.
+    ///
+    /// \return A matrix containing the eigenvectors.
     ///
     inline Matrix eigenvectors();
 };
