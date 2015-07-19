@@ -261,7 +261,7 @@ inline int SymEigsSolver<Scalar, SelectionRule, OpType>::compute(int maxit, Scal
     // Sorting results
     sort_ritzpair();
 
-    niter += i + 1;
+    niter = i + 1;
 
     return std::min(nev, nconv);
 }
