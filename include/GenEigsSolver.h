@@ -16,6 +16,62 @@
 #include "MatOp/DenseGenRealShiftSolve.h"
 
 
+///
+/// \ingroup EigenSolver
+///
+/// This class implements the eigen solver for general real matrices.
+///
+/// \tparam Scalar The element type of the matrix.
+///                Currently supported types are `float` and `double`.
+/// \tparam SelectionRule An enumeration value indicating the selection rule of
+///                       the requested eigenvalues, for example `LARGEST_MAGN`
+///                       to retrieve eigenvalues with the largest magnitude.
+///                       The full list of enumeration values can be found in
+///                       SelectionRule.h .
+/// \tparam OpType The name of the matrix operation class.
+///
+/// Most of the background information documented in the SymEigsSolver class
+/// also applies to the GenEigsSolver class here, except that the eigenvalues
+/// and eigenvectors of a general matrix can now be complex-valued.
+///
+/// Similar to SymEigsSolver, the matrix operation class should compute the
+/// matrix-vector multiplication. Users could either use the DenseGenMatProd
+/// wrapper class, or define their own which implements all the
+/// public member functions as in DenseGenMatProd.
+///
+/// An example that illustrates the usage of GenEigsSolver is give below:
+///
+/// \code{.cpp}
+/// #include <armadillo>
+/// #include <GenEigsSolver.h>  // Also includes <MatOp/DenseGenMatProd.h>
+///
+/// int main()
+/// {
+///     // We are going to calculate the eigenvalues of M
+///     arma::mat M = arma::randu(10, 10);
+///
+///     // Construct matrix operation object using the wrapper class
+///     DenseGenMatProd<double> op(M);
+///
+///     // Construct eigen solver object, requesting the largest
+///     // (in magnitude, or norm) three eigenvalues
+///     GenEigsSolver< double, LARGEST_MAGN, DenseGenMatProd<double> > eigs(&op, 3, 6);
+///
+///     // Initialize and compute
+///     eigs.init();
+///     int nconv = eigs.compute();
+///
+///     // Retrieve results
+///     arma::cx_vec evalues;
+///     if(nconv > 0)
+///         evalues = eigs.eigenvalues();
+///
+///     evalues.print("Eigenvalues found:");
+///
+///     return 0;
+/// }
+/// \endcode
+///
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
            typename OpType = DenseGenMatProd<double> >
@@ -94,6 +150,18 @@ protected:
     inline virtual void sort_ritzpair();
 
 public:
+    ///
+    /// Constructor to create a solver object.
+    ///
+    /// \param op_  Pointer to the matrix operation object.
+    /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
+    ///             where \f$n\f$ is the size of matrix.
+    /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv_` means faster convergence, but it may
+    ///             also result in greater memory use and more matrix operations
+    ///             in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
+    ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
+    ///
     GenEigsSolver(OpType *op_, int nev_, int ncv_) :
         op(op_),
         dim_n(op->rows()),
@@ -110,25 +178,58 @@ public:
             throw std::invalid_argument("ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix");
     }
 
-    // Initialization and clean-up
+    ///
+    /// Providing the initial residual vector for the algorithm.
+    ///
+    /// \param init_resid Pointer to the initial residual vector.
+    ///
+    /// **ARPACK-Armadillo** (and also **ARPACK**) uses an iterative algorithm
+    /// to find eigenvalues. This function allows the user to provide the initial
+    /// residual vector.
+    ///
     inline void init(Scalar *init_resid);
 
-    // Initialization with random initial coefficients
+    ///
+    /// Providing a random initial residual vector.
+    ///
+    /// This overloaded function generates a random initial residual vector
+    /// for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5)
+    /// distributions.
+    ///
     inline void init();
 
-    // Compute Ritz pairs and return the number of converged eigenvalues
+    ///
+    /// Conducting the major computation procedure.
+    ///
+    /// \param maxit Maximum number of iterations allowed in the algorithm.
+    /// \param tol Precision parameter for the calculated eigenvalues.
+    ///
+    /// \return Number of converged eigenvalues.
+    ///
     inline int compute(int maxit = 1000, Scalar tol = 1e-10);
 
-    // Return the number of restarting iterations
+    ///
+    /// Returning the number of iterations used in the computation.
+    ///
     inline int num_iterations() { return niter; }
 
-    // Return the number of matrix operations
+    ///
+    /// Returning the number of matrix operations used in the computation.
+    ///
     inline int num_operations() { return nmatop; }
 
-    // Return converged eigenvalues
+    ///
+    /// Returning the converged eigenvalues.
+    ///
+    /// \return A complex-valued vector containing the eigenvalues.
+    ///
     inline ComplexVector eigenvalues();
 
-    // Return converged eigenvectors
+    ///
+    /// Returning the eigenvectors associated with the converged eigenvalues.
+    ///
+    /// \return A complex-valued matrix containing the eigenvectors.
+    ///
     inline ComplexMatrix eigenvectors();
 };
 
