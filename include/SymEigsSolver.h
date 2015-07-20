@@ -267,6 +267,8 @@ public:
     /// Returning the converged eigenvalues.
     ///
     /// \return A vector containing the eigenvalues.
+    /// Returned vector type will be `arma::vec` or `arma::fvec`, depending on
+    /// the template parameter `Scalar` defined.
     ///
     inline Vector eigenvalues();
 
@@ -274,6 +276,8 @@ public:
     /// Returning the eigenvectors associated with the converged eigenvalues.
     ///
     /// \return A matrix containing the eigenvectors.
+    /// Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
+    /// the template parameter `Scalar` defined.
     ///
     inline Matrix eigenvectors();
 };
