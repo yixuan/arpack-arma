@@ -25,15 +25,6 @@
 ///
 /// This class implements the eigen solver for real symmetric matrices.
 ///
-/// \tparam Scalar The element type of the matrix.
-///                Currently supported types are `float` and `double`.
-/// \tparam SelectionRule An enumeration value indicating the selection rule of
-///                       the requested eigenvalues, for example `LARGEST_MAGN`
-///                       to retrieve eigenvalues with the largest magnitude.
-///                       The full list of enumeration values can be found in
-///                       SelectionRule.h .
-/// \tparam OpType The name of the matrix operation class. See explanations below.
-///
 /// **ARPACK-Armadillo** is designed to calculate a specified number (\f$k\f$)
 /// of eigenvalues of a large square matrix (\f$A\f$). Usually \f$k\f$ is much
 /// less than the size of the matrix (\f$n\f$), so that only a few eigenvalues
@@ -51,7 +42,24 @@
 /// for example `arma::mat`, then there is an easy way to construct such
 /// matrix operation class, by using the built-in wrapper class DenseGenMatProd
 /// which wraps an existing matrix object in **Armadillo**. This is also the
-/// default choice of SymEigsSolver. See the example below.
+/// default template parameter for SymEigsSolver.
+///
+/// If the users need to define their own matrix-vector multiplication operation
+/// class, it should impelement all the public member functions as in DenseGenMatProd.
+///
+/// \tparam Scalar        The element type of the matrix.
+///                       Currently supported types are `float` and `double`.
+/// \tparam SelectionRule An enumeration value indicating the selection rule of
+///                       the requested eigenvalues, for example `LARGEST_MAGN`
+///                       to retrieve eigenvalues with the largest magnitude.
+///                       The full list of enumeration values can be found in
+///                       SelectionRule.h .
+/// \tparam OpType        The name of the matrix operation class. Users could either
+///                       use the DenseGenMatProd wrapper class, or define their
+///                       own that impelemnts all the public member functions as in
+///                       DenseGenMatProd.
+///
+/// Below is an example that demonstrates the usage of this class.
 ///
 /// \code{.cpp}
 /// #include <armadillo>
@@ -84,9 +92,7 @@
 /// }
 /// \endcode
 ///
-/// If the users need to define their own matrix-vector multiplication operation
-/// class, it should impelement all the public member functions as in DenseGenMatProd.
-/// Below is an example.
+/// And here is an example for user-supplied matrix operation class.
 ///
 /// \code{.cpp}
 /// #include <armadillo>
@@ -187,7 +193,12 @@ public:
     ///
     /// Constructor to create a solver object.
     ///
-    /// \param op_  Pointer to the matrix operation object.
+    /// \param op_  Pointer to the matrix operation object, which should implement
+    ///             the matrix-vector multiplication operation of \f$A\f$:
+    ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
+    ///             create the object from the DenseGenMatProd wrapper class, or
+    ///             define their own that impelemnts all the public member functions
+    ///             as in DenseGenMatProd.
     /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.
     /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
@@ -295,16 +306,15 @@ public:
 /// values of \f$\nu\f$, and \f$\lambda\f$ can also be easily obtained by noting
 /// that \f$\lambda=\sigma+\nu^{-1}\f$.
 ///
-/// Why do we want to do this?
-///
-/// The reason is that the algorithm of **ARPACK-Armadillo** (and also **ARPACK**)
+/// The reason why we need this type of manipulation is that
+/// the algorithm of **ARPACK-Armadillo** (and also **ARPACK**)
 /// is good at finding eigenvalues with large magnitude, but may fail in looking
 /// for eigenvalues that are close to zero. However, if we really need them, we
 /// can set \f$\sigma=0\f$, find the largest eigenvalues of \f$A^{-1}\f$, and then
 /// transform back to \f$\lambda\f$, since in this case largest values of \f$\nu\f$
 /// implies smallest values of \f$\lambda\f$.
 ///
-/// As a summary, in the shift-and-invert mode, the selection rule will apply to
+/// To summarize, in the shift-and-invert mode, the selection rule will apply to
 /// \f$\nu=1/(\lambda-\sigma)\f$ rather than \f$\lambda\f$. So a selection rule
 /// of `LARGEST_MAGN` combined with shift \f$\sigma\f$ will find eigenvalues of
 /// \f$A\f$ that are closest to \f$\sigma\f$. But note that the eigenvalues()
@@ -312,16 +322,18 @@ public:
 /// returning \f$\lambda\f$ rather than \f$\nu\f$), and eigenvectors are the
 /// same for both the original problem and the shifted-and-inverted problem.
 ///
-/// \tparam Scalar The element type of the matrix.
-///                Currently supported types are `float` and `double`.
+/// \tparam Scalar        The element type of the matrix.
+///                       Currently supported types are `float` and `double`.
 /// \tparam SelectionRule An enumeration value indicating the selection rule of
 ///                       the shifted-and-inverted eigenvalues.
 ///                       The full list of enumeration values can be found in
 ///                       SelectionRule.h .
-/// \tparam OpType The name of the matrix operation class. See the documentation
-///                of the constructor.
+/// \tparam OpType        The name of the matrix operation class. Users could either
+///                       use the DenseSymShiftSolve wrapper class, or define their
+///                       own that impelemnts all the public member functions as in
+///                       DenseSymShiftSolve.
 ///
-/// Example code that illustrates the use of the shift-and-invert mode:
+/// Below is an example that illustrates the use of the shift-and-invert mode:
 ///
 /// \code{.cpp}
 /// #include <armadillo>
@@ -351,8 +363,7 @@ public:
 /// }
 /// \endcode
 ///
-/// A user-supplied matrix shift-solve operation class should implement all the
-/// public member functions as in DenseSymShiftSolve. Below is an example.
+/// Also an example for user-supplied matrix shift-solve operation class:
 ///
 /// \code{.cpp}
 /// #include <armadillo>
@@ -414,18 +425,19 @@ public:
     ///
     /// Constructor to create a eigen solver object using the shift-and-invert mode.
     ///
-    /// \param op_  Pointer to the matrix operation object. This class should implement
-    ///             the shift-solve operation of \f$A\f$: calculating \f$(A-\sigma I)^{-1}y\f$
-    ///             for any vector \f$y\f$. **ARPACK-Armadillo** provides a wrapper
-    ///             class DenseSymShiftSolve to wrap an existing \f$A\f$ stored as
-    ///             an **Armadillo** matrix. See the example code in the introduction part above.
-    /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
-    ///             where \f$n\f$ is the size of matrix.
-    /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
-    ///             Typically a larger `ncv_` means faster convergence, but it may
-    ///             also result in greater memory use and more matrix operations
-    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
-    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param op_    Pointer to the matrix operation object, which should implement
+    ///               the shift-solve operation of \f$A\f$: calculating
+    ///               \f$(A-\sigma I)^{-1}y\f$ for any vector \f$y\f$. Users could either
+    ///               create the object from the DenseSymShiftSolve wrapper class, or
+    ///               define their own that impelemnts all the public member functions
+    ///               as in DenseSymShiftSolve.
+    /// \param nev_   Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv_   Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv_` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param sigma_ The value of the shift.
     ///
     SymEigsShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
