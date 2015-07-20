@@ -27,8 +27,8 @@ matrix-vector multiplication \f$y=Ax\f$ or the shift-solve operation
 \f$y=(A-\sigma I)^{-1}x\f$. **ARPACK-Armadillo** has defined a number of
 helper classes to quickly create such operations from a matrix object.
 See the documentation of DenseGenMatProd, DenseSymShiftSolve, etc.
-2. Create an object of one of the eigen solver classes, for example `SymEigsSolver`
-for symmetric matrices, and `GenEigsSolver` for general matrices. Member functions
+2. Create an object of one of the eigen solver classes, for example SymEigsSolver
+for symmetric matrices, and GenEigsSolver for general matrices. Member functions
 of this object can then be called to conduct the computation and retrieve the
 eigenvalues and/or eigenvectors.
 
