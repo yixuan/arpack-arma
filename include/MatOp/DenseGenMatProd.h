@@ -6,6 +6,8 @@
 ///
 /// \defgroup MatOp Matrix Operations
 ///
+/// Define matrix operations on existing matrix objects
+///
 
 ///
 /// \ingroup MatOp
