@@ -115,7 +115,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>There are two major steps to use the <b>ARPACK-Armadillo</b> library:</p>
 <ol type="1">
 <li>Define a class that implements a certain matrix operation, for example the matrix-vector multiplication \(y=Ax\) or the shift-solve operation \(y=(A-\sigma I)^{-1}x\). <b>ARPACK-Armadillo</b> has defined a number of helper classes to quickly create such operations from a matrix object. See the documentation of <a class="el" href="classDenseGenMatProd.html">DenseGenMatProd</a>, <a class="el" href="classDenseSymShiftSolve.html">DenseSymShiftSolve</a>, etc.</li>
-<li>Create an object of one of the eigen solver classes, for example <code><a class="el" href="classSymEigsSolver.html">SymEigsSolver</a></code> for symmetric matrices, and <code><a class="el" href="classGenEigsSolver.html">GenEigsSolver</a></code> for general matrices. Member functions of this object can then be called to conduct the computation and retrieve the eigenvalues and/or eigenvectors.</li>
+<li>Create an object of one of the eigen solver classes, for example <a class="el" href="classSymEigsSolver.html">SymEigsSolver</a> for symmetric matrices, and <a class="el" href="classGenEigsSolver.html">GenEigsSolver</a> for general matrices. Member functions of this object can then be called to conduct the computation and retrieve the eigenvalues and/or eigenvectors.</li>
 </ol>
 <p>Below is a list of the available eigen solvers in <b>ARPACK-Armadillo</b>:</p><ul>
 <li><a class="el" href="classSymEigsSolver.html">SymEigsSolver</a>: for real symmetric matrices</li>
