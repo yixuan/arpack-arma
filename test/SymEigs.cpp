@@ -16,7 +16,7 @@ void run_test(Matrix &mat, int k, int m)
     // all_eval.t().print("all eigenvalues =");
 
     DenseGenMatProd<double> op(mat);
-    SymEigsSolver<double, SelectionRule, DenseGenMatProd<double>> eigs(&op, k, m);
+    SymEigsSolver< double, SelectionRule, DenseGenMatProd<double> > eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();

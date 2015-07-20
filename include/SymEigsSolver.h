@@ -194,7 +194,7 @@ public:
     ///             Typically a larger `ncv_` means faster convergence, but it may
     ///             also result in greater memory use and more matrix operations
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
-    ///             and is advised to take \f$ncv \ge 2\times nev\f$.
+    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
     SymEigsSolver(OpType *op_, int nev_, int ncv_) :
         op(op_),
@@ -425,7 +425,7 @@ public:
     ///             Typically a larger `ncv_` means faster convergence, but it may
     ///             also result in greater memory use and more matrix operations
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
-    ///             and is advised to take \f$ncv \ge 2\times nev\f$.
+    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param sigma_ The value of the shift.
     ///
     SymEigsShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
