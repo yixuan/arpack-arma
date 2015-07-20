@@ -21,23 +21,21 @@
 ///
 /// This class implements the eigen solver for general real matrices.
 ///
-/// \tparam Scalar The element type of the matrix.
-///                Currently supported types are `float` and `double`.
+/// Most of the background information documented in the SymEigsSolver class
+/// also applies to the GenEigsSolver class here, except that the eigenvalues
+/// and eigenvectors of a general matrix can now be complex-valued.
+///
+/// \tparam Scalar        The element type of the matrix.
+///                       Currently supported types are `float` and `double`.
 /// \tparam SelectionRule An enumeration value indicating the selection rule of
 ///                       the requested eigenvalues, for example `LARGEST_MAGN`
 ///                       to retrieve eigenvalues with the largest magnitude.
 ///                       The full list of enumeration values can be found in
 ///                       SelectionRule.h .
-/// \tparam OpType The name of the matrix operation class.
-///
-/// Most of the background information documented in the SymEigsSolver class
-/// also applies to the GenEigsSolver class here, except that the eigenvalues
-/// and eigenvectors of a general matrix can now be complex-valued.
-///
-/// Similar to SymEigsSolver, the matrix operation class should compute the
-/// matrix-vector multiplication. Users could either use the DenseGenMatProd
-/// wrapper class, or define their own which implements all the
-/// public member functions as in DenseGenMatProd.
+/// \tparam OpType        The name of the matrix operation class. Users could either
+///                       use the DenseGenMatProd wrapper class, or define their
+///                       own that impelemnts all the public member functions as in
+///                       DenseGenMatProd.
 ///
 /// An example that illustrates the usage of GenEigsSolver is give below:
 ///
@@ -153,7 +151,12 @@ public:
     ///
     /// Constructor to create a solver object.
     ///
-    /// \param op_  Pointer to the matrix operation object.
+    /// \param op_  Pointer to the matrix operation object, which should implement
+    ///             the matrix-vector multiplication operation of \f$A\f$:
+    ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
+    ///             create the object from the DenseGenMatProd wrapper class, or
+    ///             define their own that impelemnts all the public member functions
+    ///             as in DenseGenMatProd.
     /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
     ///             where \f$n\f$ is the size of matrix.
     /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
@@ -238,6 +241,25 @@ public:
 #include "GenEigsSolver_Impl.h"
 
 
+///
+/// \ingroup EigenSolver
+///
+/// This class implements the eigen solver for general real matrices with
+/// a real shift value in the **shift-and-invert mode**. The background
+/// knowledge of the shift-and-invert mode can be found in the documentation
+/// of the SymEigsShiftSolver class.
+///
+/// \tparam Scalar        The element type of the matrix.
+///                       Currently supported types are `float` and `double`.
+/// \tparam SelectionRule An enumeration value indicating the selection rule of
+///                       the shifted-and-inverted eigenvalues.
+///                       The full list of enumeration values can be found in
+///                       SelectionRule.h .
+/// \tparam OpType        The name of the matrix operation class. Users could either
+///                       use the DenseGenRealShiftSolve wrapper class, or define their
+///                       own that impelemnts all the public member functions as in
+///                       DenseGenRealShiftSolve.
+///
 template <typename Scalar = double,
           int SelectionRule = LARGEST_MAGN,
           typename OpType = DenseGenRealShiftSolve<double> >
@@ -258,6 +280,24 @@ private:
         GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair();
     }
 public:
+    ///
+    /// Constructor to create a eigen solver object using the shift-and-invert mode.
+    ///
+    /// \param op_    Pointer to the matrix operation object. This class should implement
+    ///               the shift-solve operation of \f$A\f$: calculating
+    ///               \f$(A-\sigma I)^{-1}y\f$ for any vector \f$y\f$. Users could either
+    ///               create the object from the DenseGenRealShiftSolve wrapper class, or
+    ///               define their own that impelemnts all the public member functions
+    ///               as in DenseGenRealShiftSolve.
+    /// \param nev_   Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv_   Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv_` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
+    /// \param sigma_ The real-valued shift.
+    ///
     GenEigsRealShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
         GenEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
         sigma(sigma_)
