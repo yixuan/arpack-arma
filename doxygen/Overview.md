@@ -70,7 +70,7 @@ int main()
     // Retrieve results
     arma::vec evalues;
     if(nconv > 0)
-     evalues = eigs.eigenvalues();
+        evalues = eigs.eigenvalues();
 
     evalues.print("Eigenvalues found:");
 
@@ -115,7 +115,7 @@ int main()
 
 ## Shift-and-invert Mode
 
-When we want to find eigenvalues that are closest to a number \f$\sigma\f$,
+When it is needed to find eigenvalues that are closest to a number \f$\sigma\f$,
 for example to find the smallest eigenvalues of a positive definite matrix
 (in which case \f$\sigma=0\f$), it is advised to use the shift-and-invert mode
 of eigen solvers.
