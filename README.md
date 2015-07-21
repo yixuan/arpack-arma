@@ -128,7 +128,7 @@ int main()
 
 When we want to find eigenvalues that are closest to a number `σ`,
 for example to find the smallest eigenvalues of a positive definite matrix
-(in which case `σ=0`), it is advised to use the shift-and-invert mode
+(in which case `σ = 0`), it is advised to use the shift-and-invert mode
 of eigen solvers.
 
 In the shift-and-invert mode, selection rules are applied to `1/(λ - σ)`
