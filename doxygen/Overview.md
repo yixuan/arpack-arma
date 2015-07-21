@@ -12,6 +12,9 @@ should also link to those two libraries.
 of a large square matrix (\f$A\f$). Usually \f$k\f$ is much less than the size of matrix
 (\f$n\f$), so that only a few eigenvalues and eigenvectors are computed, which
 in general is more efficient than calculating the whole spectral decomposition.
+Users can choose eigenvalue selection rules to pick up the eigenvalues of interest,
+such as the largest \f$k\f$ eigenvalues, or eigenvalues with largest real parts,
+etc.
 
 To use the eigen solvers in this library, the user does not need to directly
 provide the whole matrix, but instead, the algorithm only requires certain operations
@@ -112,7 +115,15 @@ int main()
 
 ## Shift-and-invert Mode
 
-TODO
+When we want to find eigenvalues that are closest to a number \f$\sigma\f$,
+for example to find the smallest eigenvalues of a positive definite matrix
+(in which case \f$\sigma=0\f$), it is advised to use the shift-and-invert mode
+of eigen solvers.
+
+In the shift-and-invert mode, selection rules are applied to \f$1/(\lambda-\sigma)\f$
+rather than \f$\lambda\f$, where \f$\lambda\f$ are eigenvalues of \f$A\f$.
+To use this mode, users need to define the shift-solve matrix operation. See
+the documentation of SymEigsShiftSolver for details.
 
 ## License
 
