@@ -23,6 +23,10 @@ namespace arma
         #define arma_slahqr slahqr
         #define arma_dlahqr dlahqr
 
+        // Calculating eigenvalues of a symmetric tridiagonal matrix
+        #define arma_ssteqr ssteqr
+        #define arma_dsteqr dsteqr
+
         // Calculating eigenvectors of a Schur form matrix
         #define arma_strevc strevc
         #define arma_dtrevc dtrevc
@@ -41,6 +45,9 @@ namespace arma
 
         #define arma_slahqr SLAHQR
         #define arma_dlahqr DLAHQR
+
+        #define arma_ssteqr SSTEQR
+        #define arma_dsteqr DSTEQR
 
         #define arma_strevc STREVC
         #define arma_dtrevc DTREVC
@@ -63,6 +70,9 @@ namespace arma
 
         void arma_fortran(arma_slahqr)(blas_int* wantt, blas_int* wantz, blas_int* n, blas_int* ilo, blas_int* ihi, float*  h, blas_int* ldh, float*  wr, float*  wi, blas_int* iloz, blas_int* ihiz, float*  z, blas_int* ldz, blas_int* info);
         void arma_fortran(arma_dlahqr)(blas_int* wantt, blas_int* wantz, blas_int* n, blas_int* ilo, blas_int* ihi, double* h, blas_int* ldh, double* wr, double* wi, blas_int* iloz, blas_int* ihiz, double* z, blas_int* ldz, blas_int* info);
+
+        void arma_fortran(arma_ssteqr)(char* compz, blas_int* n, float*  d, float*  e, float*  z, blas_int* ldz, float*  work, blas_int* info);
+        void arma_fortran(arma_dsteqr)(char* compz, blas_int* n, double* d, double* e, double* z, blas_int* ldz, double* work, blas_int* info);
 
         void arma_fortran(arma_strevc)(char* side, char* howmny, blas_int* select, blas_int* n, float*  t, blas_int* ldt, float*  vl, blas_int* ldvl, float*  vr, blas_int* ldvr, blas_int* mm, blas_int* m, float*  work, blas_int* info);
         void arma_fortran(arma_dtrevc)(char* side, char* howmny, blas_int* select, blas_int* n, double* t, blas_int* ldt, double* vl, blas_int* ldvl, double* vr, blas_int* ldvr, blas_int* mm, blas_int* m, double* work, blas_int* info);
@@ -150,6 +160,25 @@ namespace arma
             {
                 typedef double T;
                 arma_fortran(arma_dlahqr)(wantt, wantz, n, ilo, ihi, (T*)h, ldh, (T*)wr, (T*)wi, iloz, ihiz, (T*)z, ldz, info);
+            }
+        }
+
+        template<typename eT>
+        inline
+        void
+        steqr(char* compz, blas_int* n, eT* d, eT* e, eT* z, blas_int* ldz, eT* work, blas_int* info)
+        {
+            arma_type_check(( is_supported_blas_type<eT>::value == false ));
+            if(is_float<eT>::value == true)
+            {
+                typedef float T;
+                arma_fortran(arma_ssteqr)(compz, n, (T*)d, (T*)e, (T*)z, ldz, (T*)work, info);
+            }
+            else
+            if(is_double<eT>::value == true)
+            {
+                typedef double T;
+                arma_fortran(arma_dsteqr)(compz, n, (T*)d, (T*)e, (T*)z, ldz, (T*)work, info);
             }
         }
 
