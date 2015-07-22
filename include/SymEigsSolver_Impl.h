@@ -117,9 +117,12 @@ template < typename Scalar,
            typename OpType >
 inline void SymEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
 {
-    Vector evals(ncv);
+    /*Vector evals(ncv);
     Matrix evecs(ncv, ncv);
-    arma::eig_sym(evals, evecs, arma::symmatl(fac_H));
+    arma::eig_sym(evals, evecs, arma::symmatl(fac_H));*/
+    TridiagEigen<double> decomp(fac_H);
+    Vector evals = decomp.eigenvalues();
+    Matrix evecs = decomp.eigenvectors();
 
     std::vector<SortPair> pairs(ncv);
     EigenvalueComparator<Scalar, SelectionRule> comp;
