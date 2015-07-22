@@ -72,18 +72,22 @@ public:
         evecs.set_size(n, n);
 
         char compz = 'I';
-        Scalar *work = new Scalar[2 * n - 2];
+        int lwork = 1 + 4 * n + n * n;
+        Scalar *work = new Scalar[lwork];
+        int liwork = 3 + 5 * n;
+        int *iwork = new int[liwork];
         int info;
 
-        arma::lapack::steqr(&compz, &n, main_diag.memptr(), sub_diag.memptr(),
-                            evecs.memptr(), &n, work, &info);
+        arma::lapack::stedc(&compz, &n, main_diag.memptr(), sub_diag.memptr(),
+                            evecs.memptr(), &n, work, &lwork, iwork, &liwork, &info);
 
         delete [] work;
+        delete [] iwork;
 
         if(info < 0)
-            throw std::invalid_argument("Lapack steqr: illegal value");
+            throw std::invalid_argument("Lapack stedc: illegal value");
         if(info > 0)
-            throw std::logic_error("Lapack steqr: failed to compute all the eigenvalues");
+            throw std::logic_error("Lapack stedc: failed to compute all the eigenvalues");
 
         computed = true;
     }
