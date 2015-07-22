@@ -74,15 +74,21 @@ public:
         mat_T = arma::trimatu(mat);
         mat_T.diag(-1) = mat.diag(-1);
 
-        Scalar xi, xj, r, c, s;
+        Scalar xi, xj, r, c, s, eps = std::numeric_limits<Scalar>::epsilon();
         Matrix Gt(2, 2);
         for(int i = 0; i < n - 2; i++)
         {
             xi = mat_T(i, i);
             xj = mat_T(i + 1, i);
             r = std::sqrt(xi * xi + xj * xj);
-            rot_cos[i] = c = xi / r;
-            rot_sin[i] = s = -xj / r;
+            if(r <= eps)
+            {
+                rot_cos[i] = c = 1;
+                rot_sin[i] = s = 0;
+            } else {
+                rot_cos[i] = c = xi / r;
+                rot_sin[i] = s = -xj / r;
+            }
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
             // G = [ cos  sin]
@@ -102,8 +108,14 @@ public:
         xi = mat_T(n - 2, n - 2);
         xj = mat_T(n - 1, n - 2);
         r = std::sqrt(xi * xi + xj * xj);
-        rot_cos[n - 2] = c = xi / r;
-        rot_sin[n - 2] = s = -xj / r;
+        if(r <= eps)
+        {
+            rot_cos[n - 2] = c = 1;
+            rot_sin[n - 2] = s = 0;
+        } else {
+            rot_cos[n - 2] = c = xi / r;
+            rot_sin[n - 2] = s = -xj / r;
+        }
         Gt << c << -s << arma::endr << s << c << arma::endr;
         mat_T.submat(n - 2, n - 2, n - 1, n - 1) = Gt * mat_T.submat(n - 2, n - 2, n - 1, n - 1);
 
@@ -399,14 +411,21 @@ public:
                *ptr,                         // some location relative to Tii
                *c = this->rot_cos.memptr(),  // pointer to the cosine vector
                *s = this->rot_sin.memptr(),  // pointer to the sine vector
-               r, tmp;
+               r, tmp,
+               eps = std::numeric_limits<Scalar>::epsilon();
         for(int i = 0; i < this->n - 2; i++)
         {
             // Tii[0] == T[i, i]
             // Tii[1] == T[i + 1, i]
             r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
-            *c =  Tii[0] / r;
-            *s = -Tii[1] / r;
+            if(r <= eps)
+            {
+                *c = 1;
+                *s = 0;
+            } else {
+                *c =  Tii[0] / r;
+                *s = -Tii[1] / r;
+            }
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
@@ -448,8 +467,14 @@ public:
         }
         // For i = n - 2
         r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
-        *c =  Tii[0] / r;
-        *s = -Tii[1] / r;
+        if(r <= eps)
+        {
+            *c = 1;
+            *s = 0;
+        } else {
+            *c =  Tii[0] / r;
+            *s = -Tii[1] / r;
+        }
         Tii[0] = r;
         Tii[1] = 0;
         ptr = Tii + this->n;  // points to T[i - 2, i - 1]
