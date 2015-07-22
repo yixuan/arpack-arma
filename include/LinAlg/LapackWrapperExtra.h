@@ -27,9 +27,6 @@ namespace arma
         #define arma_strevc strevc
         #define arma_dtrevc dtrevc
 
-        #define arma_shsein shsein
-        #define arma_dhsein dhsein
-
     #else
 
         #define arma_ssytrs SSYTRS
@@ -47,9 +44,6 @@ namespace arma
 
         #define arma_strevc STREVC
         #define arma_dtrevc DTREVC
-
-        #define arma_shsein SHSEIN
-        #define arma_dhsein DHSEIN
 
     #endif
 
