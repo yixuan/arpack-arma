@@ -80,7 +80,7 @@ TEST_CASE("Eigensolver of symmetric real matrix [100x100]", "[eigs_sym]")
     Matrix A = arma::randu(100, 100);
     Matrix mat = A + A.t();
     int k = 10;
-    int m = 20;
+    int m = 30;
     run_test_sets(mat, k, m);
 }
 
