@@ -72,11 +72,27 @@ public:
         evecs.set_size(n, n);
 
         char compz = 'I';
-        int lwork = 1 + 4 * n + n * n;
+        int lwork = -1;
+        Scalar lwork_opt;
+
+        int liwork = -1;
+        int liwork_opt, info;
+
+        // Query of lwork and liwork
+        arma::lapack::stedc(&compz, &n, main_diag.memptr(), sub_diag.memptr(),
+                            evecs.memptr(), &n, &lwork_opt, &lwork, &liwork_opt, &liwork, &info);
+
+        if(info == 0)
+        {
+            lwork = (int) lwork_opt;
+            liwork = liwork_opt;
+        } else {
+            lwork = 1 + 4 * n + n * n;
+            liwork = 3 + 5 * n;
+        }
+
         Scalar *work = new Scalar[lwork];
-        int liwork = 3 + 5 * n;
         int *iwork = new int[liwork];
-        int info;
 
         arma::lapack::stedc(&compz, &n, main_diag.memptr(), sub_diag.memptr(),
                             evecs.memptr(), &n, work, &lwork, iwork, &liwork, &info);
