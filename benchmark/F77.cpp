@@ -1,6 +1,10 @@
 #include <armadillo>
 #include "ArpackFun.h"
 
+#define USE_PROFILER 1
+#define LIB_PROFILER_PRINTF printf
+#include "libProfiler.h"
+
 int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
     // Begin ARPACK
@@ -59,9 +63,11 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
     // ido == -1 or ido == 1 means more iterations needed
     while (ido == -1 || ido == 1)
     {
+        PROFILER_START(mat_vec_prod);
         arma::vec vec_in(&workd[ipntr[0] - 1], n, false);
         arma::vec vec_out(&workd[ipntr[1] - 1], n, false);
         vec_out = M * vec_in;
+        PROFILER_END();
 
         saupd(ido, bmat, n, which,
               nev, tol, resid,
@@ -135,13 +141,15 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
         return 1;
     }
 
+    PROFILER_START(printing);
     evals.print("computed eigenvalues D =");
     evecs(arma::span(0, 4), arma::span(0, nev - 1)).print("first 5 rows of computed eigenvectors U =");
     std::cout << "nconv = " << nconv << std::endl;
     std::cout << "nops = " << niter << std::endl;
 
-    // arma::mat err = M * evecs.cols(0, nev - 1) - evecs.cols(0, nev - 1) * arma::diagmat(evals);
-    // std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
+    arma::mat err = M * evecs.cols(0, nev - 1) - evecs.cols(0, nev - 1) * arma::diagmat(evals);
+    std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
+    PROFILER_END();
 
     return 0;
 }
@@ -207,9 +215,11 @@ int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
     // ido == -1 or ido == 1 means more iterations needed
     while (ido == -1 || ido == 1)
     {
+        PROFILER_START(mat_vec_prod);
         arma::vec vec_in(&workd[ipntr[0] - 1], n, false);
         arma::vec vec_out(&workd[ipntr[1] - 1], n, false);
         vec_out = M * vec_in;
+        PROFILER_END();
 
         naupd(ido, bmat, n, which,
               nev, tol, resid,
@@ -287,10 +297,12 @@ int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
         return 1;
     }
 
+    PROFILER_START(printing);
     arma::cx_vec(evals_re, evals_im).print("computed eigenvalues = ");
     evecs(arma::span(0, 4), arma::span(0, nev)).print("first 5 rows of computed eigenvectors =");
     std::cout << "nconv = " << nconv << std::endl;
     std::cout << "nops = " << niter << std::endl;
+    PROFILER_END();
 
     return 0;
 }

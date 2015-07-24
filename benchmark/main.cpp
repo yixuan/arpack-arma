@@ -6,6 +6,11 @@ int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m);
 int eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m);
 int eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m);
 
+#define USE_PROFILER 1
+#define LIB_PROFILER_IMPLEMENTATION
+#define LIB_PROFILER_PRINTF printf
+#include "libProfiler.h"
+
 int main()
 {
     arma::arma_rng::set_seed(123);
@@ -19,37 +24,38 @@ int main()
     int k = 10;
     int m = 20;
 
-    clock_t t1, t2;
-
-    t1 = clock();
+    PROFILER_ENABLE;
+    PROFILER_START(eigs_sym_f77);
     eigs_sym_F77(M, init_resid, k, m);
-    t2 = clock();
-    std::cout << "elapsed time for eigs_sym_F77: "
-              << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
+    PROFILER_END();
+    LogProfiler();
+    PROFILER_DISABLE;
 
 
-
-    t1 = clock();
+    PROFILER_ENABLE;
+    PROFILER_START(eigs_sym_cpp);
     eigs_sym_Cpp(M, init_resid, k, m);
-    t2 = clock();
-    std::cout << "elapsed time for eigs_sym_Cpp: "
-              << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
+    PROFILER_END();
+    LogProfiler();
+    PROFILER_DISABLE;
 
 
 
-    t1 = clock();
+    PROFILER_ENABLE;
+    PROFILER_START(eigs_gen_f77);
     eigs_gen_F77(A, init_resid, k, m);
-    t2 = clock();
-    std::cout << "elapsed time for eigs_gen_F77: "
-              << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
+    PROFILER_END();
+    LogProfiler();
+    PROFILER_DISABLE;
 
 
 
-    t1 = clock();
+    PROFILER_ENABLE;
+    PROFILER_START(eigs_gen_cpp);
     eigs_gen_Cpp(A, init_resid, k, m);
-    t2 = clock();
-    std::cout << "elapsed time for eigs_gen_Cpp: "
-              << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
+    PROFILER_END();
+    LogProfiler();
+    PROFILER_DISABLE;
 
     return 0;
 }
