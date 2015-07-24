@@ -20,8 +20,14 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
         fac_V.col(i) = v; // The (i+1)-th column
         fac_H(i, i - 1) = beta;
 
+#ifdef USE_PROFILER
+PROFILER_START(mat_vec_prod);
+#endif
         op->perform_op(v.memptr(), w.memptr());
         nmatop++;
+#ifdef USE_PROFILER
+PROFILER_END();
+#endif
 
         Vector h = fac_V.head_cols(i + 1).t() * w;
         fac_H(arma::span(0, i), i) = h;
@@ -244,8 +250,14 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::init(Scalar *init_resi
     v /= vnorm;
 
     Vector w(dim_n);
+#ifdef USE_PROFILER
+PROFILER_START(mat_vec_prod);
+#endif
     op->perform_op(v.memptr(), w.memptr());
     nmatop++;
+#ifdef USE_PROFILER
+PROFILER_END();
+#endif
 
     fac_H(0, 0) = arma::dot(v, w);
     fac_f = w - v * fac_H(0, 0);
