@@ -24,36 +24,32 @@ int main()
     int k = 10;
     int m = 20;
 
+    const int replicates = 10;
+
     PROFILER_ENABLE;
-    PROFILER_START(eigs_sym_f77);
-    eigs_sym_F77(M, init_resid, k, m);
-    PROFILER_END();
+    for(int i = 0; i < replicates; i++)
+        eigs_sym_F77(M, init_resid, k, m);
     LogProfiler();
     PROFILER_DISABLE;
 
 
     PROFILER_ENABLE;
-    PROFILER_START(eigs_sym_cpp);
-    eigs_sym_Cpp(M, init_resid, k, m);
-    PROFILER_END();
+    for(int i = 0; i < replicates; i++)
+        eigs_sym_Cpp(M, init_resid, k, m);
     LogProfiler();
     PROFILER_DISABLE;
 
 
-
     PROFILER_ENABLE;
-    PROFILER_START(eigs_gen_f77);
-    eigs_gen_F77(A, init_resid, k, m);
-    PROFILER_END();
+    for(int i = 0; i < replicates; i++)
+        eigs_gen_F77(A, init_resid, k, m);
     LogProfiler();
     PROFILER_DISABLE;
 
 
-
     PROFILER_ENABLE;
-    PROFILER_START(eigs_gen_cpp);
-    eigs_gen_Cpp(A, init_resid, k, m);
-    PROFILER_END();
+    for(int i = 0; i < replicates; i++)
+        eigs_gen_Cpp(A, init_resid, k, m);
     LogProfiler();
     PROFILER_DISABLE;
 

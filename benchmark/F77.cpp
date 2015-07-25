@@ -7,6 +7,8 @@
 
 int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
+    PROFILER_START(eigs_sym_f77);
+
     // Begin ARPACK
     //
     // Initial value of ido
@@ -141,7 +143,9 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
         return 1;
     }
 
-    PROFILER_START(printing);
+    PROFILER_END();
+
+/*
     evals.print("computed eigenvalues D =");
     evecs(arma::span(0, 4), arma::span(0, nev - 1)).print("first 5 rows of computed eigenvectors U =");
     std::cout << "nconv = " << nconv << std::endl;
@@ -149,7 +153,7 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 
     arma::mat err = M * evecs.cols(0, nev - 1) - evecs.cols(0, nev - 1) * arma::diagmat(evals);
     std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
-    PROFILER_END();
+*/
 
     return 0;
 }
@@ -158,6 +162,8 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 
 int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
+    PROFILER_START(eigs_gen_f77);
+
     // Begin ARPACK
     //
     // Initial value of ido
@@ -297,12 +303,14 @@ int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
         return 1;
     }
 
-    PROFILER_START(printing);
+    PROFILER_END();
+
+/*
     arma::cx_vec(evals_re, evals_im).print("computed eigenvalues = ");
     evecs(arma::span(0, 4), arma::span(0, nev)).print("first 5 rows of computed eigenvectors =");
     std::cout << "nconv = " << nconv << std::endl;
     std::cout << "nops = " << niter << std::endl;
-    PROFILER_END();
+*/
 
     return 0;
 }
