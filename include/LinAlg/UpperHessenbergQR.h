@@ -299,7 +299,7 @@ public:
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
-        Vector Yi(Y.n_rows);
+        /*Vector Yi(Y.n_rows);
         for(int i = 0; i < n - 1; i++)
         {
             // Y[, i:(i + 1)] = Y[, i:(i + 1)] * Gi
@@ -308,6 +308,21 @@ public:
             Yi = Y.col(i);
             Y.col(i)     = (*c) * Yi - (*s) * Y.col(i + 1);
             Y.col(i + 1) = (*s) * Yi + (*c) * Y.col(i + 1);
+            c++;
+            s++;
+        }*/
+        Scalar *Y_col_i, *Y_col_i1;
+        int nrow = Y.n_rows;
+        for(int i = 0; i < n - 1; i++)
+        {
+            Y_col_i  = Y.colptr(i);
+            Y_col_i1 = Y.colptr(i + 1);
+            for(int j = 0; j < nrow; j++)
+            {
+                Scalar tmp = Y_col_i[j];
+                Y_col_i[j]  = (*c) * tmp - (*s) * Y_col_i1[j];
+                Y_col_i1[j] = (*s) * tmp + (*c) * Y_col_i1[j];
+            }
             c++;
             s++;
         }
