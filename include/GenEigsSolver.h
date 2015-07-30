@@ -11,6 +11,7 @@
 
 #include "SelectionRule.h"
 #include "LinAlg/UpperHessenbergQR.h"
+#include "LinAlg/DoubleShiftQR.h"
 #include "LinAlg/UpperHessenbergEigen.h"
 #include "MatOp/DenseGenMatProd.h"
 #include "MatOp/DenseGenRealShiftSolve.h"

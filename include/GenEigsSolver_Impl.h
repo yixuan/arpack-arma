@@ -57,8 +57,8 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
     if(k >= ncv)
         return;
 
+    DoubleShiftQR<Scalar> decomp_ds;
     UpperHessenbergQR<Scalar> decomp;
-    Matrix Q, R;
     Vector em(ncv, arma::fill::zeros);
     em[ncv - 1] = 1;
 
@@ -72,21 +72,20 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
             // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
             //
             // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
-            Scalar re = ritz_val[i].real();
-            Scalar s = std::norm(ritz_val[i]);
-            Matrix HH = fac_H;
-            HH.diag() -= 2 * re;
-            HH = fac_H * HH;
-            HH.diag() += s;
-            // NOTE: HH is no longer upper Hessenberg
-            arma::qr(Q, R, HH);
+            Scalar s = 2 * ritz_val[i].real();
+            Scalar t = std::norm(ritz_val[i]);
+
+            decomp_ds.compute(fac_H, s, t);
 
             // V -> VQ
-            fac_V = fac_V * Q;
+            decomp_ds.apply_YQ(fac_V);
             // H -> Q'HQ
-            fac_H = Q.t() * fac_H * Q;
+            // Matrix Q(ncv, ncv, arma::fill::eye);
+            // decomp_ds.apply_YQ(Q);
+            // fac_H = Q.t() * fac_H * Q;
+            fac_H = decomp_ds.matrix_QtHQ();
             // em -> Q'em
-            em = Q.t() * em;
+            decomp_ds.apply_QtY(em);
 
             i++;
         } else {
