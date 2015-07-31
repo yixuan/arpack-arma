@@ -2,21 +2,34 @@
 #include <iostream>
 
 #include <SymEigsSolver.h>
+#include <MatOp/DenseGenMatProd.h>
+#include <MatOp/SparseGenMatProd.h>
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
 typedef arma::mat Matrix;
 typedef arma::vec Vector;
+typedef arma::sp_mat SpMatrix;
 
-template <int SelectionRule>
-void run_test(Matrix &mat, int k, int m)
+template <typename MatType>
+struct OpTypeTrait
 {
-    // Vector all_eval = arma::eig_sym(mat);
-    // all_eval.t().print("all eigenvalues =");
+    typedef DenseGenMatProd<double> OpType;
+};
 
-    DenseGenMatProd<double> op(mat);
-    SymEigsSolver< double, SelectionRule, DenseGenMatProd<double> > eigs(&op, k, m);
+template <>
+struct OpTypeTrait<SpMatrix>
+{
+    typedef SparseGenMatProd<double> OpType;
+};
+
+
+template <typename MatType, int SelectionRule>
+void run_test(MatType &mat, int k, int m)
+{
+    typename OpTypeTrait<MatType>::OpType op(mat);
+    SymEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType> eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
@@ -38,27 +51,28 @@ void run_test(Matrix &mat, int k, int m)
     REQUIRE( arma::abs(err).max() == Approx(0.0) );
 }
 
-void run_test_sets(Matrix &mat, int k, int m)
+template <typename MatType>
+void run_test_sets(MatType &mat, int k, int m)
 {
     SECTION( "Largest Magnitude" )
     {
-        run_test<LARGEST_MAGN>(mat, k, m);
+        run_test<MatType, LARGEST_MAGN>(mat, k, m);
     }
     SECTION( "Largest Value" )
     {
-        run_test<LARGEST_ALGE>(mat, k, m);
+        run_test<MatType, LARGEST_ALGE>(mat, k, m);
     }
     SECTION( "Smallest Magnitude" )
     {
-        run_test<SMALLEST_MAGN>(mat, k, m);
+        run_test<MatType, SMALLEST_MAGN>(mat, k, m);
     }
     SECTION( "Smallest Value" )
     {
-        run_test<SMALLEST_ALGE>(mat, k, m);
+        run_test<MatType, SMALLEST_ALGE>(mat, k, m);
     }
     SECTION( "Both Ends" )
     {
-        run_test<BOTH_ENDS>(mat, k, m);
+        run_test<MatType, BOTH_ENDS>(mat, k, m);
     }
 }
 
@@ -70,6 +84,7 @@ TEST_CASE("Eigensolver of symmetric real matrix [10x10]", "[eigs_sym]")
     Matrix mat = A + A.t();
     int k = 3;
     int m = 6;
+
     run_test_sets(mat, k, m);
 }
 
@@ -81,6 +96,7 @@ TEST_CASE("Eigensolver of symmetric real matrix [100x100]", "[eigs_sym]")
     Matrix mat = A + A.t();
     int k = 10;
     int m = 30;
+
     run_test_sets(mat, k, m);
 }
 
@@ -92,5 +108,18 @@ TEST_CASE("Eigensolver of symmetric real matrix [1000x1000]", "[eigs_sym]")
     Matrix mat = A + A.t();
     int k = 20;
     int m = 50;
+
+    run_test_sets(mat, k, m);
+}
+
+TEST_CASE("Eigensolver of sparse symmetric real matrix [100x100]", "[eigs_sym]")
+{
+    arma::arma_rng::set_seed(123);
+
+    SpMatrix A = arma::sprandu(100, 100, 0.1);
+    SpMatrix mat = A + A.t();
+    int k = 10;
+    int m = 30;
+
     run_test_sets(mat, k, m);
 }
