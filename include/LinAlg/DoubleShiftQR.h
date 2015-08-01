@@ -12,15 +12,13 @@ private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
 
-    int n;
-    Matrix mat_H;
-    Scalar shift_s;
-    Scalar shift_t;
-    // Householder reflectors
-    Matrix ref_u;
-    // Approximately zero
-    const Scalar prec;
-    bool computed;
+    int n;              // Dimension of the matrix
+    Matrix mat_H;       // A copy of the matrix to be factorized
+    Scalar shift_s;     // Shift constant
+    Scalar shift_t;     // Shift constant
+    Matrix ref_u;       // Householder reflectors
+    const Scalar prec;  // Approximately zero
+    bool computed;      // Whether matrix has been factorized
 
     void compute_reflector(const Scalar &x1, const Scalar &x2, const Scalar &x3, int ind)
     {
@@ -31,9 +29,7 @@ private:
         Scalar x_norm = std::sqrt(x1_new * x1_new + tmp);
         if(x_norm <= prec)
         {
-            ref_u(0, ind) = 0;
-            ref_u(1, ind) = 0;
-            ref_u(2, ind) = 0;
+            ref_u.col(ind).zeros();
         } else {
             ref_u(0, ind) = x1_new / x_norm;
             ref_u(1, ind) = x2 / x_norm;
@@ -54,11 +50,11 @@ private:
         // For block size <= 2, there is no need to apply reflectors
         if(nrow == 1)
         {
-            compute_reflector(0, 0, 0, start_ind);
+            ref_u.col(start_ind).zeros();
             return;
         } else if(nrow == 2) {
-            compute_reflector(0, 0, 0, start_ind);
-            compute_reflector(0, 0, 0, start_ind + 1);
+            ref_u.col(start_ind).zeros();
+            ref_u.col(start_ind + 1).zeros();
             return;
         }
         // For block size >=3, use the regular strategy
@@ -83,7 +79,7 @@ private:
 
         // The last reflector
         compute_reflector(X(nrow - 2, nrow - 3), X(nrow - 1, nrow - 3), 0, start_ind + nrow - 2);
-        compute_reflector(0, 0, 0, start_ind + nrow - 1);
+        ref_u.col(start_ind + nrow - 1).zeros();
         // Apply the reflector to X
         apply_PX(X, nrow - 2, nrow - 3, 2, 3, start_ind + nrow - 2);
         apply_XP(X, 0, nrow - 2, nrow, 2, start_ind + nrow - 2);
@@ -132,11 +128,13 @@ private:
         if(u0 * u0 + u1 * u1 + u2 * u2 <= prec)
             return;
 
-        Scalar dot2 = x[0] * u0 + x[1] * u1 + (std::abs(u2) <= prec ? 0 : (x[2] * u2));
+        // When the reflector only contains two elements, u2 has been set to zero
+        bool u2_is_zero = (std::abs(u2) <= prec);
+        Scalar dot2 = x[0] * u0 + x[1] * u1 + (u2_is_zero ? 0 : (x[2] * u2));
         dot2 *= 2;
         x[0] -= dot2 * u0;
         x[1] -= dot2 * u1;
-        if(std::abs(u2) > prec)
+        if(!u2_is_zero)
             x[2] -= dot2 * u2;
     }
 
@@ -206,8 +204,10 @@ public:
         mat_H = arma::trimatu(mat);
         mat_H.diag(-1) = mat.diag(-1);
 
+        // Obtain the indices of zero elements in the subdiagonal,
+        // so that H can be divided into several blocks
         std::vector<int> zero_ind;
-        zero_ind.reserve(n - 1);
+        zero_ind.reserve(n / 2);
         zero_ind.push_back(0);
         for(int i = 1; i < n - 1; i++)
         {
@@ -223,7 +223,7 @@ public:
         {
             int start = zero_ind[i];
             int end = zero_ind[i + 1] - 1;
-            // Call this block X
+            // Compute refelctors from each block X
             Matrix tmp = mat_H.submat(start, start, arma::size(end - start + 1, end - start + 1));
             compute_reflectors_from_block(tmp, start);
             mat_H.submat(start, start, arma::size(end - start + 1, end - start + 1)) = tmp;
