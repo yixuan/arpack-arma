@@ -12,6 +12,7 @@ typedef arma::mat Matrix;
 typedef arma::vec Vector;
 typedef arma::sp_mat SpMatrix;
 
+// Traits to obtain operation type from matrix type
 template <typename MatType>
 struct OpTypeTrait
 {
@@ -112,11 +113,11 @@ TEST_CASE("Eigensolver of symmetric real matrix [1000x1000]", "[eigs_sym]")
     run_test_sets(mat, k, m);
 }
 
-TEST_CASE("Eigensolver of sparse symmetric real matrix [100x100]", "[eigs_sym]")
+TEST_CASE("Eigensolver of sparse symmetric real matrix [1000x1000]", "[eigs_sym]")
 {
     arma::arma_rng::set_seed(123);
 
-    SpMatrix A = arma::sprandu(100, 100, 0.1);
+    SpMatrix A = arma::sprandu(1000, 1000, 0.1);
     SpMatrix mat = A + A.t();
     int k = 10;
     int m = 30;
