@@ -23,18 +23,19 @@ private:
     void compute_reflector(const Scalar &x1, const Scalar &x2, const Scalar &x3, int ind)
     {
         Scalar tmp = x2 * x2 + x3 * x3;
-        // x1' = x1 - rho * ||x||
-        // rho = -sign(x1)
-        Scalar x1_new = x1 - ((x1 < 0) - (x1 > 0)) * std::sqrt(x1 * x1 + tmp);
-        Scalar x_norm = std::sqrt(x1_new * x1_new + tmp);
-        if(x_norm <= prec)
+        Scalar r = std::sqrt(x1 * x1 + tmp);
+        if(r <= prec)
         {
             ref_u.col(ind).zeros();
-        } else {
-            ref_u(0, ind) = x1_new / x_norm;
-            ref_u(1, ind) = x2 / x_norm;
-            ref_u(2, ind) = x3 / x_norm;
+            return;
         }
+        // x1' = x1 - rho * ||x||
+        // rho = -sign(x1)
+        Scalar x1_new = x1 - ((x1 < 0) - (x1 > 0)) * r;
+        Scalar x_norm = std::sqrt(x1_new * x1_new + tmp);
+        ref_u(0, ind) = x1_new / x_norm;
+        ref_u(1, ind) = x2 / x_norm;
+        ref_u(2, ind) = x3 / x_norm;
     }
 
     void compute_reflector(const Scalar *x, int ind)
@@ -47,14 +48,19 @@ private:
         // For the block X, we can assume that ncol == nrow,
         // and all sub-diagonal elements are non-zero
         const int nrow = X.n_rows;
-        // For block size <= 2, there is no need to apply reflectors
+        // For block size == 1, there is no need to apply reflectors
         if(nrow == 1)
         {
-            ref_u.col(start_ind).zeros();
+            compute_reflector(0, 0, 0, start_ind);
             return;
         } else if(nrow == 2) {
-            ref_u.col(start_ind).zeros();
-            ref_u.col(start_ind + 1).zeros();
+            // Do a Givens rotation on M = X * X - s * X + t * I
+            Scalar x = X(0, 0) * (X(0, 0) - shift_s) + X(0, 1) * X(1, 0) + shift_t;
+            Scalar y = X(1, 0) * (X(0, 0) + X(1, 1) - shift_s);
+            compute_reflector(x, y, 0, start_ind);
+            apply_PX(X, 0, 0, 2, 2, start_ind);
+            apply_XP(X, 0, 0, 2, 2, start_ind);
+            compute_reflector(0, 0, 0, start_ind + 1);
             return;
         }
         // For block size >=3, use the regular strategy
@@ -79,10 +85,11 @@ private:
 
         // The last reflector
         compute_reflector(X(nrow - 2, nrow - 3), X(nrow - 1, nrow - 3), 0, start_ind + nrow - 2);
-        ref_u.col(start_ind + nrow - 1).zeros();
         // Apply the reflector to X
         apply_PX(X, nrow - 2, nrow - 3, 2, 3, start_ind + nrow - 2);
         apply_XP(X, 0, nrow - 2, nrow, 2, start_ind + nrow - 2);
+
+        compute_reflector(0, 0, 0, start_ind + nrow - 1);
     }
 
     // P = I - 2 * u * u' = P'
@@ -223,12 +230,13 @@ public:
         {
             int start = zero_ind[i];
             int end = zero_ind[i + 1] - 1;
+            int block_size = end - start + 1;
             // Compute refelctors from each block X
-            Matrix tmp = mat_H.submat(start, start, arma::size(end - start + 1, end - start + 1));
+            Matrix tmp = mat_H.submat(start, start, arma::size(block_size, block_size));
             compute_reflectors_from_block(tmp, start);
-            mat_H.submat(start, start, arma::size(end - start + 1, end - start + 1)) = tmp;
+            mat_H.submat(start, start, arma::size(block_size, block_size)) = tmp;
             // Apply reflectors to the block right to X
-            if(end < n - 1 && end - start >= 2)
+            if(end < n - 1 && block_size >= 2)
             {
                 for(int j = start; j < end; j++)
                 {
@@ -236,7 +244,7 @@ public:
                 }
             }
             // Apply reflectors to the block above X
-            if(start > 0 && end - start >= 2)
+            if(start > 0 && block_size >= 2)
             {
                 for(int j = start; j < end; j++)
                 {
