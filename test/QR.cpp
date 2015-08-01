@@ -116,6 +116,7 @@ TEST_CASE("QR decomposition with double shifts", "QR")
     mat m(n, n, arma::fill::randn);
     mat H = arma::trimatu(m);
     H.diag(-1) = m.diag(-1);
+    H(1, 0) = H(3, 2) = H(6, 5) = 0;
 
     double s = 2, t = 3;
 
