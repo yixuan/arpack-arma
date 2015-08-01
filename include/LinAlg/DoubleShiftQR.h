@@ -53,8 +53,10 @@ private:
         {
             compute_reflector(0, 0, 0, start_ind);
             return;
-        } else if(nrow == 2) {
-            // Do a Givens rotation on M = X * X - s * X + t * I
+        }
+
+        // For block size == 2, do a Givens rotation on M = X * X - s * X + t * I
+        if(nrow == 2) {
             Scalar x = X(0, 0) * (X(0, 0) - shift_s) + X(0, 1) * X(1, 0) + shift_t;
             Scalar y = X(1, 0) * (X(0, 0) + X(1, 1) - shift_s);
             compute_reflector(x, y, 0, start_ind);
@@ -63,7 +65,8 @@ private:
             compute_reflector(0, 0, 0, start_ind + 1);
             return;
         }
-        // For block size >=3, use the regular strategy
+
+        // For block size >= 3, use the regular strategy
         Scalar x = X(0, 0) * (X(0, 0) - shift_s) + X(0, 1) * X(1, 0) + shift_t;
         Scalar y = X(1, 0) * (X(0, 0) + X(1, 1) - shift_s);
         Scalar z = X(2, 1) * X(1, 0);
@@ -72,11 +75,10 @@ private:
         apply_PX(X, 0, 0, 3, nrow, start_ind);
         apply_XP(X, 0, 0, std::min(nrow, 4), 3, start_ind);
 
-        // Calculate the following reflectors
+        // Calculate the remaining reflectors
+        // If entering this loop, nrow is at least 4.
         for(int i = 1; i < nrow - 2; i++)
         {
-            // If entering this loop, nrow is at least 4.
-
             compute_reflector(&X(i, i - 1), start_ind + i);
             // Apply the reflector to X
             apply_PX(X, i, i - 1, 3, nrow - i + 1, start_ind + i);
@@ -181,7 +183,7 @@ private:
 public:
     DoubleShiftQR() :
         n(0),
-        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(0.9))),
+        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2) / 3)),
         computed(false)
     {}
 
@@ -191,7 +193,7 @@ public:
         shift_s(s),
         shift_t(t),
         ref_u(3, n),
-        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(0.9))),
+        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2) / 3)),
         computed(false)
     {
         compute(mat, s, t);
