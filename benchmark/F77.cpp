@@ -1,3 +1,5 @@
+#define ARMA_USE_ARPACK
+
 #include <armadillo>
 #include <iostream>
 #include <ctime>
@@ -325,4 +327,23 @@ void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
 
     end = clock();
     time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+}
+
+
+
+void sparse_eigs_sym_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
+                         double &time_used, double &prec_err)
+{
+    clock_t start, end;
+    start = clock();
+
+    arma::vec evals;
+    arma::mat evecs;
+    arma::eigs_sym(evals, evecs, M, k, "lm", 1e-10);
+
+    end = clock();
+    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+
+    arma::mat err = M * evecs - evecs * arma::diagmat(evals);
+    prec_err = arma::abs(err).max();
 }
