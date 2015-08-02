@@ -104,3 +104,30 @@ void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
     arma::mat err = M * evecs - evecs * arma::diagmat(evals);
     prec_err = arma::abs(err).max();
 }
+
+
+
+void sparse_eigs_gen_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
+                         double &time_used, double &prec_err)
+{
+    clock_t start, end;
+    start = clock();
+
+    SparseGenMatProd<double> op(M);
+    GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op, k, m);
+    eigs.init(init_resid.memptr());
+
+    int nconv = eigs.compute();
+    int niter = eigs.num_iterations();
+    int nops = eigs.num_operations();
+
+    arma::cx_vec evals = eigs.eigenvalues();
+    arma::cx_mat evecs = eigs.eigenvectors();
+
+    end = clock();
+    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+
+    arma::mat M_dense(M);
+    arma::cx_mat err = M_dense * evecs - evecs * arma::diagmat(evals);
+    prec_err = arma::abs(err).max();
+}
