@@ -1,14 +1,8 @@
 #include <armadillo>
 #include "ArpackFun.h"
 
-#define USE_PROFILER 1
-#define LIB_PROFILER_PRINTF printf
-#include "libProfiler.h"
-
 int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
-    PROFILER_START(eigs_sym_f77);
-
     // Begin ARPACK
     //
     // Initial value of ido
@@ -65,11 +59,9 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
     // ido == -1 or ido == 1 means more iterations needed
     while (ido == -1 || ido == 1)
     {
-        PROFILER_START(mat_vec_prod);
         arma::vec vec_in(&workd[ipntr[0] - 1], n, false);
         arma::vec vec_out(&workd[ipntr[1] - 1], n, false);
         vec_out = M * vec_in;
-        PROFILER_END();
 
         saupd(ido, bmat, n, which,
               nev, tol, resid,
@@ -143,8 +135,6 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
         return 1;
     }
 
-    PROFILER_END();
-
 /*
     evals.print("computed eigenvalues D =");
     evecs(arma::span(0, 4), arma::span(0, nev - 1)).print("first 5 rows of computed eigenvectors U =");
@@ -162,8 +152,6 @@ int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 
 int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
-    PROFILER_START(eigs_gen_f77);
-
     // Begin ARPACK
     //
     // Initial value of ido
@@ -221,11 +209,9 @@ int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
     // ido == -1 or ido == 1 means more iterations needed
     while (ido == -1 || ido == 1)
     {
-        PROFILER_START(mat_vec_prod);
         arma::vec vec_in(&workd[ipntr[0] - 1], n, false);
         arma::vec vec_out(&workd[ipntr[1] - 1], n, false);
         vec_out = M * vec_in;
-        PROFILER_END();
 
         naupd(ido, bmat, n, which,
               nev, tol, resid,
@@ -302,8 +288,6 @@ int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m)
         std::cout << "errors occured" << std::endl;
         return 1;
     }
-
-    PROFILER_END();
 
 /*
     arma::cx_vec(evals_re, evals_im).print("computed eigenvalues = ");

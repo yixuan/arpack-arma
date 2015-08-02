@@ -1,17 +1,11 @@
 #include <armadillo>
 #include <iostream>
 
-#define USE_PROFILER 1
-#define LIB_PROFILER_PRINTF printf
-#include "libProfiler.h"
-
 #include <SymEigsSolver.h>
 #include <GenEigsSolver.h>
 
 int eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
-    PROFILER_START(eigs_sym_cpp);
-
     DenseGenMatProd<double> op(M);
     SymEigsSolver< double, LARGEST_MAGN, DenseGenMatProd<double> > eigs(&op, k, m);
     eigs.init(init_resid.memptr());
@@ -22,8 +16,6 @@ int eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 
     arma::vec evals = eigs.eigenvalues();
     arma::mat evecs = eigs.eigenvectors();
-
-    PROFILER_END();
 
 /*
     evals.print("computed eigenvalues D =");
@@ -43,8 +35,6 @@ int eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 
 int eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 {
-    PROFILER_START(eigs_gen_cpp);
-
     DenseGenMatProd<double> op(M);
     GenEigsSolver< double, LARGEST_MAGN, DenseGenMatProd<double> > eigs(&op, k, m);
     eigs.init(init_resid.memptr());
@@ -55,8 +45,6 @@ int eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m)
 
     arma::cx_vec evals = eigs.eigenvalues();
     arma::cx_mat evecs = eigs.eigenvectors();
-
-    PROFILER_END();
 
 /*
     evals.print("computed eigenvalues D =");
