@@ -1,57 +1,57 @@
 #include <armadillo>
-#include <ctime>
 #include <iostream>
 #include <iomanip>
 #include <string>
 
-int eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m);
-int eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m);
-int eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m);
-int eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m);
+void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
+void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
+void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
+void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
 
 
 void print_header(std::string title)
 {
-    const int width = 60;
-    const int col_width = width / 4;
+    const int width = 80;
     const char sep = ' ';
 
     std::cout << std::endl << std::string(width, '=') << std::endl;
     std::cout << std::string((width - title.length()) / 2, ' ') << title << std::endl;
     std::cout << std::string(width, '-') << std::endl;
 
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << "matrix_size";
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << "dataset";
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << "F77 (ms)";
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << "C++ (ms)";
+    std::cout << std::left << std::setw(11) << std::setfill(sep) << "mat_size";
+    std::cout << std::left << std::setw(10) << std::setfill(sep) << "dataset";
+    std::cout << std::left << std::setw(16) << std::setfill(sep) << "F77 time (ms)";
+    std::cout << std::left << std::setw(15) << std::setfill(sep) << "F77 err (ms)";
+    std::cout << std::left << std::setw(16) << std::setfill(sep) << "C++ time (ms)";
+    std::cout << std::left << std::setw(12) << std::setfill(sep) << "C++ err (ms)";
     std::cout << std::endl;
 
     std::cout << std::string(width, '-') << std::endl;
 }
 
-void print_row(int dataset, int n, double time_f77, double time_cpp)
+void print_row(int n, int dataset, double time_f77, double err_f77, double time_cpp, double err_cpp)
 {
-    const int width = 60;
-    const int col_width = width / 4;
     const char sep = ' ';
 
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << n;
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << dataset;
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << time_f77;
-    std::cout << std::left << std::setw(col_width) << std::setfill(sep) << time_cpp;
+    std::cout << std::left << std::setw(11) << std::setfill(sep) << n;
+    std::cout << std::left << std::setw(10) << std::setfill(sep) << dataset;
+    std::cout << std::left << std::setw(16) << std::setfill(sep) << time_f77;
+    std::cout << std::left << std::setw(15) << std::setfill(sep) << err_f77;
+    std::cout << std::left << std::setw(16) << std::setfill(sep) << time_cpp;
+    std::cout << std::left << std::setw(12) << std::setfill(sep) << err_cpp;
     std::cout << std::endl;
 }
 
 void print_footer()
 {
-    const int width = 60;
+    const int width = 80;
     std::cout << std::string(width, '=') << std::endl << std::endl;
 }
 
 void run_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
 {
-    clock_t start, end;
     double time_f77, time_cpp;
+    double err_f77, err_cpp;
 
     for(int i = 0; i < n_experiment; i++)
     {
@@ -64,25 +64,17 @@ void run_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
 
         for(int j = 0; j < n_replicate; j++)
         {
-            start = clock();
-            eigs_sym_F77(M, init_resid, k, m);
-            end = clock();
-            time_f77 = (end - start) / double(CLOCKS_PER_SEC) * 1000;
-
-            start = clock();
-            eigs_sym_Cpp(M, init_resid, k, m);
-            end = clock();
-            time_cpp = (end - start) / double(CLOCKS_PER_SEC) * 1000;
-
-            print_row(i + 1, n, time_f77, time_cpp);
+            eigs_sym_F77(M, init_resid, k, m, time_f77, err_f77);
+            eigs_sym_Cpp(M, init_resid, k, m, time_cpp, err_cpp);
+            print_row(n, i + 1, time_f77, err_f77, time_cpp, err_cpp);
         }
     }
 }
 
 void run_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
 {
-    clock_t start, end;
     double time_f77, time_cpp;
+    double err_f77, err_cpp;
 
     for(int i = 0; i < n_experiment; i++)
     {
@@ -94,17 +86,9 @@ void run_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
 
         for(int j = 0; j < n_replicate; j++)
         {
-            start = clock();
-            eigs_gen_F77(A, init_resid, k, m);
-            end = clock();
-            time_f77 = (end - start) / double(CLOCKS_PER_SEC) * 1000;
-
-            start = clock();
-            eigs_gen_Cpp(A, init_resid, k, m);
-            end = clock();
-            time_cpp = (end - start) / double(CLOCKS_PER_SEC) * 1000;
-
-            print_row(i + 1, n, time_f77, time_cpp);
+            eigs_gen_F77(A, init_resid, k, m, time_f77, err_f77);
+            eigs_gen_Cpp(A, init_resid, k, m, time_cpp, err_cpp);
+            print_row(n, i + 1, time_f77, err_f77, time_cpp, err_cpp);
         }
     }
 }
