@@ -145,21 +145,33 @@ public:
 
         Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0 / 3));
         ComplexMatrix evecs(n, n);
-        ComplexVector tmp(n);
+        Complex *col_ptr = evecs.memptr();
         for(int i = 0; i < n; i++)
         {
             if(is_real(evals[i], prec))
             {
-                tmp.zeros();
-                tmp.set_real(mat_Z.col(i));
-                evecs.col(i) = arma::normalise(tmp);
+                // For real eigenvector, normalize and copy
+                Scalar z_norm = arma::norm(mat_Z.col(i));
+                for(int j = 0; j < n; j++)
+                {
+                    col_ptr[j] = Complex(mat_Z(j, i) / z_norm, 0);
+                }
+
+                col_ptr += n;
             } else {
-                tmp.set_real(mat_Z.col(i));
-                tmp.set_imag(mat_Z.col(i + 1));
-                evecs.col(i)     = arma::normalise(tmp);
-                evecs.col(i + 1) = arma::conj(evecs.col(i));
+                // Complex eigenvectors are stored in consecutive columns
+                Scalar r2 = arma::dot(mat_Z.col(i), mat_Z.col(i));
+                Scalar i2 = arma::dot(mat_Z.col(i + 1), mat_Z.col(i + 1));
+                Scalar z_norm = std::sqrt(r2 + i2);
+                Scalar *z_ptr = mat_Z.colptr(i);
+                for(int j = 0; j < n; j++)
+                {
+                    col_ptr[j] = Complex(z_ptr[j] / z_norm, z_ptr[j + n] / z_norm);
+                    col_ptr[j + n] = std::conj(col_ptr[j]);
+                }
 
                 i++;
+                col_ptr += 2 * n;
             }
         }
 

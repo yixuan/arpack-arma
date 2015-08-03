@@ -107,12 +107,22 @@ template < typename Scalar,
            typename OpType >
 inline int GenEigsSolver<Scalar, SelectionRule, OpType>::num_converged(Scalar tol)
 {
+/*
     // thresh = tol * max(prec, abs(theta)), theta for ritz value
     Vector rv = arma::abs(ritz_val.head(nev));
     Vector thresh = tol * arma::clamp(rv, prec, std::max(prec, rv.max()));
     Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
     // Converged "wanted" ritz values
     ritz_conv = (resid < thresh);
+*/
+
+    const Scalar f_norm = arma::norm(fac_f);
+    for(unsigned int i = 0; i < ritz_conv.n_elem; i++)
+    {
+        Scalar thresh = tol * std::max(prec, std::abs(ritz_val[i]));
+        Scalar resid = std::abs(ritz_vec(ncv - 1, i)) * f_norm;
+        ritz_conv[i] = (resid < thresh);
+    }
 
     return arma::sum(ritz_conv);
 }

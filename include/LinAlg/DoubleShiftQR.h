@@ -109,19 +109,21 @@ private:
 
         if(nrow == 2)
         {
-            for(int i = 0; i < ncol; i++)
+            Scalar *xptr = &X(oi, oj);
+            for(int i = 0; i < ncol; i++, xptr += X.n_rows)
             {
-                Scalar tmp = u0 * X(oi, oj + i) + u1 * X(oi + 1, oj + i);
-                X(oi,     oj + i) -= tmp * u0;
-                X(oi + 1, oj + i) -= tmp * u1;
+                Scalar tmp = u0 * xptr[0] + u1 * xptr[1];
+                xptr[0] -= tmp * u0;
+                xptr[1] -= tmp * u1;
             }
         } else {
-            for(int i = 0; i < ncol; i++)
+            Scalar *xptr = &X(oi, oj);
+            for(int i = 0; i < ncol; i++, xptr += X.n_rows)
             {
-                Scalar tmp = u0 * X(oi, oj + i) + u1 * X(oi + 1, oj + i) + u2 * X(oi + 2, oj + i);
-                X(oi,     oj + i) -= tmp * u0;
-                X(oi + 1, oj + i) -= tmp * u1;
-                X(oi + 2, oj + i) -= tmp * u2;
+                Scalar tmp = u0 * xptr[0] + u1 * xptr[1] + u2 * xptr[2];
+                xptr[0] -= tmp * u0;
+                xptr[1] -= tmp * u1;
+                xptr[2] -= tmp * u2;
             }
         }
     }
