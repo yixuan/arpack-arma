@@ -18,20 +18,20 @@ private:
     Scalar shift_t;     // Shift constant
     Matrix ref_u;       // Householder reflectors
     const Scalar prec;  // Approximately zero
+    Scalar prec2;
     bool computed;      // Whether matrix has been factorized
 
     void compute_reflector(const Scalar &x1, const Scalar &x2, const Scalar &x3, int ind)
     {
-        Scalar tmp = x2 * x2 + x3 * x3;
-        Scalar r = std::sqrt(x1 * x1 + tmp);
-        if(r <= prec)
+        if(std::abs(x1) + std::abs(x2) + std::abs(x3) <= 3 * prec)
         {
             ref_u.col(ind).zeros();
             return;
         }
         // x1' = x1 - rho * ||x||
         // rho = -sign(x1)
-        Scalar x1_new = x1 - ((x1 < 0) - (x1 > 0)) * r;
+        Scalar tmp = x2 * x2 + x3 * x3;
+        Scalar x1_new = x1 - ((x1 < 0) - (x1 > 0)) * std::sqrt(x1 * x1 + tmp);
         Scalar x_norm = std::sqrt(x1_new * x1_new + tmp);
         ref_u(0, ind) = x1_new / x_norm;
         ref_u(1, ind) = x2 / x_norm;
@@ -98,13 +98,11 @@ private:
     // PX = X - 2 * u * (u'X)
     void apply_PX(Matrix &X, int oi, int oj, int nrow, int ncol, int u_ind)
     {
-        const Scalar sqrt_2 = std::sqrt(Scalar(2));
+        Scalar u0 = ref_u(0, u_ind),
+               u1 = ref_u(1, u_ind),
+               u2 = ref_u(2, u_ind);
 
-        Scalar u0 = sqrt_2 * ref_u(0, u_ind),
-               u1 = sqrt_2 * ref_u(1, u_ind),
-               u2 = sqrt_2 * ref_u(2, u_ind);
-
-        if(u0 * u0 + u1 * u1 + u2 * u2 <= prec)
+        if(std::abs(u0) + std::abs(u1) + std::abs(u2) <= 3 * prec)
             return;
 
         if(nrow == 2)
@@ -113,6 +111,7 @@ private:
             for(int i = 0; i < ncol; i++, xptr += X.n_rows)
             {
                 Scalar tmp = u0 * xptr[0] + u1 * xptr[1];
+                tmp *= 2;
                 xptr[0] -= tmp * u0;
                 xptr[1] -= tmp * u1;
             }
@@ -121,6 +120,7 @@ private:
             for(int i = 0; i < ncol; i++, xptr += X.n_rows)
             {
                 Scalar tmp = u0 * xptr[0] + u1 * xptr[1] + u2 * xptr[2];
+                tmp *= 2;
                 xptr[0] -= tmp * u0;
                 xptr[1] -= tmp * u1;
                 xptr[2] -= tmp * u2;
@@ -136,7 +136,7 @@ private:
                u1 = ref_u(1, u_ind),
                u2 = ref_u(2, u_ind);
 
-        if(u0 * u0 + u1 * u1 + u2 * u2 <= prec)
+        if(std::abs(u0) + std::abs(u1) + std::abs(u2) <= 3 * prec)
             return;
 
         // When the reflector only contains two elements, u2 has been set to zero
@@ -152,14 +152,12 @@ private:
     // XP = X - 2 * (X * u) * u'
     void apply_XP(Matrix &X, int oi, int oj, int nrow, int ncol, int u_ind)
     {
-        const Scalar sqrt_2 = std::sqrt(Scalar(2));
-
-        Scalar u0 = sqrt_2 * ref_u(0, u_ind),
-               u1 = sqrt_2 * ref_u(1, u_ind),
-               u2 = sqrt_2 * ref_u(2, u_ind);
+        Scalar u0 = ref_u(0, u_ind),
+               u1 = ref_u(1, u_ind),
+               u2 = ref_u(2, u_ind);
         Scalar *X0 = &X(oi, oj), *X1 = &X(oi, oj + 1);
 
-        if(u0 * u0 + u1 * u1 + u2 * u2 <= prec)
+        if(std::abs(u0) + std::abs(u1) + std::abs(u2) <= 3 * prec)
             return;
 
         if(ncol == 2)
@@ -167,6 +165,7 @@ private:
             for(int i = 0; i < nrow; i++)
             {
                 Scalar tmp = u0 * X0[i] + u1 * X1[i];
+                tmp *= 2;
                 X0[i] -= tmp * u0;
                 X1[i] -= tmp * u1;
             }
@@ -175,6 +174,7 @@ private:
             for(int i = 0; i < nrow; i++)
             {
                 Scalar tmp = u0 * X0[i] + u1 * X1[i] + u2 * X2[i];
+                tmp *= 2;
                 X0[i] -= tmp * u0;
                 X1[i] -= tmp * u1;
                 X2[i] -= tmp * u2;
@@ -185,7 +185,7 @@ private:
 public:
     DoubleShiftQR() :
         n(0),
-        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2) / 3)),
+        prec(std::numeric_limits<Scalar>::epsilon()),
         computed(false)
     {}
 
@@ -195,7 +195,7 @@ public:
         shift_s(s),
         shift_t(t),
         ref_u(3, n),
-        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2) / 3)),
+        prec(std::numeric_limits<Scalar>::epsilon()),
         computed(false)
     {
         compute(mat, s, t);
@@ -215,6 +215,8 @@ public:
         mat_H = arma::trimatu(mat);
         mat_H.diag(-1) = mat.diag(-1);
 
+        prec2 = std::min(std::pow(prec, Scalar(2) / 3), n * prec);
+
         // Obtain the indices of zero elements in the subdiagonal,
         // so that H can be divided into several blocks
         std::vector<int> zero_ind;
@@ -222,7 +224,7 @@ public:
         zero_ind.push_back(0);
         for(int i = 1; i < n - 1; i++)
         {
-            if(std::abs(mat_H(i, i - 1)) <= prec)
+            if(std::abs(mat_H(i, i - 1)) <= prec2 * (std::abs(mat_H(i - 1, i - 1)) + std::abs(mat_H(i, i))))
             {
                 mat_H(i, i - 1) = 0;
                 zero_ind.push_back(i);
