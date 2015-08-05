@@ -1,6 +1,6 @@
 #include <armadillo>
 #include <iostream>
-#include <ctime>
+#include "timer.h"
 
 #include <SymEigsSolver.h>
 #include <GenEigsSolver.h>
@@ -10,8 +10,8 @@
 void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
                   double &time_used, double &prec_err)
 {
-    clock_t start, end;
-    start = clock();
+    double start, end;
+    start = get_wall_time();
 
     DenseGenMatProd<double> op(M);
     SymEigsSolver< double, LARGEST_MAGN, DenseGenMatProd<double> > eigs(&op, k, m);
@@ -24,8 +24,8 @@ void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
     arma::vec evals = eigs.eigenvalues();
     arma::mat evecs = eigs.eigenvectors();
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
 
     arma::mat err = M * evecs - evecs * arma::diagmat(evals);
     prec_err = arma::abs(err).max();
@@ -47,8 +47,8 @@ void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
                   double &time_used, double &prec_err)
 {
-    clock_t start, end;
-    start = clock();
+    double start, end;
+    start = get_wall_time();
 
     DenseGenMatProd<double> op(M);
     GenEigsSolver< double, LARGEST_MAGN, DenseGenMatProd<double> > eigs(&op, k, m);
@@ -56,13 +56,13 @@ void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
-    int nops = eigs.num_operations();
+    int nops = eigs.num_operations();std::cout << "nops = " << nops << std::endl;
 
     arma::cx_vec evals = eigs.eigenvalues();
     arma::cx_mat evecs = eigs.eigenvectors();
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
 
     arma::cx_mat err = M * evecs - evecs * arma::diagmat(evals);
     prec_err = arma::abs(err).max();
@@ -84,8 +84,8 @@ void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
                          double &time_used, double &prec_err)
 {
-    clock_t start, end;
-    start = clock();
+    double start, end;
+    start = get_wall_time();
 
     SparseGenMatProd<double> op(M);
     SymEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op, k, m);
@@ -98,8 +98,8 @@ void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
     arma::vec evals = eigs.eigenvalues();
     arma::mat evecs = eigs.eigenvectors();
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
 
     arma::mat err = M * evecs - evecs * arma::diagmat(evals);
     prec_err = arma::abs(err).max();
@@ -110,8 +110,8 @@ void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
 void sparse_eigs_gen_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
                          double &time_used, double &prec_err)
 {
-    clock_t start, end;
-    start = clock();
+    double start, end;
+    start = get_wall_time();
 
     SparseGenMatProd<double> op(M);
     GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op, k, m);
@@ -124,8 +124,8 @@ void sparse_eigs_gen_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
     arma::cx_vec evals = eigs.eigenvalues();
     arma::cx_mat evecs = eigs.eigenvectors();
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
 
     arma::mat M_dense(M);
     arma::cx_mat err = M_dense * evecs - evecs * arma::diagmat(evals);

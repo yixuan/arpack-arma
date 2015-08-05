@@ -2,15 +2,15 @@
 
 #include <armadillo>
 #include <iostream>
-#include <ctime>
+#include "timer.h"
 #include "ArpackFun.h"
 
 void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
                   double &time_used, double &prec_err)
 {
-    clock_t start, end;
+    double start, end;
     prec_err = -1.0;
-    start = clock();
+    start = get_wall_time();
 
     // Begin ARPACK
     //
@@ -160,8 +160,8 @@ void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
     std::cout << "||AU - UD||_inf = " << arma::abs(err).max() << std::endl;
 */
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
     arma::mat err = M * evecs.cols(0, nev - 1) - evecs.cols(0, nev - 1) * arma::diagmat(evals);
     prec_err = arma::abs(err).max();
 }
@@ -171,9 +171,9 @@ void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
 void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
                   double &time_used, double &prec_err)
 {
-    clock_t start, end;
+    double start, end;
     prec_err = -1.0;
-    start = clock();
+    start = get_wall_time();
 
     // Begin ARPACK
     //
@@ -325,8 +325,9 @@ void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
     std::cout << "nops = " << niter << std::endl;
 */
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
+    std::cout << "nops77 = " << niter << std::endl;
 }
 
 
@@ -334,15 +335,15 @@ void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
 void sparse_eigs_sym_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
                          double &time_used, double &prec_err)
 {
-    clock_t start, end;
-    start = clock();
+    double start, end;
+    start = get_wall_time();
 
     arma::vec evals;
     arma::mat evecs;
     arma::eigs_sym(evals, evecs, M, k, "lm", 1e-10);
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
 
     arma::mat err = M * evecs - evecs * arma::diagmat(evals);
     prec_err = arma::abs(err).max();
@@ -353,15 +354,15 @@ void sparse_eigs_sym_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
 void sparse_eigs_gen_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
                          double &time_used, double &prec_err)
 {
-    clock_t start, end;
-    start = clock();
+    double start, end;
+    start = get_wall_time();
 
     arma::cx_vec evals;
     arma::cx_mat evecs;
     arma::eigs_gen(evals, evecs, M, k, "lm", 1e-10);
 
-    end = clock();
-    time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+    end = get_wall_time();
+    time_used = (end - start) * 1000;
 
     arma::mat M_dense(M);
 
