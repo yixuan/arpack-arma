@@ -152,20 +152,21 @@ private:
     // XP = X - 2 * (X * u) * u'
     void apply_XP(Matrix &X, int oi, int oj, int nrow, int ncol, int u_ind)
     {
-        Scalar u0 = ref_u(0, u_ind),
-               u1 = ref_u(1, u_ind),
-               u2 = ref_u(2, u_ind);
-        Scalar *X0 = &X(oi, oj), *X1 = &X(oi, oj + 1);
+        const Scalar sqrt_2 = std::sqrt(Scalar(2));
+        Scalar u0 = sqrt_2 * ref_u(0, u_ind),
+               u1 = sqrt_2 * ref_u(1, u_ind),
+               u2 = sqrt_2 * ref_u(2, u_ind);
 
-        if(std::abs(u0) + std::abs(u1) + std::abs(u2) <= 3 * prec)
+        if(std::abs(u0) + std::abs(u1) + std::abs(u2) <= 3 * sqrt_2 * prec)
             return;
+
+        Scalar *X0 = &X(oi, oj), *X1 = &X(oi, oj + 1);
 
         if(ncol == 2)
         {
             for(int i = 0; i < nrow; i++)
             {
                 Scalar tmp = u0 * X0[i] + u1 * X1[i];
-                tmp *= 2;
                 X0[i] -= tmp * u0;
                 X1[i] -= tmp * u1;
             }
@@ -174,12 +175,33 @@ private:
             for(int i = 0; i < nrow; i++)
             {
                 Scalar tmp = u0 * X0[i] + u1 * X1[i] + u2 * X2[i];
-                tmp *= 2;
                 X0[i] -= tmp * u0;
                 X1[i] -= tmp * u1;
                 X2[i] -= tmp * u2;
             }
         }
+        /*Scalar u0 = ref_u(0, u_ind),
+               u1 = ref_u(1, u_ind),
+               u2 = ref_u(2, u_ind);
+
+        if(std::abs(u0) + std::abs(u1) + std::abs(u2) <= 3 * prec)
+            return;
+
+        Vector X0(&X(oi, oj), nrow, false),
+               X1(&X(oi, oj + 1), nrow, false);
+
+        if(ncol == 2)
+        {
+            Vector tmp = (2 * u0) * X0 + (2 * u1) * X1;
+            X0 -= u0 * tmp;
+            X1 -= u1 * tmp;
+        } else {
+            Vector X2(&X(oi, oj + 2), nrow, false);
+            Vector tmp = (2 * u0) * X0 + (2 * u1) * X1 + (2 * u2) * X2;
+            X0 -= u0 * tmp;
+            X1 -= u1 * tmp;
+            X2 -= u2 * tmp;
+        }*/
     }
 
 public:
@@ -224,7 +246,7 @@ public:
         zero_ind.push_back(0);
         for(int i = 1; i < n - 1; i++)
         {
-            if(std::abs(mat_H(i, i - 1)) <= prec2 * (std::abs(mat_H(i - 1, i - 1)) + std::abs(mat_H(i, i))))
+            if(std::abs(mat_H(i, i - 1)) <= prec2)
             {
                 mat_H(i, i - 1) = 0;
                 zero_ind.push_back(i);
