@@ -53,8 +53,7 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
 
     DoubleShiftQR<Scalar> decomp_ds;
     UpperHessenbergQR<Scalar> decomp;
-    Vector em(ncv, arma::fill::zeros);
-    em[ncv - 1] = 1;
+    Matrix Q(ncv, ncv, arma::fill::eye);
 
     for(int i = k; i < ncv; i++)
     {
@@ -71,15 +70,14 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
 
             decomp_ds.compute(fac_H, s, t);
 
-            // V -> VQ
-            decomp_ds.apply_YQ(fac_V);
+            // Q -> Q * Qi
+            decomp_ds.apply_YQ(Q);
+            //decomp_ds.apply_YQ(fac_V, ncv);
             // H -> Q'HQ
             // Matrix Q(ncv, ncv, arma::fill::eye);
             // decomp_ds.apply_YQ(Q);
             // fac_H = Q.t() * fac_H * Q;
             fac_H = decomp_ds.matrix_QtHQ();
-            // em -> Q'em
-            decomp_ds.apply_QtY(em);
 
             i++;
         } else {
@@ -87,16 +85,29 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
             fac_H.diag() -= ritz_val[i].real();
             decomp.compute(fac_H);
 
-            // V -> VQ
-            decomp.apply_YQ(fac_V);
+            // Q -> Q * Qi
+            decomp.apply_YQ(Q);
             // H -> Q'HQ = RQ + mu * I
             fac_H = decomp.matrix_RQ();
             fac_H.diag() += ritz_val[i].real();
-            // em -> Q'em
-            decomp.apply_QtY(em);
         }
     }
-    Vector fk = fac_f * em[k - 1] + fac_V.col(k) * fac_H(k, k - 1);
+    // V -> VQ
+    // Q has some elements being zero
+    // The first (ncv - k + i) elements of the i-th column of Q are non-zero
+    Matrix Vs(dim_n, k + 1);
+    int nnz;
+    for(int i = 0; i < k; i++)
+    {
+        nnz = ncv - k + i + 1;
+        Matrix V(fac_V.memptr(), dim_n, nnz, false);
+        Vector q(Q.colptr(i), nnz, false);
+        Vs.col(i) = V * q;
+    }
+    Vs.col(k) = fac_V * Q.col(k);
+    fac_V.head_cols(k + 1) = Vs;
+
+    Vector fk = fac_f * Q(ncv - 1, k - 1) + fac_V.col(k) * fac_H(k, k - 1);
     factorize_from(k, ncv, fk);
     retrieve_ritzpair();
 }
