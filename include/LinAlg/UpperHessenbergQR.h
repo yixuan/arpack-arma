@@ -75,11 +75,12 @@ public:
         mat_T.diag(-1) = mat.diag(-1);
 
         Scalar xi, xj, r, c, s, eps = std::numeric_limits<Scalar>::epsilon();
-        Matrix Gt(2, 2);
-        for(int i = 0; i < n - 2; i++)
+        Scalar *Tii, *ptr;
+        for(int i = 0; i < n - 1; i++)
         {
-            xi = mat_T(i, i);
-            xj = mat_T(i + 1, i);
+            Tii = &mat_T(i, i);
+            xi = Tii[0];  // mat_T(i, i)
+            xj = Tii[1];  // mat_T(i + 1, i)
             r = std::sqrt(xi * xi + xj * xj);
             if(r <= eps)
             {
@@ -95,8 +96,17 @@ public:
             //     [-sin  cos]
             // and then do T[i:(i + 1), i:(n - 1)] = G' * T[i:(i + 1), i:(n - 1)]
 
-            Gt << c << -s << arma::endr << s << c << arma::endr;
-            mat_T.submat(i, i, i + 1, n - 1) = Gt * mat_T.submat(i, i, i + 1, n - 1);
+            // Gt << c << -s << arma::endr << s << c << arma::endr;
+            // mat_T.submat(i, i, i + 1, n - 1) = Gt * mat_T.submat(i, i, i + 1, n - 1);
+            Tii[0] = r;    // mat_T(i, i)     => r
+            Tii[1] = 0;    // mat_T(i + 1, i) => 0
+            ptr = Tii + n; // mat_T(i, k), k = i+1, i+2, ..., n-1
+            for(int j = i + 1; j < n; j++, ptr += n)
+            {
+                Scalar tmp = ptr[0];
+                ptr[0] = c * tmp - s * ptr[1];
+                ptr[1] = s * tmp + c * ptr[1];
+            }
 
             // If we do not need to calculate the R matrix, then
             // only the cos and sin sequences are required.
@@ -104,20 +114,6 @@ public:
             // mat_T(i + 1, arma::span(i + 1, n - 1)) *= c;
             // mat_T(i + 1, arma::span(i + 1, n - 1)) += s * mat_T(i, arma::span(i + 1, n - 1));
         }
-        // For i = n - 2
-        xi = mat_T(n - 2, n - 2);
-        xj = mat_T(n - 1, n - 2);
-        r = std::sqrt(xi * xi + xj * xj);
-        if(r <= eps)
-        {
-            rot_cos[n - 2] = c = 1;
-            rot_sin[n - 2] = s = 0;
-        } else {
-            rot_cos[n - 2] = c = xi / r;
-            rot_sin[n - 2] = s = -xj / r;
-        }
-        Gt << c << -s << arma::endr << s << c << arma::endr;
-        mat_T.submat(n - 2, n - 2, n - 1, n - 1) = Gt * mat_T.submat(n - 2, n - 2, n - 1, n - 1);
 
         computed = true;
     }
@@ -159,9 +155,20 @@ public:
             // RQ[, i:(i + 1)] = RQ[, i:(i + 1)] * Gi
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
-            Vector Yi = RQ(arma::span(0, i + 1), i);
+
+            Scalar *Yi, *Yi1;
+            Yi = &RQ(0, i);
+            Yi1 = Yi + n;  // RQ(0, i + 1)
+            for(int j = 0; j < i + 2; j++)
+            {
+                Scalar tmp = Yi[j];
+                Yi[j]  = (*c) * tmp - (*s) * Yi1[j];
+                Yi1[j] = (*s) * tmp + (*c) * Yi1[j];
+            }
+
+            /* Vector Yi = RQ(arma::span(0, i + 1), i);
             RQ(arma::span(0, i + 1), i)     = (*c) * Yi - (*s) * RQ(arma::span(0, i + 1), i + 1);
-            RQ(arma::span(0, i + 1), i + 1) = (*s) * Yi + (*c) * RQ(arma::span(0, i + 1), i + 1);
+            RQ(arma::span(0, i + 1), i + 1) = (*s) * Yi + (*c) * RQ(arma::span(0, i + 1), i + 1); */
             c++;
             s++;
         }
