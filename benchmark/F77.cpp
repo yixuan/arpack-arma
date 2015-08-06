@@ -91,8 +91,8 @@ void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
         delete [] resid;
 
         std::cout << "errors occured" << std::endl;
-        end = clock();
-        time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+        end = get_wall_time();
+        time_used = (end - start) * 1000;
 
         return;
     }
@@ -144,8 +144,8 @@ void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
     if (ierr < 0)
     {
         std::cout << "errors occured" << std::endl;
-        end = clock();
-        time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+        end = get_wall_time();
+        time_used = (end - start) * 1000;
 
         return;
     }
@@ -255,8 +255,8 @@ void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
         delete [] resid;
 
         std::cout << "errors occured" << std::endl;
-        end = clock();
-        time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+        end = get_wall_time();
+        time_used = (end - start) * 1000;
 
         return;
     }
@@ -312,8 +312,8 @@ void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
     if (ierr < 0)
     {
         std::cout << "errors occured" << std::endl;
-        end = clock();
-        time_used = (end - start) / double(CLOCKS_PER_SEC) * 1000;
+        end = get_wall_time();
+        time_used = (end - start) * 1000;
 
         return;
     }
@@ -327,7 +327,7 @@ void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m,
 
     end = get_wall_time();
     time_used = (end - start) * 1000;
-    std::cout << "nops77 = " << niter << std::endl;
+    // std::cout << "nops77 = " << niter << std::endl;
 }
 
 

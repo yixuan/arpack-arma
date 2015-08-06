@@ -56,7 +56,8 @@ void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
-    int nops = eigs.num_operations();std::cout << "nops = " << nops << std::endl;
+    int nops = eigs.num_operations();
+    // std::cout << "nops = " << nops << std::endl;
 
     arma::cx_vec evals = eigs.eigenvalues();
     arma::cx_mat evecs = eigs.eigenvectors();
