@@ -186,7 +186,7 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
     /*ComplexVector evals(ncv);
     ComplexMatrix evecs(ncv, ncv);
     arma::eig_gen(evals, evecs, fac_H);*/
-    UpperHessenbergEigen<double> decomp(fac_H);
+    UpperHessenbergEigen<Scalar> decomp(fac_H);
     ComplexVector evals = decomp.eigenvalues();
     ComplexMatrix evecs = decomp.eigenvectors();
 
