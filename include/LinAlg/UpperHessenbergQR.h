@@ -2,6 +2,9 @@
 #define UPPER_HESSENBERG_QR_H
 
 #include <armadillo>
+#include <cmath>      // std::sqrt
+#include <limits>     // std::numeric_limits
+#include <stdexcept>  // std::logic_error
 
 ///
 /// \ingroup LinearAlgebra
@@ -71,14 +74,19 @@ public:
         rot_cos.set_size(n - 1);
         rot_sin.set_size(n - 1);
 
-        mat_T = arma::trimatu(mat);
-        mat_T.diag(-1) = mat.diag(-1);
+        // Make a copy of mat
+        mat_T = mat;
 
         Scalar xi, xj, r, c, s, eps = std::numeric_limits<Scalar>::epsilon();
         Scalar *Tii, *ptr;
         for(int i = 0; i < n - 1; i++)
         {
-            Tii = &mat_T(i, i);
+            Tii = mat_T.colptr(i) + i;
+
+            // Make sure mat_T is upper Hessenberg
+            // Zero the elements below mat_T(i + 1, i)
+            std::fill(Tii + 2, Tii + n - i, Scalar(0));
+
             xi = Tii[0];  // mat_T(i, i)
             xj = Tii[1];  // mat_T(i + 1, i)
             r = std::sqrt(xi * xi + xj * xj);
@@ -146,7 +154,7 @@ public:
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         // Make a copy of the R matrix
-        Matrix RQ = arma::trimatu(mat_T);
+        Matrix RQ = mat_T;
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
@@ -157,7 +165,7 @@ public:
             //      [-sin[i]  cos[i]]
 
             Scalar *Yi, *Yi1;
-            Yi = &RQ(0, i);
+            Yi = RQ.colptr(i);
             Yi1 = Yi + n;  // RQ(0, i + 1)
             for(int j = 0; j < i + 2; j++)
             {
