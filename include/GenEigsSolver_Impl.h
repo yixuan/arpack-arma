@@ -190,23 +190,17 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
     ComplexVector evals = decomp.eigenvalues();
     ComplexMatrix evecs = decomp.eigenvectors();
 
-    std::vector<SortPair> pairs(ncv);
-    EigenvalueComparator<Complex, SelectionRule> comp;
-    for(int i = 0; i < ncv; i++)
-    {
-        pairs[i].first = evals[i];
-        pairs[i].second = i;
-    }
-    std::sort(pairs.begin(), pairs.end(), comp);
+    SortEigenvalue<Complex, SelectionRule> sorting(evals.memptr(), evals.n_elem);
+    std::vector<int> ind = sorting.index();
 
     // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
     for(int i = 0; i < ncv; i++)
     {
-        ritz_val[i] = pairs[i].first;
+        ritz_val[i] = evals[ind[i]];
     }
     for(int i = 0; i < nev; i++)
     {
-        ritz_vec.col(i) = evecs.col(pairs[i].second);
+        ritz_vec.col(i) = evecs.col(ind[i]);
     }
 }
 
@@ -219,25 +213,21 @@ template < typename Scalar,
            typename OpType >
 inline void GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair()
 {
-    std::vector<SortPair> pairs(nev);
-    EigenvalueComparator<Complex, LARGEST_MAGN> comp;
-    for(int i = 0; i < nev; i++)
-    {
-        pairs[i].first = ritz_val[i];
-        pairs[i].second = i;
-    }
-    std::sort(pairs.begin(), pairs.end(), comp);
+    SortEigenvalue<Complex, LARGEST_MAGN> sorting(ritz_val.memptr(), nev);
+    std::vector<int> ind = sorting.index();
 
+    ComplexVector new_ritz_val(ncv);
     ComplexMatrix new_ritz_vec(ncv, nev);
     BoolVector new_ritz_conv(nev);
 
     for(int i = 0; i < nev; i++)
     {
-        ritz_val[i] = pairs[i].first;
-        new_ritz_vec.col(i) = ritz_vec.col(pairs[i].second);
-        new_ritz_conv[i] = ritz_conv[pairs[i].second];
+        new_ritz_val[i] = ritz_val[ind[i]];
+        new_ritz_vec.col(i) = ritz_vec.col(ind[i]);
+        new_ritz_conv[i] = ritz_conv[ind[i]];
     }
 
+    ritz_val.swap(new_ritz_val);
     ritz_vec.swap(new_ritz_vec);
     ritz_conv.swap(new_ritz_conv);
 }

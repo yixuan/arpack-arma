@@ -124,14 +124,9 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
     Vector evals = decomp.eigenvalues();
     Matrix evecs = decomp.eigenvectors();
 
-    std::vector<SortPair> pairs(ncv);
-    EigenvalueComparator<Scalar, SelectionRule> comp;
-    for(int i = 0; i < ncv; i++)
-    {
-        pairs[i].first = evals[i];
-        pairs[i].second = i;
-    }
-    std::sort(pairs.begin(), pairs.end(), comp);
+    SortEigenvalue<Scalar, SelectionRule> sorting(evals.memptr(), evals.n_elem);
+    std::vector<int> ind = sorting.index();
+
     // For BOTH_ENDS, the eigenvalues are sorted according
     // to the LARGEST_ALGE rule, so we need to move those smallest
     // values to the left
@@ -142,26 +137,26 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
     // or is nev (used in sort_ritzpair())
     if(SelectionRule == BOTH_ENDS)
     {
-        std::vector<SortPair> pairs_copy(pairs);
+        std::vector<int> ind_copy(ind);
         for(int i = 0; i < ncv; i++)
         {
             // If i is even, pick values from the left (large values)
             // If i is odd, pick values from the right (small values)
             if(i % 2 == 0)
-                pairs[i] = pairs_copy[i / 2];
+                ind[i] = ind_copy[i / 2];
             else
-                pairs[i] = pairs_copy[ncv - 1 - i / 2];
+                ind[i] = ind_copy[ncv - 1 - i / 2];
         }
     }
 
     // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
     for(int i = 0; i < ncv; i++)
     {
-        ritz_val[i] = pairs[i].first;
+        ritz_val[i] = evals[ind[i]];
     }
     for(int i = 0; i < nev; i++)
     {
-        ritz_vec.col(i) = evecs.col(pairs[i].second);
+        ritz_vec.col(i) = evecs.col(ind[i]);
     }
 }
 
@@ -174,24 +169,21 @@ template < typename Scalar,
            typename OpType >
 inline void SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair()
 {
-    std::vector<SortPair> pairs(nev);
-    EigenvalueComparator<Scalar, LARGEST_MAGN> comp;
-    for(int i = 0; i < nev; i++)
-    {
-        pairs[i].first = ritz_val[i];
-        pairs[i].second = i;
-    }
-    std::sort(pairs.begin(), pairs.end(), comp);
+    SortEigenvalue<Scalar, LARGEST_MAGN> sorting(ritz_val.memptr(), nev);
+    std::vector<int> ind = sorting.index();
 
+    Vector new_ritz_val(ncv);
     Matrix new_ritz_vec(ncv, nev);
     BoolVector new_ritz_conv(nev);
+
     for(int i = 0; i < nev; i++)
     {
-        ritz_val[i] = pairs[i].first;
-        new_ritz_vec.col(i) = ritz_vec.col(pairs[i].second);
-        new_ritz_conv[i] = ritz_conv[pairs[i].second];
+        new_ritz_val[i] = ritz_val[ind[i]];
+        new_ritz_vec.col(i) = ritz_vec.col(ind[i]);
+        new_ritz_conv[i] = ritz_conv[ind[i]];
     }
 
+    ritz_val.swap(new_ritz_val);
     ritz_vec.swap(new_ritz_vec);
     ritz_conv.swap(new_ritz_conv);
 }
