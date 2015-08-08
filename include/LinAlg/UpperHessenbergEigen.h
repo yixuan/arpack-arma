@@ -2,6 +2,8 @@
 #define UPPER_HESSENBERG_EIGEN_H
 
 #include <armadillo>
+#include <cmath>
+#include <complex>
 #include <stdexcept>
 #include "LapackWrapperExtra.h"
 

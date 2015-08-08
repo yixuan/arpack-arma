@@ -3,6 +3,7 @@
 
 #include <armadillo>
 #include <cmath>      // std::sqrt
+#include <algorithm>  // std::fill
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::logic_error
 

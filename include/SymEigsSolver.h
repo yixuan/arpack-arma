@@ -2,10 +2,11 @@
 #define SYM_EIGS_SOLVER_H
 
 #include <armadillo>
-#include <vector>
-#include <cmath>
-#include <limits>
-#include <stdexcept>
+#include <vector>     // std::vector
+#include <cmath>      // std::abs, std::pow, std::sqrt
+#include <algorithm>  // std::max, std::min
+#include <limits>     // std::numeric_limits
+#include <stdexcept>  // std::invalid_argument
 
 #include "SelectionRule.h"
 #include "LinAlg/UpperHessenbergQR.h"
@@ -136,7 +137,6 @@ private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
     typedef arma::uvec BoolVector;
-    typedef std::pair<Scalar, int> SortPair;
 
 protected:
     OpType *op;           // object to conduct matrix operation,
