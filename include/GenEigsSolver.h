@@ -3,10 +3,9 @@
 
 #include <armadillo>
 #include <vector>
-#include <algorithm>
 #include <cmath>
 #include <complex>
-#include <utility>
+#include <limits>
 #include <stdexcept>
 
 #include "SelectionRule.h"
