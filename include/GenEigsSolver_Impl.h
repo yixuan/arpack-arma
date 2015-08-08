@@ -54,7 +54,7 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
     if(k >= ncv)
         return;
 
-    DoubleShiftQR<Scalar> decomp_ds;
+    DoubleShiftQR<Scalar> decomp_ds(ncv);
     UpperHessenbergQR<Scalar> decomp;
     Matrix Q(ncv, ncv, arma::fill::eye);
 
