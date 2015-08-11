@@ -40,15 +40,9 @@ void run_test(Matrix &mat, int k, int m, double sigma)
     REQUIRE( arma::abs(err).max() == Approx(0.0) );
 }
 
-TEST_CASE("Eigensolver of general real matrix", "[eigs_gen]")
+
+void run_test_sets(Matrix &A, int k, int m, double sigma)
 {
-    arma::arma_rng::set_seed(123);
-    Matrix A = arma::randu(10, 10);
-
-    int k = 3;
-    int m = 6;
-    double sigma = 0.0;
-
     SECTION( "Largest Magnitude" )
     {
         run_test<LARGEST_MAGN>(A, k, m, sigma);
@@ -73,4 +67,40 @@ TEST_CASE("Eigensolver of general real matrix", "[eigs_gen]")
     {
         run_test<SMALLEST_IMAG>(A, k, m, sigma);
     }
+}
+
+TEST_CASE("Eigensolver of general real matrix [10x10]", "[eigs_gen]")
+{
+    arma::arma_rng::set_seed(123);
+
+    Matrix A = arma::randu(10, 10);
+    int k = 3;
+    int m = 6;
+    double sigma = 0.0;
+
+    run_test_sets(A, k, m, sigma);
+}
+
+TEST_CASE("Eigensolver of general real matrix [100x100]", "[eigs_gen]")
+{
+    arma::arma_rng::set_seed(123);
+
+    Matrix A = arma::randu(100, 100);
+    int k = 10;
+    int m = 20;
+    double sigma = 0.0;
+
+    run_test_sets(A, k, m, sigma);
+}
+
+TEST_CASE("Eigensolver of general real matrix [1000x1000]", "[eigs_gen]")
+{
+    arma::arma_rng::set_seed(123);
+
+    Matrix A = arma::randu(1000, 1000);
+    int k = 20;
+    int m = 50;
+    double sigma = 0.0;
+
+    run_test_sets(A, k, m, sigma);
 }
