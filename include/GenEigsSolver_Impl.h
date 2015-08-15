@@ -334,17 +334,18 @@ inline typename GenEigsSolver<Scalar, SelectionRule, OpType>::ComplexVector GenE
 template < typename Scalar,
            int SelectionRule,
            typename OpType >
-inline typename GenEigsSolver<Scalar, SelectionRule, OpType>::ComplexMatrix GenEigsSolver<Scalar, SelectionRule, OpType>::eigenvectors()
+inline typename GenEigsSolver<Scalar, SelectionRule, OpType>::ComplexMatrix GenEigsSolver<Scalar, SelectionRule, OpType>::eigenvectors(int nvec)
 {
     int nconv = arma::sum(ritz_conv);
-    ComplexMatrix res(dim_n, nconv);
+    nvec = std::min(nvec, nconv);
+    ComplexMatrix res(dim_n, nvec);
 
-    if(!nconv)
+    if(!nvec)
         return res;
 
-    ComplexMatrix ritz_vec_conv(ncv, nconv);
+    ComplexMatrix ritz_vec_conv(ncv, nvec);
     int j = 0;
-    for(int i = 0; i < nev; i++)
+    for(int i = 0; i < nev && j < nvec; i++)
     {
         if(ritz_conv[i])
         {

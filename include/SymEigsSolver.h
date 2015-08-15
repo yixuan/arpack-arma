@@ -275,11 +275,17 @@ public:
     ///
     /// Returning the eigenvectors associated with the converged eigenvalues.
     ///
+    /// \param nvec The number of eigenvectors to return.
+    ///
     /// \return A matrix containing the eigenvectors.
     /// Returned matrix type will be `arma::mat` or `arma::fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
-    inline Matrix eigenvectors();
+    inline Matrix eigenvectors(int nvec);
+    ///
+    /// Returning all converged eigenvectors.
+    ///
+    inline Matrix eigenvectors() { return eigenvectors(nev); }
 };
 
 

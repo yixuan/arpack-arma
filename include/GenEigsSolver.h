@@ -232,11 +232,17 @@ public:
     ///
     /// Returning the eigenvectors associated with the converged eigenvalues.
     ///
+    /// \param nvec The number of eigenvectors to return.
+    ///
     /// \return A complex-valued matrix containing the eigenvectors.
     /// Returned matrix type will be `arma::cx_mat` or `arma::cx_fmat`, depending on
     /// the template parameter `Scalar` defined.
     ///
-    inline ComplexMatrix eigenvectors();
+    inline ComplexMatrix eigenvectors(int nvec);
+    ///
+    /// Returning all converged eigenvectors.
+    ///
+    inline ComplexMatrix eigenvectors() { return eigenvectors(nev); }
 };
 
 
