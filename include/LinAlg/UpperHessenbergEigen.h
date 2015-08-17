@@ -145,7 +145,7 @@ public:
         if(!computed)
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
 
-        Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0 / 3));
+        Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
         ComplexMatrix evecs(n, n);
         Complex *col_ptr = evecs.memptr();
         for(int i = 0; i < n; i++)

@@ -17,7 +17,7 @@ void run_test(arma::Mat<Scalar> &A, arma::Col<Scalar> &b)
     SymmetricLDL<Scalar> solver;
     arma::Col<Scalar> x0;
     arma::Col<Scalar> x(n);
-    const Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0 / 3));
+    const Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
 
     SECTION( "Using Lower Triangular Part" )
     {

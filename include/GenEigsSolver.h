@@ -171,7 +171,7 @@ public:
         ncv(ncv_ > dim_n ? dim_n : ncv_),
         nmatop(0),
         niter(0),
-        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0 / 3)))
+        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
     {
         if(nev_ < 1 || nev_ > dim_n - 2)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 2, n is the size of matrix");

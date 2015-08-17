@@ -200,7 +200,7 @@ public:
     DoubleShiftQR(int size) :
         n(size),
         prec(std::numeric_limits<Scalar>::epsilon()),
-        prec2(std::min(std::pow(prec, Scalar(2) / 3), n * prec)),
+        prec2(std::min(std::pow(prec, Scalar(2.0) / 3), n * prec)),
         computed(false)
     {}
 
@@ -211,7 +211,7 @@ public:
         shift_t(t),
         ref_u(3, n),
         prec(std::numeric_limits<Scalar>::epsilon()),
-        prec2(std::min(std::pow(prec, Scalar(2) / 3), n * prec)),
+        prec2(std::min(std::pow(prec, Scalar(2.0) / 3), n * prec)),
         computed(false)
     {
         compute(mat, s, t);
