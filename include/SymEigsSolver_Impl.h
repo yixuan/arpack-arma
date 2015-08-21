@@ -207,11 +207,13 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::init(Scalar *init_resi
     nmatop = 0;
     niter = 0;
 
-    Vector v(init_resid, dim_n);
-    Scalar vnorm = arma::norm(v);
-    if(vnorm < prec)
+    Vector r(init_resid, dim_n, false);
+    // The first column of fac_V
+    Vector v(fac_V.colptr(0), dim_n, false);
+    Scalar rnorm = arma::norm(r);
+    if(rnorm < prec)
         throw std::invalid_argument("initial residual vector cannot be zero");
-    v /= vnorm;
+    v = r / rnorm;
 
     Vector w(dim_n);
     op->perform_op(v.memptr(), w.memptr());
@@ -219,7 +221,6 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::init(Scalar *init_resi
 
     fac_H(0, 0) = arma::dot(v, w);
     fac_f = w - v * fac_H(0, 0);
-    fac_V.col(0) = v;
 }
 
 // Initialization with random initial coefficients
