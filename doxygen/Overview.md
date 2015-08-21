@@ -6,6 +6,9 @@ software for large scale eigenvalue problems, built on top of
 the BLAS and LAPACK libraries. Therefore program that uses **ARPACK-Armadillo**
 should also link to those two libraries.
 
+The development page of **ARPACK-Armadillo** is at
+[https://github.com/yixuan/arpack-arma](https://github.com/yixuan/arpack-arma).
+
 ## Common Usage
 
 **ARPACK-Armadillo** is designed to calculate a specified number (\f$k\f$) of eigenvalues
