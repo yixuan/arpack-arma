@@ -113,85 +113,91 @@ $(document).ready(function(){initNavTree('GeneralLU_8h_source.html','');});
 <div class="title">GeneralLU.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef GENERAL_LU_H</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define GENERAL_LU_H</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;armadillo&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;LapackWrapperExtra.h&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// Copyright (C) 2015 Yixuan Qiu</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">// file, You can obtain one at http://mozilla.org/MPL/2.0/.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef GENERAL_LU_H</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define GENERAL_LU_H</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;armadillo&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;LapackWrapperExtra.h&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Scalar = <span class="keywordtype">double</span>&gt;</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classGeneralLU.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="classGeneralLU.html">GeneralLU</a></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">typedef</span> arma::Mat&lt;Scalar&gt; Matrix;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">typedef</span> arma::Col&lt;Scalar&gt; Vector;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">typedef</span> arma::Col&lt;int&gt; IntVector;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">int</span> dim_n;          <span class="comment">// size of the matrix</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    Matrix mat_fac;     <span class="comment">// storing factorization structures</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    IntVector vec_fac;  <span class="comment">// storing factorization structures</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">bool</span> computed;      <span class="comment">// whether factorization has been computed</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classGeneralLU.html#a71cd1def13a9729bd5411158e0921c24">   42</a></span>&#160;    <a class="code" href="classGeneralLU.html#a71cd1def13a9729bd5411158e0921c24">GeneralLU</a>() :</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        dim_n(0), computed(false)</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    {}</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classGeneralLU.html#aff431f31d59b970283b05ba9feec3c26">   53</a></span>&#160;    <a class="code" href="classGeneralLU.html#aff431f31d59b970283b05ba9feec3c26">GeneralLU</a>(<span class="keyword">const</span> Matrix &amp;mat) :</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        dim_n(mat.n_rows),</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        computed(false)</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <a class="code" href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">compute</a>(mat);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">   66</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">compute</a>(<span class="keyword">const</span> Matrix &amp;mat)</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">if</span>(!mat.is_square())</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;GeneralLU: matrix must be square&quot;</span>);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        dim_n = mat.n_rows;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        mat_fac = mat;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        vec_fac.set_size(dim_n);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordtype">int</span> info;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        arma::lapack::getrf(&amp;dim_n, &amp;dim_n, mat_fac.memptr(), &amp;dim_n,</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                            vec_fac.memptr(), &amp;info);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">if</span>(info &lt; 0)</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Lapack getrf: illegal value&quot;</span>);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">if</span>(info &gt; 0)</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordflow">throw</span> std::logic_error(<span class="stringliteral">&quot;GeneralLU: matrix is singular&quot;</span>);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        computed = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="classGeneralLU.html#adb4135a43c55766c0653bf6284d16dcb">   98</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classGeneralLU.html#adb4135a43c55766c0653bf6284d16dcb">solve</a>(Vector &amp;vec_in, Vector &amp;vec_out)</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">if</span>(!computed)</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        vec_out = vec_in;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keywordtype">int</span> one = 1;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordtype">char</span> no_trans = <span class="charliteral">&#39;N&#39;</span>;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordtype">int</span> info;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        arma::lapack::getrs(&amp;no_trans, &amp;dim_n, &amp;one, mat_fac.memptr(), &amp;dim_n,</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                            vec_fac.memptr(), vec_out.memptr(), &amp;dim_n, &amp;info);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <span class="keywordflow">if</span>(info &lt; 0)</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Lapack getrs: illegal value&quot;</span>);</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;};</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor">#endif // GENERAL_LU_H</span></div>
-<div class="ttc" id="classGeneralLU_html_a6a22af034258985581d940fbe678bce2"><div class="ttname"><a href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">GeneralLU::compute</a></div><div class="ttdeci">void compute(const Matrix &amp;mat)</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00066">GeneralLU.h:66</a></div></div>
-<div class="ttc" id="classGeneralLU_html"><div class="ttname"><a href="classGeneralLU.html">GeneralLU</a></div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00024">GeneralLU.h:24</a></div></div>
-<div class="ttc" id="classGeneralLU_html_adb4135a43c55766c0653bf6284d16dcb"><div class="ttname"><a href="classGeneralLU.html#adb4135a43c55766c0653bf6284d16dcb">GeneralLU::solve</a></div><div class="ttdeci">void solve(Vector &amp;vec_in, Vector &amp;vec_out)</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00098">GeneralLU.h:98</a></div></div>
-<div class="ttc" id="classGeneralLU_html_a71cd1def13a9729bd5411158e0921c24"><div class="ttname"><a href="classGeneralLU.html#a71cd1def13a9729bd5411158e0921c24">GeneralLU::GeneralLU</a></div><div class="ttdeci">GeneralLU()</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00042">GeneralLU.h:42</a></div></div>
-<div class="ttc" id="classGeneralLU_html_aff431f31d59b970283b05ba9feec3c26"><div class="ttname"><a href="classGeneralLU.html#aff431f31d59b970283b05ba9feec3c26">GeneralLU::GeneralLU</a></div><div class="ttdeci">GeneralLU(const Matrix &amp;mat)</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00053">GeneralLU.h:53</a></div></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Scalar = <span class="keywordtype">double</span>&gt;</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classGeneralLU.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="classGeneralLU.html">GeneralLU</a></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">typedef</span> arma::Mat&lt;Scalar&gt; Matrix;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">typedef</span> arma::Col&lt;Scalar&gt; Vector;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">typedef</span> arma::Col&lt;int&gt; IntVector;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">int</span> dim_n;          <span class="comment">// size of the matrix</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    Matrix mat_fac;     <span class="comment">// storing factorization structures</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    IntVector vec_fac;  <span class="comment">// storing factorization structures</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">bool</span> computed;      <span class="comment">// whether factorization has been computed</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classGeneralLU.html#a71cd1def13a9729bd5411158e0921c24">   48</a></span>&#160;    <a class="code" href="classGeneralLU.html#a71cd1def13a9729bd5411158e0921c24">GeneralLU</a>() :</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        dim_n(0), computed(false)</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {}</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classGeneralLU.html#aff431f31d59b970283b05ba9feec3c26">   59</a></span>&#160;    <a class="code" href="classGeneralLU.html#aff431f31d59b970283b05ba9feec3c26">GeneralLU</a>(<span class="keyword">const</span> Matrix &amp;mat) :</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        dim_n(mat.n_rows),</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        computed(false)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">compute</a>(mat);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">   72</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">compute</a>(<span class="keyword">const</span> Matrix &amp;mat)</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">if</span>(!mat.is_square())</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;GeneralLU: matrix must be square&quot;</span>);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        dim_n = mat.n_rows;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        mat_fac = mat;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        vec_fac.set_size(dim_n);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">int</span> info;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        arma::lapack::getrf(&amp;dim_n, &amp;dim_n, mat_fac.memptr(), &amp;dim_n,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                            vec_fac.memptr(), &amp;info);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordflow">if</span>(info &lt; 0)</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Lapack getrf: illegal value&quot;</span>);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordflow">if</span>(info &gt; 0)</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keywordflow">throw</span> std::logic_error(<span class="stringliteral">&quot;GeneralLU: matrix is singular&quot;</span>);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        computed = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classGeneralLU.html#adb4135a43c55766c0653bf6284d16dcb">  104</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classGeneralLU.html#adb4135a43c55766c0653bf6284d16dcb">solve</a>(Vector &amp;vec_in, Vector &amp;vec_out)</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordflow">if</span>(!computed)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        vec_out = vec_in;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordtype">int</span> one = 1;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="keywordtype">char</span> no_trans = <span class="charliteral">&#39;N&#39;</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordtype">int</span> info;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        arma::lapack::getrs(&amp;no_trans, &amp;dim_n, &amp;one, mat_fac.memptr(), &amp;dim_n,</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                            vec_fac.memptr(), vec_out.memptr(), &amp;dim_n, &amp;info);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">if</span>(info &lt; 0)</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Lapack getrs: illegal value&quot;</span>);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;};</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#endif // GENERAL_LU_H</span></div>
+<div class="ttc" id="classGeneralLU_html_a6a22af034258985581d940fbe678bce2"><div class="ttname"><a href="classGeneralLU.html#a6a22af034258985581d940fbe678bce2">GeneralLU::compute</a></div><div class="ttdeci">void compute(const Matrix &amp;mat)</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00072">GeneralLU.h:72</a></div></div>
+<div class="ttc" id="classGeneralLU_html"><div class="ttname"><a href="classGeneralLU.html">GeneralLU</a></div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00030">GeneralLU.h:30</a></div></div>
+<div class="ttc" id="classGeneralLU_html_adb4135a43c55766c0653bf6284d16dcb"><div class="ttname"><a href="classGeneralLU.html#adb4135a43c55766c0653bf6284d16dcb">GeneralLU::solve</a></div><div class="ttdeci">void solve(Vector &amp;vec_in, Vector &amp;vec_out)</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00104">GeneralLU.h:104</a></div></div>
+<div class="ttc" id="classGeneralLU_html_a71cd1def13a9729bd5411158e0921c24"><div class="ttname"><a href="classGeneralLU.html#a71cd1def13a9729bd5411158e0921c24">GeneralLU::GeneralLU</a></div><div class="ttdeci">GeneralLU()</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00048">GeneralLU.h:48</a></div></div>
+<div class="ttc" id="classGeneralLU_html_aff431f31d59b970283b05ba9feec3c26"><div class="ttname"><a href="classGeneralLU.html#aff431f31d59b970283b05ba9feec3c26">GeneralLU::GeneralLU</a></div><div class="ttdeci">GeneralLU(const Matrix &amp;mat)</div><div class="ttdef"><b>Definition:</b> <a href="GeneralLU_8h_source.html#l00059">GeneralLU.h:59</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -7,5 +7,6 @@ var classSymEigsSolver =
     [ "num_iterations", "classSymEigsSolver.html#a57181f5d36ec6171387cb2ef3d05ad45", null ],
     [ "num_operations", "classSymEigsSolver.html#a26a9d00b0655bfd3a6847fe99e1d0ca5", null ],
     [ "eigenvalues", "classSymEigsSolver.html#a36a81ae9737ff987c2338a190d3340d3", null ],
-    [ "eigenvectors", "classSymEigsSolver.html#aa21ca16b68defdf07bed7e00ffd05a6a", null ]
+    [ "eigenvectors", "classSymEigsSolver.html#ab6233bcf8ebf7b179a8e5e6d1ef0d18d", null ],
+    [ "eigenvectors", "classSymEigsSolver.html#a1a0a60d923d8beacbe30248596186ea0", null ]
 ];

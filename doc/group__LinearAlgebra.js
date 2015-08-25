@@ -12,6 +12,13 @@ var group__LinearAlgebra =
       [ "compute", "classSymmetricLDL.html#a08a3ab4b877f419ffe31046dcaa32c3c", null ],
       [ "solve", "classSymmetricLDL.html#af75cd4ca11ddef5b2c63a4f1cd0c48f5", null ]
     ] ],
+    [ "TridiagEigen", "classTridiagEigen.html", [
+      [ "TridiagEigen", "classTridiagEigen.html#a264f69ebdd357051921d10952f33c764", null ],
+      [ "TridiagEigen", "classTridiagEigen.html#ac9029708a3a52e8034d05ef54ca57496", null ],
+      [ "compute", "classTridiagEigen.html#a6c62f5169db753be371851ad20d8b8bb", null ],
+      [ "eigenvalues", "classTridiagEigen.html#ae075ed05d69e29fabc7e7b6f8bdd65f0", null ],
+      [ "eigenvectors", "classTridiagEigen.html#a9a154ab5c17444587832d6d8f17a60b1", null ]
+    ] ],
     [ "UpperHessenbergEigen", "classUpperHessenbergEigen.html", [
       [ "UpperHessenbergEigen", "classUpperHessenbergEigen.html#a60b39188b042a1d356342b1492fe99d7", null ],
       [ "UpperHessenbergEigen", "classUpperHessenbergEigen.html#a5e1564e0104748a3b5e8951947e923f7", null ],

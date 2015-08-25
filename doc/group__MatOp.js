@@ -19,5 +19,11 @@ var group__MatOp =
       [ "cols", "classDenseSymShiftSolve.html#a43b13a745ff25488a7a762fbdeba7e33", null ],
       [ "set_shift", "classDenseSymShiftSolve.html#a3a65d2c5e0a6e71db5a715a480ac8cbb", null ],
       [ "perform_op", "classDenseSymShiftSolve.html#abaf0e209533623bef5280dd819ab98aa", null ]
+    ] ],
+    [ "SparseGenMatProd", "classSparseGenMatProd.html", [
+      [ "SparseGenMatProd", "classSparseGenMatProd.html#a5b35cfea1389d6454e9e204788093ac5", null ],
+      [ "rows", "classSparseGenMatProd.html#a9abc7630df82c72d47f3a2aed577d1e9", null ],
+      [ "cols", "classSparseGenMatProd.html#a2ea3b4cf37802e87085e4e1ed2565fde", null ],
+      [ "perform_op", "classSparseGenMatProd.html#ae8cb99b3e2b5426946e3b2b2a881b205", null ]
     ] ]
 ];

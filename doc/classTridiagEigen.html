@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>ARPACK-Armadillo: SymmetricLDL&lt; Scalar &gt; Class Template Reference</title>
+<title>ARPACK-Armadillo: TridiagEigen&lt; Scalar &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,7 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('classSymmetricLDL.html','');});
+$(document).ready(function(){initNavTree('classTridiagEigen.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -112,41 +112,43 @@ $(document).ready(function(){initNavTree('classSymmetricLDL.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classSymmetricLDL-members.html">List of all members</a>  </div>
+<a href="classTridiagEigen-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">SymmetricLDL&lt; Scalar &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__LinearAlgebra.html">Linear Algebra</a></div></div>  </div>
+<div class="title">TridiagEigen&lt; Scalar &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__LinearAlgebra.html">Linear Algebra</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="SymmetricLDL_8h_source.html">SymmetricLDL.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6f53579c7b638e0b58989e6b68403be6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSymmetricLDL.html#a6f53579c7b638e0b58989e6b68403be6">SymmetricLDL</a> ()</td></tr>
-<tr class="separator:a6f53579c7b638e0b58989e6b68403be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d8de8cc264c4ff6843802a286f52836"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSymmetricLDL.html#a6d8de8cc264c4ff6843802a286f52836">SymmetricLDL</a> (const Matrix &amp;mat, const char uplo= 'L')</td></tr>
-<tr class="separator:a6d8de8cc264c4ff6843802a286f52836"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08a3ab4b877f419ffe31046dcaa32c3c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSymmetricLDL.html#a08a3ab4b877f419ffe31046dcaa32c3c">compute</a> (const Matrix &amp;mat, const char uplo= 'L')</td></tr>
-<tr class="separator:a08a3ab4b877f419ffe31046dcaa32c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af75cd4ca11ddef5b2c63a4f1cd0c48f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSymmetricLDL.html#af75cd4ca11ddef5b2c63a4f1cd0c48f5">solve</a> (Vector &amp;vec_in, Vector &amp;vec_out)</td></tr>
-<tr class="separator:af75cd4ca11ddef5b2c63a4f1cd0c48f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a264f69ebdd357051921d10952f33c764"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTridiagEigen.html#a264f69ebdd357051921d10952f33c764">TridiagEigen</a> ()</td></tr>
+<tr class="separator:a264f69ebdd357051921d10952f33c764"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9029708a3a52e8034d05ef54ca57496"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTridiagEigen.html#ac9029708a3a52e8034d05ef54ca57496">TridiagEigen</a> (const Matrix &amp;mat)</td></tr>
+<tr class="separator:ac9029708a3a52e8034d05ef54ca57496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c62f5169db753be371851ad20d8b8bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTridiagEigen.html#a6c62f5169db753be371851ad20d8b8bb">compute</a> (const Matrix &amp;mat)</td></tr>
+<tr class="separator:a6c62f5169db753be371851ad20d8b8bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae075ed05d69e29fabc7e7b6f8bdd65f0"><td class="memItemLeft" align="right" valign="top">Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTridiagEigen.html#ae075ed05d69e29fabc7e7b6f8bdd65f0">eigenvalues</a> ()</td></tr>
+<tr class="separator:ae075ed05d69e29fabc7e7b6f8bdd65f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a154ab5c17444587832d6d8f17a60b1"><td class="memItemLeft" align="right" valign="top">Matrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTridiagEigen.html#a9a154ab5c17444587832d6d8f17a60b1">eigenvectors</a> ()</td></tr>
+<tr class="separator:a9a154ab5c17444587832d6d8f17a60b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Scalar = double&gt;<br />
-class SymmetricLDL&lt; Scalar &gt;</h3>
+class TridiagEigen&lt; Scalar &gt;</h3>
 
-<p>Perform the LDL decomposition of a symmetric (possibly indefinite) matrix.</p>
+<p>Calculate the eigenvalues and eigenvectors of a symmetric tridiagonal matrix.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Scalar</td><td>The element type of the matrix. Currently supported types are <code>float</code> and <code>double</code>.</td></tr>
   </table>
   </dd>
 </dl>
-<p>This class is a wrapper of the Lapack functions <code>_sytrf</code> and <code>_sytrs</code>. </p>
+<p>This class is a wrapper of the Lapack functions <code>_steqr</code>. </p>
 
-<p>Definition at line <a class="el" href="SymmetricLDL_8h_source.html#l00025">25</a> of file <a class="el" href="SymmetricLDL_8h_source.html">SymmetricLDL.h</a>.</p>
+<p>Definition at line <a class="el" href="TridiagEigen_8h_source.html#l00025">25</a> of file <a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a6f53579c7b638e0b58989e6b68403be6"></a>
+<a class="anchor" id="a264f69ebdd357051921d10952f33c764"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -156,7 +158,7 @@ template&lt;typename Scalar = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classSymmetricLDL.html">SymmetricLDL</a>&lt; Scalar &gt;::<a class="el" href="classSymmetricLDL.html">SymmetricLDL</a> </td>
+          <td class="memname"><a class="el" href="classTridiagEigen.html">TridiagEigen</a>&lt; Scalar &gt;::<a class="el" href="classTridiagEigen.html">TridiagEigen</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -168,13 +170,13 @@ template&lt;typename Scalar = double&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Default constructor to create an object that stores the LDL decomposition of a symmetric matrix. Factorization can be performed later by calling the <a class="el" href="classSymmetricLDL.html#a08a3ab4b877f419ffe31046dcaa32c3c">compute()</a> method. </p>
+<p>Default constructor. Computation can be performed later by calling the <a class="el" href="classTridiagEigen.html#a6c62f5169db753be371851ad20d8b8bb">compute()</a> method. </p>
 
-<p>Definition at line <a class="el" href="SymmetricLDL_8h_source.html#l00044">44</a> of file <a class="el" href="SymmetricLDL_8h_source.html">SymmetricLDL.h</a>.</p>
+<p>Definition at line <a class="el" href="TridiagEigen_8h_source.html#l00043">43</a> of file <a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a6d8de8cc264c4ff6843802a286f52836"></a>
+<a class="anchor" id="ac9029708a3a52e8034d05ef54ca57496"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -184,21 +186,11 @@ template&lt;typename Scalar = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classSymmetricLDL.html">SymmetricLDL</a>&lt; Scalar &gt;::<a class="el" href="classSymmetricLDL.html">SymmetricLDL</a> </td>
+          <td class="memname"><a class="el" href="classTridiagEigen.html">TridiagEigen</a>&lt; Scalar &gt;::<a class="el" href="classTridiagEigen.html">TridiagEigen</a> </td>
           <td>(</td>
           <td class="paramtype">const Matrix &amp;&#160;</td>
-          <td class="paramname"><em>mat</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>mat</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const char&#160;</td>
-          <td class="paramname"><em>uplo</em> = <code>'L'</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -207,21 +199,20 @@ template&lt;typename Scalar = double&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructor to create an object that performs and stores the LDL decomposition of a symmetric matrix <code>mat</code>.</p>
+<p>Constructor to create an object that calculates the eigenvalues and eigenvectors of a symmetric tridiagonal matrix <code>mat</code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mat</td><td>Matrix type can be <code>arma::mat</code> or <code>arma::fmat</code>, depending on the template parameter <code>Scalar</code> defined. </td></tr>
-    <tr><td class="paramname">uplo</td><td>'L' to indicate using the lower triangular part of the matrix, and 'U' for upper triangular part. </td></tr>
+    <tr><td class="paramname">mat</td><td>Matrix type can be <code>arma::mat</code> or <code>arma::fmat</code>, depending on the template parameter <code>Scalar</code> defined. Only the main diagonal and the lower sub-diagonal parts of the matrix are used. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="SymmetricLDL_8h_source.html#l00057">57</a> of file <a class="el" href="SymmetricLDL_8h_source.html">SymmetricLDL.h</a>.</p>
+<p>Definition at line <a class="el" href="TridiagEigen_8h_source.html#l00056">56</a> of file <a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a08a3ab4b877f419ffe31046dcaa32c3c"></a>
+<a class="anchor" id="a6c62f5169db753be371851ad20d8b8bb"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -231,21 +222,11 @@ template&lt;typename Scalar = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classSymmetricLDL.html">SymmetricLDL</a>&lt; Scalar &gt;::compute </td>
+          <td class="memname">void <a class="el" href="classTridiagEigen.html">TridiagEigen</a>&lt; Scalar &gt;::compute </td>
           <td>(</td>
           <td class="paramtype">const Matrix &amp;&#160;</td>
-          <td class="paramname"><em>mat</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>mat</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const char&#160;</td>
-          <td class="paramname"><em>uplo</em> = <code>'L'</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -254,20 +235,19 @@ template&lt;typename Scalar = double&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Conduct the LDL factorization of a symmetric matrix.</p>
+<p>Compute the eigenvalue decomposition of a symmetric tridiagonal matrix.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mat</td><td>Matrix type can be <code>arma::mat</code> or <code>arma::fmat</code>, depending on the template parameter <code>Scalar</code> defined. </td></tr>
-    <tr><td class="paramname">uplo</td><td>'L' to indicate using the lower triangular part of the matrix, and 'U' for upper triangular part. </td></tr>
+    <tr><td class="paramname">mat</td><td>Matrix type can be <code>arma::mat</code> or <code>arma::fmat</code>, depending on the template parameter <code>Scalar</code> defined. Only the main diagonal and the lower sub-diagonal parts of the matrix are used. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="SymmetricLDL_8h_source.html#l00073">73</a> of file <a class="el" href="SymmetricLDL_8h_source.html">SymmetricLDL.h</a>.</p>
+<p>Definition at line <a class="el" href="TridiagEigen_8h_source.html#l00070">70</a> of file <a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="af75cd4ca11ddef5b2c63a4f1cd0c48f5"></a>
+<a class="anchor" id="ae075ed05d69e29fabc7e7b6f8bdd65f0"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -277,21 +257,10 @@ template&lt;typename Scalar = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classSymmetricLDL.html">SymmetricLDL</a>&lt; Scalar &gt;::solve </td>
+          <td class="memname">Vector <a class="el" href="classTridiagEigen.html">TridiagEigen</a>&lt; Scalar &gt;::eigenvalues </td>
           <td>(</td>
-          <td class="paramtype">Vector &amp;&#160;</td>
-          <td class="paramname"><em>vec_in</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
-          <td class="paramtype">Vector &amp;&#160;</td>
-          <td class="paramname"><em>vec_out</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -300,29 +269,51 @@ template&lt;typename Scalar = double&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Use the computed LDL factorization to solve linear equation \(Ax=b\), where \(A\) is the matrix factorized.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">vec_in</td><td>The vector \(b\). </td></tr>
-    <tr><td class="paramname">vec_out</td><td>The vector \(x\) to be solved, which will be overwritten by the calculated solution.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>Vector type can be <code>arma::vec</code> or <code>arma::fvec</code>, depending on the template parameter <code>Scalar</code> defined. </p>
+<p>Retrieve the eigenvalues.</p>
+<dl class="section return"><dt>Returns</dt><dd>Returned vector type will be <code>arma::vec</code> or <code>arma::fvec</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="SymmetricLDL_8h_source.html#l00113">113</a> of file <a class="el" href="SymmetricLDL_8h_source.html">SymmetricLDL.h</a>.</p>
+<p>Definition at line <a class="el" href="TridiagEigen_8h_source.html#l00123">123</a> of file <a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9a154ab5c17444587832d6d8f17a60b1"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Matrix <a class="el" href="classTridiagEigen.html">TridiagEigen</a>&lt; Scalar &gt;::eigenvectors </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Retrieve the eigenvectors.</p>
+<dl class="section return"><dt>Returns</dt><dd>Returned matrix type will be <code>arma::mat</code> or <code>arma::fmat</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
+
+<p>Definition at line <a class="el" href="TridiagEigen_8h_source.html#l00138">138</a> of file <a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>LinAlg/<a class="el" href="SymmetricLDL_8h_source.html">SymmetricLDL.h</a></li>
+<li>LinAlg/<a class="el" href="TridiagEigen_8h_source.html">TridiagEigen.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="classSymmetricLDL.html">SymmetricLDL</a></li>
+    <li class="navelem"><a class="el" href="classTridiagEigen.html">TridiagEigen</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>

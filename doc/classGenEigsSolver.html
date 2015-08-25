@@ -145,8 +145,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad2f8e9d2c4c813a46c2fe036d2cf3097"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe9e50ef80360324c3a71d9ba7aac366"><td class="memItemLeft" align="right" valign="top">ComplexVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenEigsSolver.html#abe9e50ef80360324c3a71d9ba7aac366">eigenvalues</a> ()</td></tr>
 <tr class="separator:abe9e50ef80360324c3a71d9ba7aac366"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae846405eea158c2a6764a805d97e36ee"><td class="memItemLeft" align="right" valign="top">ComplexMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenEigsSolver.html#ae846405eea158c2a6764a805d97e36ee">eigenvectors</a> ()</td></tr>
-<tr class="separator:ae846405eea158c2a6764a805d97e36ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a266d90e52a3c4c60e9a386609e86cc92"><td class="memItemLeft" align="right" valign="top">ComplexMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenEigsSolver.html#a266d90e52a3c4c60e9a386609e86cc92">eigenvectors</a> (int nvec)</td></tr>
+<tr class="separator:a266d90e52a3c4c60e9a386609e86cc92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4da159406ca0e42817cbec5c518124f0"><td class="memItemLeft" align="right" valign="top">ComplexMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenEigsSolver.html#a4da159406ca0e42817cbec5c518124f0">eigenvectors</a> ()</td></tr>
+<tr class="separator:a4da159406ca0e42817cbec5c518124f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt;<br />
@@ -192,7 +194,7 @@ class GenEigsSolver&lt; Scalar, SelectionRule, OpType &gt;</h3>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00076">76</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00083">83</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a90faa03ed7a069b5bd0e6674b9da4978"></a>
 <div class="memitem">
@@ -243,7 +245,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00168">168</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00173">173</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -280,7 +282,7 @@ template&lt;typename Scalar , int SelectionRule, typename OpType &gt; </div>
 </dl>
 <p><b>ARPACK-Armadillo</b> (and also <b>ARPACK</b>) uses an iterative algorithm to find eigenvalues. This function allows the user to provide the initial residual vector. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00227">227</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00247">247</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
 
 </div>
 </div>
@@ -309,7 +311,7 @@ template&lt;typename Scalar , int SelectionRule, typename OpType &gt; </div>
 <p>Providing a random initial residual vector.</p>
 <p>This overloaded function generates a random initial residual vector for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5) distributions. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00259">259</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00280">280</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
 
 </div>
 </div>
@@ -356,7 +358,7 @@ template&lt;typename Scalar , int SelectionRule, typename OpType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of converged eigenvalues. </dd></dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00270">270</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00291">291</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
 
 </div>
 </div>
@@ -384,7 +386,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of iterations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00217">217</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00222">222</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -412,7 +414,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of matrix operations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00222">222</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00227">227</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -441,11 +443,11 @@ template&lt;typename Scalar , int SelectionRule, typename OpType &gt; </div>
 <p>Returning the converged eigenvalues.</p>
 <dl class="section return"><dt>Returns</dt><dd>A complex-valued vector containing the eigenvalues. Returned vector type will be <code>arma::cx_vec</code> or <code>arma::cx_fvec</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00298">298</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00319">319</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ae846405eea158c2a6764a805d97e36ee"></a>
+<a class="anchor" id="a266d90e52a3c4c60e9a386609e86cc92"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -457,7 +459,8 @@ template&lt;typename Scalar , int SelectionRule, typename OpType &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classGenEigsSolver.html">GenEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::ComplexMatrix <a class="el" href="classGenEigsSolver.html">GenEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::eigenvectors </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nvec</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -468,9 +471,43 @@ template&lt;typename Scalar , int SelectionRule, typename OpType &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Returning the eigenvectors associated with the converged eigenvalues.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nvec</td><td>The number of eigenvectors to return.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>A complex-valued matrix containing the eigenvectors. Returned matrix type will be <code>arma::cx_mat</code> or <code>arma::cx_fmat</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00323">323</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver__Impl_8h_source.html#l00344">344</a> of file <a class="el" href="GenEigsSolver__Impl_8h_source.html">GenEigsSolver_Impl.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a4da159406ca0e42817cbec5c518124f0"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ComplexMatrix <a class="el" href="classGenEigsSolver.html">GenEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::eigenvectors </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returning all converged eigenvectors. </p>
+
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00251">251</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>

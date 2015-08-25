@@ -7,5 +7,6 @@ var classGenEigsSolver =
     [ "num_iterations", "classGenEigsSolver.html#a5e4c31d3624051795454765132461eed", null ],
     [ "num_operations", "classGenEigsSolver.html#ad2f8e9d2c4c813a46c2fe036d2cf3097", null ],
     [ "eigenvalues", "classGenEigsSolver.html#abe9e50ef80360324c3a71d9ba7aac366", null ],
-    [ "eigenvectors", "classGenEigsSolver.html#ae846405eea158c2a6764a805d97e36ee", null ]
+    [ "eigenvectors", "classGenEigsSolver.html#a266d90e52a3c4c60e9a386609e86cc92", null ],
+    [ "eigenvectors", "classGenEigsSolver.html#a4da159406ca0e42817cbec5c518124f0", null ]
 ];
