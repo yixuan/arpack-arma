@@ -29,8 +29,10 @@ private:
     typedef arma::Col<Scalar> Vector;
     typedef arma::Row<Scalar> RowVector;
 
+    typedef arma::sword Index;
+
 protected:
-    int n;
+    Index n;
     Matrix mat_T;
     // Gi = [ cos[i]  sin[i]]
     //      [-sin[i]  cos[i]]
@@ -82,11 +84,11 @@ public:
         rot_sin.set_size(n - 1);
 
         // Make a copy of mat
-        mat_T = mat;
+        std::copy(mat.memptr(), mat.memptr() + mat.n_elem, mat_T.memptr());
 
         Scalar xi, xj, r, c, s, eps = std::numeric_limits<Scalar>::epsilon();
         Scalar *Tii, *ptr;
-        for(int i = 0; i < n - 1; i++)
+        for(Index i = 0; i < n - 1; i++)
         {
             Tii = mat_T.colptr(i) + i;
 
@@ -116,7 +118,7 @@ public:
             Tii[0] = r;    // mat_T(i, i)     => r
             Tii[1] = 0;    // mat_T(i + 1, i) => 0
             ptr = Tii + n; // mat_T(i, k), k = i+1, i+2, ..., n-1
-            for(int j = i + 1; j < n; j++, ptr += n)
+            for(Index j = i + 1; j < n; j++, ptr += n)
             {
                 Scalar tmp = ptr[0];
                 ptr[0] = c * tmp - s * ptr[1];
@@ -165,7 +167,7 @@ public:
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
-        for(int i = 0; i < n - 1; i++)
+        for(Index i = 0; i < n - 1; i++)
         {
             // RQ[, i:(i + 1)] = RQ[, i:(i + 1)] * Gi
             // Gi = [ cos[i]  sin[i]]
@@ -174,7 +176,7 @@ public:
             Scalar *Yi, *Yi1;
             Yi = RQ.colptr(i);
             Yi1 = Yi + n;  // RQ(0, i + 1)
-            for(int j = 0; j < i + 2; j++)
+            for(Index j = 0; j < i + 2; j++)
             {
                 Scalar tmp = Yi[j];
                 Yi[j]  = (*c) * tmp - (*s) * Yi1[j];
@@ -206,7 +208,7 @@ public:
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar tmp;
-        for(int i = n - 2; i >= 0; i--)
+        for(Index i = n - 2; i >= 0; i--)
         {
             // Y[i:(i + 1)] = Gi * Y[i:(i + 1)]
             // Gi = [ cos[i]  sin[i]]
@@ -232,7 +234,7 @@ public:
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         Scalar tmp;
-        for(int i = 0; i < n - 1; i++)
+        for(Index i = 0; i < n - 1; i++)
         {
             // Y[i:(i + 1)] = Gi' * Y[i:(i + 1)]
             // Gi = [ cos[i]  sin[i]]
@@ -260,7 +262,7 @@ public:
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2;
         RowVector Yi(Y.n_cols), Yi1(Y.n_cols);
-        for(int i = n - 2; i >= 0; i--)
+        for(Index i = n - 2; i >= 0; i--)
         {
             // Y[i:(i + 1), ] = Gi * Y[i:(i + 1), ]
             // Gi = [ cos[i]  sin[i]]
@@ -291,7 +293,7 @@ public:
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
         RowVector Yi(Y.n_cols), Yi1(Y.n_cols);
-        for(int i = 0; i < n - 1; i++)
+        for(Index i = 0; i < n - 1; i++)
         {
             // Y[i:(i + 1), ] = Gi' * Y[i:(i + 1), ]
             // Gi = [ cos[i]  sin[i]]
@@ -334,12 +336,12 @@ public:
             s++;
         }*/
         Scalar *Y_col_i, *Y_col_i1;
-        int nrow = Y.n_rows;
-        for(int i = 0; i < n - 1; i++)
+        Index nrow = Y.n_rows;
+        for(Index i = 0; i < n - 1; i++)
         {
             Y_col_i  = Y.colptr(i);
             Y_col_i1 = Y.colptr(i + 1);
-            for(int j = 0; j < nrow; j++)
+            for(Index j = 0; j < nrow; j++)
             {
                 Scalar tmp = Y_col_i[j];
                 Y_col_i[j]  = (*c) * tmp - (*s) * Y_col_i1[j];
@@ -367,7 +369,7 @@ public:
         Scalar *c = rot_cos.memptr() + n - 2,
                *s = rot_sin.memptr() + n - 2;
         Vector Yi(Y.n_rows);
-        for(int i = n - 2; i >= 0; i--)
+        for(Index i = n - 2; i >= 0; i--)
         {
             // Y[, i:(i + 1)] = Y[, i:(i + 1)] * Gi'
             // Gi = [ cos[i]  sin[i]]
@@ -398,6 +400,8 @@ class TridiagQR: public UpperHessenbergQR<Scalar>
 private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
+
+    typedef arma::sword Index;
 
 public:
     ///
@@ -450,7 +454,7 @@ public:
                *s = this->rot_sin.memptr(),  // pointer to the sine vector
                r, tmp,
                eps = std::numeric_limits<Scalar>::epsilon();
-        for(int i = 0; i < this->n - 2; i++)
+        for(Index i = 0; i < this->n - 2; i++)
         {
             // Tii[0] == T[i, i]
             // Tii[1] == T[i + 1, i]
@@ -545,7 +549,7 @@ public:
                *c = this->rot_cos.memptr(),
                *s = this->rot_sin.memptr(),
                tmp;
-        for(int i = 0; i < this->n - 1; i++)
+        for(Index i = 0; i < this->n - 1; i++)
         {
             m21 = m11 + 1;
             m12 = m11 + this->n;
