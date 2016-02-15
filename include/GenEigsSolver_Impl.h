@@ -15,17 +15,17 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
     fac_f = fk;
 
     Vector w(dim_n);
-    Scalar beta = 0.0;
+    Scalar beta = std::sqrt(arma::dot(fac_f, fac_f));
     // Keep the upperleft k x k submatrix of H and set other elements to 0
     fac_H.tail_cols(ncv - from_k).zeros();
     fac_H.submat(arma::span(from_k, ncv - 1), arma::span(0, from_k - 1)).zeros();
     for(int i = from_k; i <= to_m - 1; i++)
     {
-        beta = std::sqrt(arma::dot(fac_f, fac_f));
+        // v <- f / ||f||
         fac_V.col(i) = fac_f / beta; // The (i+1)-th column
         fac_H(i, i - 1) = beta;
 
-        // w = A * v, v = fac_V.col(i)
+        // w <- A * v, v = fac_V.col(i)
         op->perform_op(fac_V.colptr(i), w.memptr());
         nmatop++;
 
@@ -33,20 +33,23 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
         Matrix Vs(fac_V.memptr(), dim_n, i + 1, false);
         // h = fac_H(0:i, i)
         Vector h(fac_H.colptr(i), i + 1, false);
+        // h <- V' * w
         h = Vs.t() * w;
 
+        // f <- w - V * h
         fac_f = w - Vs * h;
-        // Correct f if it is not orthogonal to V
-        // Typically the largest absolute value occurs in
-        // the first element, i.e., <v1, f>, so we use this
-        // to test the orthogonality
-        Scalar v1f = arma::dot(fac_f, fac_V.col(0));
-        if(v1f > prec || v1f < -prec)
+        beta = std::sqrt(arma::dot(fac_f, fac_f));
+
+        // f/||f|| is going to be the next column of V, so we need to test
+        // whether V' * (f/||f||) ~= 0
+        Vector Vf = Vs.t() * fac_f;
+        if(arma::abs(Vf).max() > prec * beta)
         {
-            Vector Vf(i + 1);
-            Vf.tail(i) = fac_V.cols(1, i).t() * fac_f;
-            Vf[0] = v1f;
+            // f <- f - V * Vf
             fac_f -= Vs * Vf;
+            // h <- h + Vf
+            h += Vf;
+            beta = std::sqrt(arma::dot(fac_f, fac_f));
         }
     }
 }
