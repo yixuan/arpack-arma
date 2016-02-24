@@ -40,16 +40,25 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
         fac_f = w - Vs * h;
         beta = std::sqrt(arma::dot(fac_f, fac_f));
 
+        if(beta > 0.717 * std::sqrt(arma::dot(h, h)))
+            continue;
+
         // f/||f|| is going to be the next column of V, so we need to test
         // whether V' * (f/||f||) ~= 0
         Vector Vf = Vs.t() * fac_f;
-        if(arma::abs(Vf).max() > prec * beta)
+        // If not, iteratively correct the residual
+        int count = 0;
+        while(count < 5 && arma::abs(Vf).max() > prec * beta)
         {
             // f <- f - V * Vf
             fac_f -= Vs * Vf;
             // h <- h + Vf
             h += Vf;
+            // beta <- ||f||
             beta = std::sqrt(arma::dot(fac_f, fac_f));
+
+            Vf = Vs.t() * fac_f;
+            count++;
         }
     }
 }
