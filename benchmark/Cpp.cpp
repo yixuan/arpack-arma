@@ -8,7 +8,7 @@
 #include <MatOp/SparseGenMatProd.h>
 
 void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
-                  double &time_used, double &prec_err)
+                  double &time_used, double &prec_err, int &nops)
 {
     double start, end;
     start = get_wall_time();
@@ -19,7 +19,7 @@ void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
-    int nops = eigs.num_operations();
+    nops = eigs.num_operations();
 
     arma::vec evals = eigs.eigenvalues();
     arma::mat evecs = eigs.eigenvectors();
@@ -45,7 +45,7 @@ void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 
 
 void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
-                  double &time_used, double &prec_err)
+                  double &time_used, double &prec_err, int &nops)
 {
     double start, end;
     start = get_wall_time();
@@ -56,8 +56,7 @@ void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
-    int nops = eigs.num_operations();
-    // std::cout << "nops = " << nops << std::endl;
+    nops = eigs.num_operations();
 
     arma::cx_vec evals = eigs.eigenvalues();
     arma::cx_mat evecs = eigs.eigenvectors();
@@ -83,7 +82,7 @@ void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m,
 
 
 void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
-                         double &time_used, double &prec_err)
+                         double &time_used, double &prec_err, int &nops)
 {
     double start, end;
     start = get_wall_time();
@@ -94,7 +93,7 @@ void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
 
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
-    int nops = eigs.num_operations();
+    nops = eigs.num_operations();
 
     arma::vec evals = eigs.eigenvalues();
     arma::mat evecs = eigs.eigenvectors();
@@ -109,7 +108,7 @@ void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
 
 
 void sparse_eigs_gen_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
-                         double &time_used, double &prec_err)
+                         double &time_used, double &prec_err, int &nops)
 {
     double start, end;
     start = get_wall_time();
@@ -120,7 +119,7 @@ void sparse_eigs_gen_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m,
 
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
-    int nops = eigs.num_operations();
+    nops = eigs.num_operations();
 
     arma::cx_vec evals = eigs.eigenvalues();
     arma::cx_mat evecs = eigs.eigenvectors();

@@ -4,14 +4,14 @@
 #include <string>
 
 
-void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
-void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
-void sparse_eigs_sym_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
-void sparse_eigs_gen_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
-void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
-void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
-void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
-void sparse_eigs_gen_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err);
+void eigs_sym_F77(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
+void eigs_gen_F77(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
+void sparse_eigs_sym_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
+void sparse_eigs_gen_F77(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
+void eigs_sym_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
+void eigs_gen_Cpp(arma::mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
+void sparse_eigs_sym_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
+void sparse_eigs_gen_Cpp(arma::sp_mat &M, arma::vec &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
 
 
 void print_header(std::string title)
@@ -23,27 +23,35 @@ void print_header(std::string title)
     std::cout << std::string((width - title.length()) / 2, ' ') << title << std::endl;
     std::cout << std::string(width, '-') << std::endl;
 
-    std::cout << std::left << std::setw(12) << std::setfill(sep) << "mat_size";
-    std::cout << std::left << std::setw(11) << std::setfill(sep) << "dataset";
-    std::cout << std::left << std::setw(15) << std::setfill(sep) << "F77_time/ms";
-    std::cout << std::left << std::setw(13) << std::setfill(sep) << "F77_error";
-    std::cout << std::left << std::setw(15) << std::setfill(sep) << "C++_time/ms";
-    std::cout << std::left << std::setw(13) << std::setfill(sep) << "C++_error";
+    std::cout << std::left << std::setw(7) << std::setfill(sep) << "size";
+    std::cout << std::left << std::setw(10) << std::setfill(sep) << "dataset";
+    std::cout << std::left << std::setw(11) << std::setfill(sep) << "F77/time";
+    std::cout << std::left << std::setw(13) << std::setfill(sep) << "error";
+    std::cout << std::left << std::setw(7) << std::setfill(sep) << "nops";
+    std::cout << std::left << std::setw(11) << std::setfill(sep) << "C++/time";
+    std::cout << std::left << std::setw(13) << std::setfill(sep) << "error";
+    std::cout << std::left << std::setw(7) << std::setfill(sep) << "nops";
     std::cout << std::endl;
 
     std::cout << std::string(width, '-') << std::endl;
 }
 
-void print_row(int n, int dataset, double time_f77, double err_f77, double time_cpp, double err_cpp)
+void print_row(int n, int dataset,
+    double time_f77, double err_f77, int nops_f77,
+    double time_cpp, double err_cpp, int nops_cpp)
 {
     const char sep = ' ';
 
-    std::cout << std::left << std::setw(12) << std::setfill(sep) << n;
-    std::cout << std::left << std::setw(11) << std::setfill(sep) << dataset;
-    std::cout << std::left << std::setw(15) << std::setfill(sep) << time_f77;
+    std::cout.precision(5);
+
+    std::cout << std::left << std::setw(7) << std::setfill(sep) << n;
+    std::cout << std::left << std::setw(10) << std::setfill(sep) << dataset;
+    std::cout << std::left << std::setw(11) << std::setfill(sep) << time_f77;
     std::cout << std::left << std::setw(13) << std::setfill(sep) << err_f77;
-    std::cout << std::left << std::setw(15) << std::setfill(sep) << time_cpp;
+    std::cout << std::left << std::setw(7) << std::setfill(sep) << nops_f77;
+    std::cout << std::left << std::setw(11) << std::setfill(sep) << time_cpp;
     std::cout << std::left << std::setw(13) << std::setfill(sep) << err_cpp;
+    std::cout << std::left << std::setw(7) << std::setfill(sep) << nops_cpp;
     std::cout << std::endl;
 }
 
@@ -57,6 +65,7 @@ void run_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
 {
     double time_f77, time_cpp;
     double err_f77, err_cpp;
+    int nops_f77, nops_cpp;
 
     for(int i = 0; i < n_experiment; i++)
     {
@@ -69,9 +78,9 @@ void run_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
 
         for(int j = 0; j < n_replicate; j++)
         {
-            eigs_sym_F77(M, init_resid, k, m, time_f77, err_f77);
-            eigs_sym_Cpp(M, init_resid, k, m, time_cpp, err_cpp);
-            print_row(n, i + 1, time_f77, err_f77, time_cpp, err_cpp);
+            eigs_sym_F77(M, init_resid, k, m, time_f77, err_f77, nops_f77);
+            eigs_sym_Cpp(M, init_resid, k, m, time_cpp, err_cpp, nops_cpp);
+            print_row(n, i + 1, time_f77, err_f77, nops_f77, time_cpp, err_cpp, nops_cpp);
         }
     }
 }
@@ -80,6 +89,7 @@ void run_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
 {
     double time_f77, time_cpp;
     double err_f77, err_cpp;
+    int nops_f77, nops_cpp;
 
     for(int i = 0; i < n_experiment; i++)
     {
@@ -91,9 +101,9 @@ void run_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
 
         for(int j = 0; j < n_replicate; j++)
         {
-            eigs_gen_F77(A, init_resid, k, m, time_f77, err_f77);
-            eigs_gen_Cpp(A, init_resid, k, m, time_cpp, err_cpp);
-            print_row(n, i + 1, time_f77, err_f77, time_cpp, err_cpp);
+            eigs_gen_F77(A, init_resid, k, m, time_f77, err_f77, nops_f77);
+            eigs_gen_Cpp(A, init_resid, k, m, time_cpp, err_cpp, nops_cpp);
+            print_row(n, i + 1, time_f77, err_f77, nops_f77, time_cpp, err_cpp, nops_cpp);
         }
     }
 }
@@ -102,6 +112,7 @@ void run_sparse_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
 {
     double time_f77, time_cpp;
     double err_f77, err_cpp;
+    int nops_f77, nops_cpp;
 
     for(int i = 0; i < n_experiment; i++)
     {
@@ -114,9 +125,9 @@ void run_sparse_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
 
         for(int j = 0; j < n_replicate; j++)
         {
-            sparse_eigs_sym_F77(M, init_resid, k, m, time_f77, err_f77);
-            sparse_eigs_sym_Cpp(M, init_resid, k, m, time_cpp, err_cpp);
-            print_row(n, i + 1, time_f77, err_f77, time_cpp, err_cpp);
+            sparse_eigs_sym_F77(M, init_resid, k, m, time_f77, err_f77, nops_f77);
+            sparse_eigs_sym_Cpp(M, init_resid, k, m, time_cpp, err_cpp, nops_cpp);
+            print_row(n, i + 1, time_f77, err_f77, nops_f77, time_cpp, err_cpp, nops_cpp);
         }
     }
 }
@@ -125,6 +136,7 @@ void run_sparse_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
 {
     double time_f77, time_cpp;
     double err_f77, err_cpp;
+    int nops_f77, nops_cpp;
 
     for(int i = 0; i < n_experiment; i++)
     {
@@ -136,9 +148,9 @@ void run_sparse_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
 
         for(int j = 0; j < n_replicate; j++)
         {
-            sparse_eigs_gen_F77(A, init_resid, k, m, time_f77, err_f77);
-            sparse_eigs_gen_Cpp(A, init_resid, k, m, time_cpp, err_cpp);
-            print_row(n, i + 1, time_f77, err_f77, time_cpp, err_cpp);
+            sparse_eigs_gen_F77(A, init_resid, k, m, time_f77, err_f77, nops_f77);
+            sparse_eigs_gen_Cpp(A, init_resid, k, m, time_cpp, err_cpp, nops_cpp);
+            print_row(n, i + 1, time_f77, err_f77, nops_f77, time_cpp, err_cpp, nops_cpp);
         }
     }
 }
