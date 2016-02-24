@@ -14,18 +14,19 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
 
     fac_f = fk;
 
-    Vector v(dim_n), w(dim_n);
-    Scalar beta = 0.0, Hii = 0.0;
+    Vector w(dim_n);
+    Scalar beta = std::sqrt(arma::dot(fac_f, fac_f)), Hii = 0.0;
     // Keep the upperleft k x k submatrix of H and set other elements to 0
     fac_H.tail_cols(ncv - from_k).zeros();
     fac_H.submat(arma::span(from_k, ncv - 1), arma::span(0, from_k - 1)).zeros();
     for(int i = from_k; i <= to_m - 1; i++)
     {
-        beta = arma::norm(fac_f);
-        v = fac_f / beta;
-        fac_V.col(i) = v; // The (i+1)-th column
+        Vector v(fac_V.colptr(i), dim_n, false);
+        // v <- f / ||f||
+        v = fac_f / beta; // The (i+1)-th column
         fac_H(i, i - 1) = beta;
 
+        // w <- A * v, v = fac_V.col(i)
         op->perform_op(v.memptr(), w.memptr());
         nmatop++;
 
@@ -33,18 +34,29 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
         fac_H(i - 1, i) = beta;
         fac_H(i, i) = Hii;
 
+        // f <- w - V * V' * w
         fac_f = w - beta * fac_V.col(i - 1) - Hii * v;
-        // Correct f if it is not orthogonal to V
-        // Typically the largest absolute value occurs in
-        // the first element, i.e., <v1, f>, so we use this
-        // to test the orthogonality
-        Scalar v1f = arma::dot(fac_f, fac_V.col(0));
-        if(v1f > prec || v1f < -prec)
+        beta = std::sqrt(arma::dot(fac_f, fac_f));
+
+        // f/||f|| is going to be the next column of V, so we need to test
+        // whether V' * (f/||f||) ~= 0
+        Matrix Vs(fac_V.memptr(), dim_n, i + 1, false); // First i+1 columns
+        Vector Vf = Vs.t() * fac_f;
+        // If not, iteratively correct the residual
+        int count = 0;
+        while(count < 5 && arma::abs(Vf).max() > prec * beta)
         {
-            Vector Vf(i + 1);
-            Vf.tail(i) = fac_V.cols(1, i).t() * fac_f;
-            Vf[0] = v1f;
-            fac_f -= fac_V.head_cols(i + 1) * Vf;
+            // f <- f - V * Vf
+            fac_f -= Vs * Vf;
+            // h <- h + Vf
+            fac_H(i - 1, i) += Vf[i - 1];
+            fac_H(i, i - 1) = fac_H(i - 1, i);
+            fac_H(i, i) += Vf[i];
+            // beta <- ||f||
+            beta = std::sqrt(arma::dot(fac_f, fac_f));
+
+            Vf = Vs.t() * fac_f;
+            count++;
         }
     }
 }
