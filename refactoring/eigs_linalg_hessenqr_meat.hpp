@@ -96,7 +96,7 @@ UpperHessenbergQR<eT>::matrix_RQ()
     throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
   // Make a copy of the R matrix
-  Mat<eT> RQ = arma::trimatu(mat_T);
+  Mat<eT> RQ = trimatu(mat_T);
 
   eT *c = rot_cos.memptr(),
      *s = rot_sin.memptr();
@@ -116,9 +116,9 @@ UpperHessenbergQR<eT>::matrix_RQ()
       Yi1[j] = (*s) * tmp + (*c) * Yi1[j];
       }
 
-    /* Yi = RQ(arma::span(0, i + 1), i);
-    RQ(arma::span(0, i + 1), i)     = (*c) * Yi - (*s) * RQ(arma::span(0, i + 1), i + 1);
-    RQ(arma::span(0, i + 1), i + 1) = (*s) * Yi + (*c) * RQ(arma::span(0, i + 1), i + 1); */
+    /* Yi = RQ(span(0, i + 1), i);
+    RQ(span(0, i + 1), i)     = (*c) * Yi - (*s) * RQ(span(0, i + 1), i + 1);
+    RQ(span(0, i + 1), i + 1) = (*s) * Yi + (*c) * RQ(span(0, i + 1), i + 1); */
     c++;
     s++;
     }
@@ -280,7 +280,7 @@ TridiagQR<eT>::matrix_RQ()
     throw std::logic_error("TridiagQR: need to call compute() first");
 
   // Make a copy of the R matrix
-  Mat<eT> RQ(this->n, this->n, arma::fill::zeros);
+  Mat<eT> RQ(this->n, this->n, fill::zeros);
   RQ.diag() = this->mat_T.diag();
   RQ.diag(1) = this->mat_T.diag(1);
 
