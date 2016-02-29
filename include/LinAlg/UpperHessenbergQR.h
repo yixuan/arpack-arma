@@ -101,6 +101,7 @@ public:
             r = std::sqrt(xi * xi + xj * xj);
             if(r <= eps)
             {
+                r = 0;
                 rot_cos[i] = c = 1;
                 rot_sin[i] = s = 0;
             } else {
@@ -163,7 +164,7 @@ public:
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         // Make a copy of the R matrix
-        Matrix RQ = mat_T;
+        Matrix RQ = arma::trimatu(mat_T);
 
         Scalar *c = rot_cos.memptr(),
                *s = rot_sin.memptr();
@@ -461,6 +462,7 @@ public:
             r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
             if(r <= eps)
             {
+                r = 0;
                 *c = 1;
                 *s = 0;
             } else {
@@ -510,6 +512,7 @@ public:
         r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
         if(r <= eps)
         {
+            r = 0;
             *c = 1;
             *s = 0;
         } else {
