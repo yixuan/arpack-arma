@@ -16,7 +16,7 @@ UpperHessenbergQR<eT>::UpperHessenbergQR()
 
 template<typename eT>
 inline
-UpperHessenbergQR<eT>::UpperHessenbergQR(const Mat<eT>& mat) :
+UpperHessenbergQR<eT>::UpperHessenbergQR(const Mat<eT>& mat)
   : n(mat.n_rows)
   , mat_T(n, n)
   , rot_cos(n - 1)
@@ -40,7 +40,7 @@ UpperHessenbergQR<eT>::compute(const Mat<eT>& mat)
   // Make a copy of mat
   std::copy(mat.memptr(), mat.memptr() + mat.n_elem, mat_T.memptr());
 
-  eT xi, xj, r, c, s, eps = std::numeric_limits<Scalar>::epsilon();
+  eT xi, xj, r, c, s, eps = std::numeric_limits<eT>::epsilon();
   eT *Tii, *ptr;
   for(uword i = 0; i < n - 1; i++)
     {
@@ -48,7 +48,7 @@ UpperHessenbergQR<eT>::compute(const Mat<eT>& mat)
 
     // Make sure mat_T is upper Hessenberg
     // Zero the elements below mat_T(i + 1, i)
-    std::fill(Tii + 2, Tii + n - i, Scalar(0));
+    std::fill(Tii + 2, Tii + n - i, eT(0));
 
     xi = Tii[0];  // mat_T(i, i)
     xj = Tii[1];  // mat_T(i + 1, i)
@@ -77,7 +77,7 @@ UpperHessenbergQR<eT>::compute(const Mat<eT>& mat)
     ptr = Tii + n; // mat_T(i, k), k = i+1, i+2, ..., n-1
     for(uword j = i + 1; j < n; j++, ptr += n)
       {
-      Scalar tmp = ptr[0];
+      eT tmp = ptr[0];
       ptr[0] = c * tmp - s * ptr[1];
       ptr[1] = s * tmp + c * ptr[1];
       }
@@ -145,7 +145,7 @@ UpperHessenbergQR<eT>::apply_YQ(Mat<eT>& Y)
     {
     Y_col_i  = Y.colptr(i);
     Y_col_i1 = Y.colptr(i + 1);
-    for(Index j = 0; j < nrow; j++)
+    for(uword j = 0; j < nrow; j++)
       {
       eT tmp = Y_col_i[j];
       Y_col_i[j]  = (*c) * tmp - (*s) * Y_col_i1[j];
@@ -197,7 +197,7 @@ TridiagQR<eT>::compute(const Mat<eT>& mat)
      *c = this->rot_cos.memptr(),  // pointer to the cosine vector
      *s = this->rot_sin.memptr(),  // pointer to the sine vector
      r, tmp,
-     eps = std::numeric_limits<Scalar>::epsilon();
+     eps = std::numeric_limits<eT>::epsilon();
   for(uword i = 0; i < this->n - 2; i++)
     {
     // Tii[0] == T[i, i]
