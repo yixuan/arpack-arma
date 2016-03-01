@@ -21,6 +21,7 @@ class UpperHessenbergEigen
 
   static arma_inline bool is_real(std::complex<eT> v, eT eps);
 
+
   public:
 
   //! Default constructor. Computation can

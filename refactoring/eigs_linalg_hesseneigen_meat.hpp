@@ -75,7 +75,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
   eT* work = new eT[3 * n];
   blas_int m;
 
-  lapack::trevc(&side, &howmny, (int*) NULL, &n, mat_T.memptr(), &n,
+  lapack::trevc(&side, &howmny, (blas_int*) NULL, &n, mat_T.memptr(), &n,
                 (eT*) NULL, &n, mat_Z.memptr(), &n, &n, &m, work, &info);
   delete [] work;
 
@@ -117,7 +117,7 @@ UpperHessenbergEigen<eT>::eigenvectors()
       {
       // For real eigenvector, normalize and copy
       eT z_norm = norm(mat_Z.col(i));
-      for(int j = 0; j < n; j++)
+      for(blas_int j = 0; j < n; j++)
         {
         col_ptr[j] = std::complex<eT>(mat_Z(j, i) / z_norm, 0);
         }
@@ -131,7 +131,7 @@ UpperHessenbergEigen<eT>::eigenvectors()
       eT i2 = dot(mat_Z.col(i + 1), mat_Z.col(i + 1));
       eT z_norm = std::sqrt(r2 + i2);
       eT* z_ptr = mat_Z.colptr(i);
-      for(int j = 0; j < n; j++)
+      for(blas_int j = 0; j < n; j++)
         {
         col_ptr[j] = std::complex<eT>(z_ptr[j] / z_norm, z_ptr[j + n] / z_norm);
         col_ptr[j + n] = std::conj(col_ptr[j]);
