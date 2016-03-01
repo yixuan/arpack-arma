@@ -1112,7 +1112,6 @@ namespace lapack
     {
     return arma_fortran(arma_ilaenv)(ispec, name, opts, n1, n2, n3, n4);
     }
-  }
 
 
 
@@ -1127,26 +1126,26 @@ namespace lapack
       {
       typedef float T;
       arma_fortran(arma_ssytrs)(uplo, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
+        }
+      else
+      if(is_double<eT>::value)
+        {
+        typedef double T;
+        arma_fortran(arma_dsytrs)(uplo, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
+        }
+      else
+      if(is_supported_complex_float<eT>::value)
+        {
+        typedef std::complex<float> T;
+        arma_fortran(arma_csytrs)(uplo, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
+        }
+      else
+      if(is_supported_complex_double<eT>::value)
+        {
+        typedef std::complex<double> T;
+        arma_fortran(arma_zsytrs)(uplo, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
+        }
       }
-    else
-    if(is_double<eT>::value)
-      {
-      typedef double T;
-      arma_fortran(arma_dsytrs)(uplo, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
-      }
-    else
-    if(is_supported_complex_float<eT>::value)
-      {
-      typedef std::complex<float> T;
-      arma_fortran(arma_csytrs)(uplo, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
-      }
-    else
-    if(is_supported_complex_double<eT>::value)
-      {
-      typedef std::complex<double> T;
-      arma_fortran(arma_zsytrs)(uplo, n, nrhs, (T*)a, lda, ipiv, (T*)b, ldb, info);
-      }
-    }
 
 
 
@@ -1247,6 +1246,9 @@ namespace lapack
       arma_fortran(arma_dtrevc)(side, howmny, select, n, (T*)t, ldt, (T*)vl, ldvl, (T*)vr, ldvr, mm, m, (T*)work, info);
       }
     }
+
+
+  }
 
 
 #endif
