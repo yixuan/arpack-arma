@@ -91,7 +91,8 @@ public:
         evals.set_size(n);
 
         mat_Z.eye();
-        mat_T = mat;
+        // mat_T = mat;
+        std::copy(mat.memptr(), mat.memptr() + mat.n_elem, mat_T.memptr());
 
         int want_T = 1, want_Z = 1;
         int ilo = 1, ihi = n, iloz = 1, ihiz = n;
