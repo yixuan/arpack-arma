@@ -1,7 +1,7 @@
 #include <armadillo>
 namespace arma {
-  #include "../eigs_linalg_hessenqr_bones.hpp"
-  #include "../eigs_linalg_hessenqr_meat.hpp"
+    #include "../eigs_linalg_hessenqr_bones.hpp"
+    #include "../eigs_linalg_hessenqr_meat.hpp"
 }
 
 #define CATCH_CONFIG_MAIN

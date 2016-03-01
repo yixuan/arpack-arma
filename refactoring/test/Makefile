@@ -8,10 +8,11 @@ HEADERS = $(wildcard ../*.hpp)
 
 .PHONY: all test clean
 
-all: QR.out
+all: QR.out Eigen.out
 
 test:
 	-./QR.out
+	-./Eigen.out
 
 %.out: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
