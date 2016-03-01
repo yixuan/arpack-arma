@@ -9,6 +9,18 @@
 template<typename eT>
 class UpperHessenbergQR
   {
+  protected:
+
+  uword   n;
+  Mat<eT> mat_T;
+  // Gi = [ cos[i]  sin[i]]
+  //      [-sin[i]  cos[i]]
+  // Q = G1 * G2 * ... * G_{n-1}
+  Col<eT> rot_cos;
+  Col<eT> rot_sin;
+  bool    computed;
+
+
   public:
 
   //! Default constructor. Computation can
@@ -28,18 +40,6 @@ class UpperHessenbergQR
 
   //! Apply the \f$Q\f$ matrix to another matrix \f$Y\f$.
   inline void apply_YQ(Mat<eT>& Y);
-
-
-  protected:
-
-  uword   n;
-  Mat<eT> mat_T;
-  // Gi = [ cos[i]  sin[i]]
-  //      [-sin[i]  cos[i]]
-  // Q = G1 * G2 * ... * G_{n-1}
-  Col<eT> rot_cos;
-  Col<eT> rot_sin;
-  bool    computed;
   };
 
 
