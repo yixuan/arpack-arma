@@ -2,6 +2,8 @@
 namespace arma {
     #include "../eigs_linalg_hessenqr_bones.hpp"
     #include "../eigs_linalg_hessenqr_meat.hpp"
+    #include "../eigs_linalg_doubleshiftqr_bones.hpp"
+    #include "../eigs_linalg_doubleshiftqr_meat.hpp"
 }
 
 #define CATCH_CONFIG_MAIN
@@ -11,6 +13,7 @@ using arma::mat;
 using arma::vec;
 using arma::UpperHessenbergQR;
 using arma::TridiagQR;
+using arma::DoubleShiftQR;
 
 template <typename Solver>
 void run_test(mat &H)
@@ -69,4 +72,49 @@ TEST_CASE("QR of Tridiagonal matrix", "[QR]")
     H.diag(1) = m.diag(-1);
 
     run_test< TridiagQR<double> >(H);
+}
+
+
+TEST_CASE("QR decomposition with double shifts", "QR")
+{
+    arma::arma_rng::set_seed(123);
+    int n = 100;
+    mat m(n, n, arma::fill::randn);
+    mat H = arma::trimatu(m);
+    H.diag(-1) = m.diag(-1);
+    H(1, 0) = H(3, 2) = H(6, 5) = 0;
+
+    double s = 2, t = 3;
+
+    mat M = H * H - s * H;
+    M.diag() += t;
+
+    mat Q0, R0;
+    arma::qr(Q0, R0, M);
+
+    DoubleShiftQR<double> decomp(H, s, t);
+    mat Q(n, n, arma::fill::eye);
+    decomp.apply_YQ(Q);
+
+    // Equal up to signs
+    INFO( "max error of Q = " << arma::abs(arma::abs(Q) - arma::abs(Q0)).max() );
+    REQUIRE( arma::abs(arma::abs(Q) - arma::abs(Q0)).max() == Approx(0.0) );
+
+    // Test Q'HQ
+    INFO( "max error of Q'HQ = " << arma::abs(decomp.matrix_QtHQ() - Q.t() * H * Q).max() );
+    REQUIRE( arma::abs(decomp.matrix_QtHQ() - Q.t() * H * Q).max() == Approx(0.0) );
+
+    // Test apply functions
+    vec y(n, arma::fill::randu);
+    mat Y(n / 2, n, arma::fill::randu);
+
+    vec Qty = y;
+    decomp.apply_QtY(Qty);
+    INFO( "max error of Q'y = " << arma::abs(Qty - Q.t() * y).max() );
+    REQUIRE( arma::abs(Qty - Q.t() * y).max() == Approx(0.0) );
+
+    mat YQ = Y;
+    decomp.apply_YQ(YQ);
+    INFO( "max error of YQ = " << arma::abs(YQ - Y * Q).max() );
+    REQUIRE( arma::abs(YQ - Y * Q).max() == Approx(0.0) );
 }
