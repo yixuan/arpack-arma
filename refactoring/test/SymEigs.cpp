@@ -9,10 +9,9 @@ namespace arma {
     #include "../eigs_selection.hpp"
     #include "../eigs_sym_bones.hpp"
     #include "../eigs_sym_meat.hpp"
+    #include "../eigs_op_densegenprod.hpp"
+    #include "../eigs_op_sparsegenprod.hpp"
 }
-
-#include <MatOp/DenseGenMatProd.h>
-#include <MatOp/SparseGenMatProd.h>
 
 #define CATCH_CONFIG_MAIN
 #include "../../test/catch.hpp"
@@ -22,6 +21,8 @@ typedef arma::vec Vector;
 typedef arma::sp_mat SpMatrix;
 using arma::SymEigsSolver;
 using arma::EigsSelect;
+using arma::DenseGenMatProd;
+using arma::SparseGenMatProd;
 
 // Traits to obtain operation type from matrix type
 template <typename MatType>
