@@ -17,7 +17,7 @@ class SymEigsSolver
 
   // Sort the first nev Ritz pairs in decreasing magnitude order
   // This is used to return the final results
-  inline virtual void sort_ritzpair();
+  virtual void sort_ritzpair();
 
 
   private:

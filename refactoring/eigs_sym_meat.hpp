@@ -73,7 +73,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
     return;
 
   TridiagQR<eT> decomp;
-  Mat<eT> Q = arma::eye< Mat<eT> >(ncv, ncv);
+  Mat<eT> Q = eye< Mat<eT> >(ncv, ncv);
 
   for(uword i = k; i < ncv; i++)
     {
