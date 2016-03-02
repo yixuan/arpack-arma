@@ -71,8 +71,7 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
         return;
 
     TridiagQR<Scalar> decomp;
-    Vector em(ncv, arma::fill::zeros);
-    em[ncv - 1] = 1;
+    Matrix Q = arma::eye<Matrix>(ncv, ncv);
 
     for(int i = k; i < ncv; i++)
     {
@@ -80,17 +79,32 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::restart(int k)
         fac_H.diag() -= ritz_val[i];
         decomp.compute(fac_H);
 
-        // V -> VQ
-        decomp.apply_YQ(fac_V);
+        // Q -> Q * Qi
+        decomp.apply_YQ(Q);
+
         // H -> Q'HQ
         // Since QR = H - mu * I, we have H = QR + mu * I
         // and therefore Q'HQ = RQ + mu * I
         fac_H = decomp.matrix_RQ();
         fac_H.diag() += ritz_val[i];
-        // em -> Q'em
-        decomp.apply_QtY(em);
     }
-    Vector fk = fac_f * em[k - 1] + fac_V.col(k) * fac_H(k, k - 1);
+
+    // V -> VQ, only need to update the first k+1 columns
+    // Q has some elements being zero
+    // The first (ncv - k + i) elements of the i-th column of Q are non-zero
+    Matrix Vs(dim_n, k + 1);
+    int nnz;
+    for(int i = 0; i < k; i++)
+    {
+        nnz = ncv - k + i + 1;
+        Matrix V(fac_V.memptr(), dim_n, nnz, false);
+        Vector q(Q.colptr(i), nnz, false);
+        Vs.col(i) = V * q;
+    }
+    Vs.col(k) = fac_V * Q.col(k);
+    fac_V.head_cols(k + 1) = Vs;
+
+    Vector fk = fac_f * Q(ncv - 1, k - 1) + fac_V.col(k) * fac_H(k, k - 1);
     factorize_from(k, ncv, fk);
     retrieve_ritzpair();
 }
@@ -138,7 +152,7 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::retrieve_ritzpair()
     /*Vector evals(ncv);
     Matrix evecs(ncv, ncv);
     arma::eig_sym(evals, evecs, arma::symmatl(fac_H));*/
-    TridiagEigen<double> decomp(fac_H);
+    TridiagEigen<Scalar> decomp(fac_H);
     Vector evals = decomp.eigenvalues();
     Matrix evecs = decomp.eigenvectors();
 
