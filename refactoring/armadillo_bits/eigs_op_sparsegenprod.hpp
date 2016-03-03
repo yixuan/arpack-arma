@@ -17,7 +17,7 @@ class SparseGenMatProd
   public:
 
   //! Constructor to create the matrix operation object.
-  inline SparseGenMatProd(SpMat<eT>& mat_)
+  inline SparseGenMatProd(const SpMat<eT>& mat_)
     : mat(&mat_)
   {}
 
