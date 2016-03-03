@@ -4,17 +4,18 @@ CPPFLAGS = -I..
 LDFLAGS =
 LIBS = -llapack -lblas
 
-HEADERS = $(wildcard ../*.hpp)
+HEADERS = $(wildcard ../armadillo_bits/*.hpp)
 
 .PHONY: all test clean
 
-all: QR.out Eigen.out SymEigs.out GenEigs.out
+all: QR.out Eigen.out SymEigs.out GenEigs.out ArmaSymEigs.out
 
 test:
 	-./QR.out
 	-./Eigen.out
 	-./SymEigs.out
 	-./GenEigs.out
+	-./ArmaSymEigs.out
 
 %.out: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
