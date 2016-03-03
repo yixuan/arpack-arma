@@ -141,18 +141,21 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
     arma_debug_check( (form_val != form_lm) && (form_val != form_sm) && (form_val != form_la) && (form_val != form_sa), "eigs_sym(): unknown form specified" );
 
     SparseGenMatProd<eT> op(X.get_ref());
-    uword n = op->rows();
+    uword n = op.rows();
     uword ncv = n_eigvals + 2 + 1;
     if(ncv < (2 * n_eigvals + 1)) { ncv = 2 * n_eigvals + 1; }
     if(ncv > n)                   { ncv = n; }
-
+    eT tol = std::max(default_tol, std::numeric_limits<eT>::epsilon());
+    eigval.set_size(n_eigvals);
+    eigvec.set_size(n, n_eigvals);
     uword nconv = 0;
+
     if(form_val == form_lm)
       {
       SymEigsSolver< eT, EigsSelect::LARGEST_MAGN, SparseGenMatProd<eT> >
         eigs(&op, n_eigvals, ncv);
       eigs.init();
-      nconv = eigs.compute(1000, default_tol);
+      nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
       eigvec = eigs.eigenvectors();
       }
@@ -162,7 +165,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
         SymEigsSolver< eT, EigsSelect::SMALLEST_MAGN, SparseGenMatProd<eT> >
           eigs(&op, n_eigvals, ncv);
         eigs.init();
-        nconv = eigs.compute(1000, default_tol);
+        nconv = eigs.compute(1000, tol);
         eigval = eigs.eigenvalues();
         eigvec = eigs.eigenvectors();
       }
@@ -172,7 +175,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
         SymEigsSolver< eT, EigsSelect::LARGEST_ALGE, SparseGenMatProd<eT> >
           eigs(&op, n_eigvals, ncv);
         eigs.init();
-        nconv = eigs.compute(1000, default_tol);
+        nconv = eigs.compute(1000, tol);
         eigval = eigs.eigenvalues();
         eigvec = eigs.eigenvectors();
       }
@@ -181,7 +184,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
         SymEigsSolver< eT, EigsSelect::SMALLEST_ALGE, SparseGenMatProd<eT> >
           eigs(&op, n_eigvals, ncv);
         eigs.init();
-        nconv = eigs.compute(1000, default_tol);
+        nconv = eigs.compute(1000, tol);
         eigval = eigs.eigenvalues();
         eigvec = eigs.eigenvectors();
       }
