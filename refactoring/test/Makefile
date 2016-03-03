@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -O2
-CPPFLAGS = -I../../include
+CPPFLAGS = -I..
 LDFLAGS =
 LIBS = -llapack -lblas
 

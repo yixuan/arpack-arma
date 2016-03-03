@@ -1,18 +1,6 @@
 #include <armadillo>
 #include <iostream>
 
-namespace arma {
-    #include "../eigs_linalg_hessenqr_bones.hpp"
-    #include "../eigs_linalg_hessenqr_meat.hpp"
-    #include "../eigs_linalg_tridiageigen_bones.hpp"
-    #include "../eigs_linalg_tridiageigen_meat.hpp"
-    #include "../eigs_selection.hpp"
-    #include "../eigs_sym_bones.hpp"
-    #include "../eigs_sym_meat.hpp"
-    #include "../eigs_op_densegenprod.hpp"
-    #include "../eigs_op_sparsegenprod.hpp"
-}
-
 #define CATCH_CONFIG_MAIN
 #include "../../test/catch.hpp"
 

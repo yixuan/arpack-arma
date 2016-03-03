@@ -1,10 +1,4 @@
 #include <armadillo>
-namespace arma {
-    #include "../eigs_linalg_hesseneigen_bones.hpp"
-    #include "../eigs_linalg_hesseneigen_meat.hpp"
-    #include "../eigs_linalg_tridiageigen_bones.hpp"
-    #include "../eigs_linalg_tridiageigen_meat.hpp"
-}
 
 #define CATCH_CONFIG_MAIN
 #include "../../test/catch.hpp"
