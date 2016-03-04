@@ -85,7 +85,7 @@ class GenEigsSolver
 private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
-    typedef arma::uvec BoolVector;
+    typedef std::vector<bool> BoolVector;
 
     typedef std::complex<Scalar> Complex;
     typedef arma::Mat<Complex> ComplexMatrix;

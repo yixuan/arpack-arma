@@ -116,13 +116,15 @@ template < typename Scalar,
 inline int SymEigsSolver<Scalar, SelectionRule, OpType>::num_converged(Scalar tol)
 {
     // thresh = tol * max(prec, abs(theta)), theta for ritz value
-    Vector rv = arma::abs(ritz_val.head(nev));
-    Vector thresh = tol * arma::clamp(rv, prec, std::max(prec, rv.max()));
-    Vector resid = arma::abs(ritz_vec.tail_rows(1).t()) * arma::norm(fac_f);
-    // Converged "wanted" ritz values
-    ritz_conv = (resid < thresh);
+    const Scalar f_norm = arma::norm(fac_f);
+    for(int i = 0; i < nev; i++)
+    {
+        Scalar thresh = tol * std::max(prec, std::abs(ritz_val[i]));
+        Scalar resid = std::abs(ritz_vec(ncv - 1, i)) * f_norm;
+        ritz_conv[i] = (resid < thresh);
+    }
 
-    return arma::sum(ritz_conv);
+    return std::count(ritz_conv.begin(), ritz_conv.end(), true);
 }
 
 // Return the adjusted nev for restarting
@@ -234,7 +236,7 @@ inline void SymEigsSolver<Scalar, SelectionRule, OpType>::init(Scalar *init_resi
     fac_f.zeros(dim_n);
     ritz_val.zeros(ncv);
     ritz_vec.zeros(ncv, nev);
-    ritz_conv.zeros(nev);
+    ritz_conv.assign(nev, false);
 
     nmatop = 0;
     niter = 0;
@@ -300,7 +302,7 @@ template < typename Scalar,
            typename OpType >
 inline typename SymEigsSolver<Scalar, SelectionRule, OpType>::Vector SymEigsSolver<Scalar, SelectionRule, OpType>::eigenvalues()
 {
-    int nconv = arma::sum(ritz_conv);
+    int nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
     Vector res(nconv);
 
     if(!nconv)
@@ -325,7 +327,7 @@ template < typename Scalar,
            typename OpType >
 inline typename SymEigsSolver<Scalar, SelectionRule, OpType>::Matrix SymEigsSolver<Scalar, SelectionRule, OpType>::eigenvectors(int nvec)
 {
-    int nconv = arma::sum(ritz_conv);
+    int nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
     nvec = std::min(nvec, nconv);
     Matrix res(dim_n, nvec);
 

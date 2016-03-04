@@ -142,7 +142,7 @@ class SymEigsSolver
 private:
     typedef arma::Mat<Scalar> Matrix;
     typedef arma::Col<Scalar> Vector;
-    typedef arma::uvec BoolVector;
+    typedef std::vector<bool> BoolVector;
 
 protected:
     OpType *op;           // object to conduct matrix operation,
