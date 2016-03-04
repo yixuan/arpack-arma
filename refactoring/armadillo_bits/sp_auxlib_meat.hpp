@@ -162,31 +162,31 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
     else
     if(form_val == form_sm)
       {
-        SymEigsSolver< eT, EigsSelect::SMALLEST_MAGN, SparseGenMatProd<eT> >
-          eigs(&op, n_eigvals, ncv);
-        eigs.init();
-        nconv = eigs.compute(1000, tol);
-        eigval = eigs.eigenvalues();
-        eigvec = eigs.eigenvectors();
+      SymEigsSolver< eT, EigsSelect::SMALLEST_MAGN, SparseGenMatProd<eT> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
       }
     else
     if(form_val == form_la)
       {
-        SymEigsSolver< eT, EigsSelect::LARGEST_ALGE, SparseGenMatProd<eT> >
-          eigs(&op, n_eigvals, ncv);
-        eigs.init();
-        nconv = eigs.compute(1000, tol);
-        eigval = eigs.eigenvalues();
-        eigvec = eigs.eigenvectors();
+      SymEigsSolver< eT, EigsSelect::LARGEST_ALGE, SparseGenMatProd<eT> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
       }
     else
       {
-        SymEigsSolver< eT, EigsSelect::SMALLEST_ALGE, SparseGenMatProd<eT> >
-          eigs(&op, n_eigvals, ncv);
-        eigs.init();
-        nconv = eigs.compute(1000, tol);
-        eigval = eigs.eigenvalues();
-        eigvec = eigs.eigenvectors();
+      SymEigsSolver< eT, EigsSelect::SMALLEST_ALGE, SparseGenMatProd<eT> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
       }
 
     return (nconv >= n_eigvals);
@@ -332,15 +332,80 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
     }
   #else
     {
-    arma_ignore(eigval);
-    arma_ignore(eigvec);
-    arma_ignore(X);
-    arma_ignore(n_eigvals);
-    arma_ignore(form_str);
-    arma_ignore(default_tol);
+    const form_type form_val = sp_auxlib::interpret_form_str(form_str);
 
-    arma_stop("eigs_gen(): use of ARPACK must be enabled");
-    return false;
+    arma_debug_check( (form_val == form_none), "eigs_gen(): unknown form specified" );
+
+    SparseGenMatProd<T> op(X.get_ref());
+    uword n = op.rows();
+    uword ncv = n_eigvals + 2 + 1;
+    if(ncv < (2 * n_eigvals + 1)) { ncv = 2 * n_eigvals + 1; }
+    if(ncv > n)                   { ncv = n; }
+    T tol = std::max(default_tol, std::numeric_limits<T>::epsilon());
+    eigval.set_size(n_eigvals);
+    eigvec.set_size(n, n_eigvals);
+    uword nconv = 0;
+
+    if(form_val == form_lm)
+      {
+      GenEigsSolver< T, EigsSelect::LARGEST_MAGN, SparseGenMatProd<T> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
+      }
+    else
+    if(form_val == form_sm)
+      {
+      GenEigsSolver< T, EigsSelect::SMALLEST_MAGN, SparseGenMatProd<T> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
+      }
+    else
+    if(form_val == form_lr)
+      {
+      GenEigsSolver< T, EigsSelect::LARGEST_REAL, SparseGenMatProd<T> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
+      }
+    else
+    if(form_val == form_sr)
+      {
+      GenEigsSolver< T, EigsSelect::SMALLEST_REAL, SparseGenMatProd<T> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
+      }
+    else
+    if(form_val == form_li)
+      {
+      GenEigsSolver< T, EigsSelect::LARGEST_IMAG, SparseGenMatProd<T> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
+      }
+    else
+      {
+      GenEigsSolver< T, EigsSelect::SMALLEST_IMAG, SparseGenMatProd<T> >
+        eigs(&op, n_eigvals, ncv);
+      eigs.init();
+      nconv = eigs.compute(1000, tol);
+      eigval = eigs.eigenvalues();
+      eigvec = eigs.eigenvectors();
+      }
+
+    return (nconv >= n_eigvals);
     }
   #endif
   }
