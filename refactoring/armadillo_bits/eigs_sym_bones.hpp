@@ -11,9 +11,9 @@ class SymEigsSolver
   {
   protected:
 
-  OpType*     op;        // object to conduct matrix operation, e.g. matrix-vector product
-  const uword nev;       // number of eigenvalues requested
-  Col<eT>     ritz_val;  // ritz values
+  OpType*           op;        // object to conduct matrix operation, e.g. matrix-vector product
+  const uword       nev;       // number of eigenvalues requested
+  Col<eT>           ritz_val;  // ritz values
 
   // Sort the first nev Ritz pairs in decreasing magnitude order
   // This is used to return the final results
@@ -22,19 +22,19 @@ class SymEigsSolver
 
   private:
 
-  const uword dim_n;     // dimension of matrix A
-  const uword ncv;       // number of ritz values
-  uword       nmatop;    // number of matrix operations called
-  uword       niter;     // number of restarting iterations
-  Mat<eT>     fac_V;     // V matrix in the Arnoldi factorization
-  Mat<eT>     fac_H;     // H matrix in the Arnoldi factorization
-  Col<eT>     fac_f;     // residual in the Arnoldi factorization
-  Mat<eT>     ritz_vec;  // ritz vectors
-  Col<uword>  ritz_conv; // indicator of the convergence of ritz values
-  const eT    prec;      // precision parameter used to test convergence
-                         // prec = epsilon^(2/3)
-                         // epsilon is the machine precision,
-                         // e.g. ~= 1e-16 for the "double" type
+  const uword       dim_n;     // dimension of matrix A
+  const uword       ncv;       // number of ritz values
+  uword             nmatop;    // number of matrix operations called
+  uword             niter;     // number of restarting iterations
+  Mat<eT>           fac_V;     // V matrix in the Arnoldi factorization
+  Mat<eT>           fac_H;     // H matrix in the Arnoldi factorization
+  Col<eT>           fac_f;     // residual in the Arnoldi factorization
+  Mat<eT>           ritz_vec;  // ritz vectors
+  std::vector<bool> ritz_conv; // indicator of the convergence of ritz values
+  const eT          prec;      // precision parameter used to test convergence
+                               // prec = epsilon^(2/3)
+                               // epsilon is the machine precision,
+                               // e.g. ~= 1e-16 for the "double" type
 
   // Arnoldi factorization starting from step-k
   inline void factorize_from(uword from_k, uword to_m, const Col<eT>& fk);

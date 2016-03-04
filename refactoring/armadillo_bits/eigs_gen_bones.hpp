@@ -30,7 +30,7 @@ class GenEigsSolver
   Mat<eT>                 fac_H;     // H matrix in the Arnoldi factorization
   Col<eT>                 fac_f;     // residual in the Arnoldi factorization
   Mat< std::complex<eT> > ritz_vec;  // ritz vectors
-  Col<uword>              ritz_conv; // indicator of the convergence of ritz values
+  std::vector<bool>       ritz_conv; // indicator of the convergence of ritz values
   const eT                prec;      // precision parameter used to test convergence
                                      // prec = epsilon^(2/3)
                                      // epsilon is the machine precision,

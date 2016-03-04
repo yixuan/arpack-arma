@@ -119,13 +119,15 @@ uword
 SymEigsSolver<eT, SelectionRule, OpType>::num_converged(eT tol)
   {
   // thresh = tol * max(prec, abs(theta)), theta for ritz value
-  Col<eT> rv = abs(ritz_val.head(nev));
-  Col<eT> thresh = tol * clamp(rv, prec, std::max(prec, rv.max()));
-  Col<eT> resid = abs(ritz_vec.tail_rows(1).t()) * norm(fac_f);
-  // Converged "wanted" ritz values
-  ritz_conv = (resid < thresh);
+  const eT f_norm = norm(fac_f);
+  for(uword i = 0; i < nev; i++)
+    {
+    eT thresh = tol * std::max(prec, std::abs(ritz_val[i]));
+    eT resid = std::abs(ritz_vec(ncv - 1, i)) * f_norm;
+    ritz_conv[i] = (resid < thresh);
+    }
 
-  return sum(ritz_conv);
+  return std::count(ritz_conv.begin(), ritz_conv.end(), true);
   }
 
 
@@ -205,9 +207,9 @@ SymEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
   SortEigenvalue<eT, EigsSelect::LARGEST_MAGN> sorting(ritz_val.memptr(), nev);
   std::vector<uword> ind = sorting.index();
 
-  Col<eT> new_ritz_val(ncv);
-  Mat<eT> new_ritz_vec(ncv, nev);
-  Col<uword> new_ritz_conv(nev);
+  Col<eT>           new_ritz_val(ncv);
+  Mat<eT>           new_ritz_vec(ncv, nev);
+  std::vector<bool> new_ritz_conv(nev);
 
   for(uword i = 0; i < nev; i++)
     {
@@ -254,7 +256,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   fac_f.zeros(dim_n);
   ritz_val.zeros(ncv);
   ritz_vec.zeros(ncv, nev);
-  ritz_conv.zeros(nev);
+  ritz_conv.assign(nev, false);
 
   nmatop = 0;
   niter = 0;
@@ -323,7 +325,7 @@ inline
 Col<eT>
 SymEigsSolver<eT, SelectionRule, OpType>::eigenvalues()
   {
-  uword nconv = sum(ritz_conv);
+  uword nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
   Col<eT> res(nconv);
 
   if(!nconv)
@@ -349,7 +351,7 @@ inline
 Mat<eT>
 SymEigsSolver<eT, SelectionRule, OpType>::eigenvectors(uword nvec)
   {
-  uword nconv = sum(ritz_conv);
+  uword nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
   nvec = std::min(nvec, nconv);
   Mat<eT> res(dim_n, nvec);
 

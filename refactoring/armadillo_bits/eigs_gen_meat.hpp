@@ -140,15 +140,16 @@ inline
 uword
 GenEigsSolver<eT, SelectionRule, OpType>::num_converged(eT tol)
   {
+  // thresh = tol * max(prec, abs(theta)), theta for ritz value
   const eT f_norm = arma::norm(fac_f);
-  for(uword i = 0; i < ritz_conv.n_elem; i++)
+  for(uword i = 0; i < nev; i++)
     {
     eT thresh = tol * std::max(prec, std::abs(ritz_val[i]));
     eT resid = std::abs(ritz_vec(ncv - 1, i)) * f_norm;
     ritz_conv[i] = (resid < thresh);
     }
 
-  return arma::sum(ritz_conv);
+  return std::count(ritz_conv.begin(), ritz_conv.end(), true);
   }
 
 
@@ -225,7 +226,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
 
   Col< std::complex<eT> > new_ritz_val(ncv);
   Mat< std::complex<eT> > new_ritz_vec(ncv, nev);
-  Col<uword>              new_ritz_conv(nev);
+  std::vector<bool>       new_ritz_conv(nev);
 
   for(uword i = 0; i < nev; i++)
     {
@@ -272,7 +273,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   fac_f.zeros(dim_n);
   ritz_val.zeros(ncv);
   ritz_vec.zeros(ncv, nev);
-  ritz_conv.zeros(nev);
+  ritz_conv.assign(nev, false);
 
   nmatop = 0;
   niter = 0;
@@ -341,7 +342,7 @@ inline
 Col< std::complex<eT> >
 GenEigsSolver<eT, SelectionRule, OpType>::eigenvalues()
   {
-  uword nconv = sum(ritz_conv);
+  uword nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
   Col< std::complex<eT> > res(nconv);
 
   if(!nconv)
@@ -367,7 +368,7 @@ inline
 Mat< std::complex<eT> >
 GenEigsSolver<eT, SelectionRule, OpType>::eigenvectors(uword nvec)
   {
-  uword nconv = sum(ritz_conv);
+  uword nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
   nvec = std::min(nvec, nconv);
   Mat<std::complex<eT>> res(dim_n, nvec);
 
