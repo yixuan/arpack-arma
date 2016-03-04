@@ -21,9 +21,31 @@ inline void GenEigsSolver<Scalar, SelectionRule, OpType>::factorize_from(int fro
     fac_H.submat(arma::span(from_k, ncv - 1), arma::span(0, from_k - 1)).zeros();
     for(int i = from_k; i <= to_m - 1; i++)
     {
+        bool restart = false;
+        // If beta = 0, then the next V is not full rank
+        // We need to generate a new residual vector that is orthogonal
+        // to the current V, which we call a restart
+        if(beta < prec)
+        {
+            fac_f.randu();
+            // f <- f - V * V' * f, so that f is orthogonal to V
+            Matrix Vs(fac_V.memptr(), dim_n, i, false); // First i columns
+            Vector Vf = Vs.t() * fac_f;
+            fac_f -= Vs * Vf;
+            // beta <- ||f||
+            beta = std::sqrt(arma::dot(fac_f, fac_f));
+
+            restart = true;
+        }
+
         // v <- f / ||f||
         fac_V.col(i) = fac_f / beta; // The (i+1)-th column
-        fac_H(i, i - 1) = beta;
+
+        // Note that H[i+1, i] equals to the unrestarted beta
+        if(restart)
+            fac_H(i, i - 1) = 0.0;
+        else
+            fac_H(i, i - 1) = beta;
 
         // w <- A * v, v = fac_V.col(i)
         op->perform_op(fac_V.colptr(i), w.memptr());
