@@ -8,7 +8,7 @@ HEADERS = $(wildcard ../armadillo_bits/*.hpp)
 
 .PHONY: all test clean
 
-all: QR.out Eigen.out SymEigs.out GenEigs.out ArmaSymEigs.out
+all: QR.out Eigen.out SymEigs.out GenEigs.out ArmaSymEigs.out ArmaGenEigs.out
 
 test:
 	-./QR.out
@@ -16,6 +16,7 @@ test:
 	-./SymEigs.out
 	-./GenEigs.out
 	-./ArmaSymEigs.out
+	-./ArmaGenEigs.out
 
 %.out: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
