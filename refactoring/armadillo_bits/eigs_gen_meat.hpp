@@ -278,11 +278,10 @@ GenEigsSolver<eT, SelectionRule, OpType>::GenEigsSolver(OpType* op_, uword nev_,
   , niter(0)
   , prec(std::pow(std::numeric_limits<eT>::epsilon(), eT(2.0) / 3))
   {
-  if(nev_ < 1 || nev_ > dim_n - 2)
-    throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 2, n is the size of matrix");
-
-  if(ncv_ < nev_ + 2 || ncv_ > dim_n)
-    throw std::invalid_argument("ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix");
+  arma_debug_check( (nev_ < 1 || nev_ > dim_n - 2),
+    "GenEigsSolver: nev must satisfy 1 <= nev <= n - 2, n is the size of matrix" );
+  arma_debug_check( (ncv_ < nev_ + 2 || ncv_ > dim_n),
+    "GenEigsSolver: ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix" );
   }
 
 
@@ -307,8 +306,8 @@ GenEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   // The first column of fac_V
   Col<eT> v(fac_V.colptr(0), dim_n, false);
   eT rnorm = norm(r);
-  if(rnorm < prec)
-    throw std::invalid_argument("initial residual vector cannot be zero");
+  arma_debug_check( (rnorm < prec),
+    "GenEigsSolver::init(): initial residual vector cannot be zero" );
   v = r / rnorm;
 
   Col<eT> w(dim_n);

@@ -269,8 +269,8 @@ template<typename eT>
 void
 DoubleShiftQR<eT>::compute(const Mat<eT>& mat, eT s, eT t)
   {
-  if(!mat.is_square())
-    throw std::invalid_argument("DoubleShiftQR: matrix must be square");
+  arma_debug_check( (mat.is_square() == false),
+    "DoubleShiftQR::compute(): matrix must be square" );
 
   n = mat.n_rows;
   mat_H.set_size(n, n);
@@ -320,8 +320,8 @@ template<typename eT>
 Mat<eT>
 DoubleShiftQR<eT>::matrix_QtHQ()
   {
-  if(!computed)
-    throw std::logic_error("DoubleShiftQR: need to call compute() first");
+  arma_debug_check( (computed == false),
+    "DoubleShiftQR::matrix_QtHQ(): need to call compute() first" );
 
   return mat_H;
   }
@@ -333,8 +333,8 @@ inline
 void
 DoubleShiftQR<eT>::apply_QtY(Col<eT>& y)
   {
-  if(!computed)
-      throw std::logic_error("DoubleShiftQR: need to call compute() first");
+  arma_debug_check( (computed == false),
+    "DoubleShiftQR::apply_QtY(): need to call compute() first" );
 
   eT* y_ptr = y.memptr();
   for(uword i = 0; i < n - 1; i++, y_ptr++)
@@ -350,8 +350,8 @@ inline
 void
 DoubleShiftQR<eT>::apply_YQ(Mat<eT>& Y)
   {
-  if(!computed)
-    throw std::logic_error("DoubleShiftQR: need to call compute() first");
+  arma_debug_check( (computed == false),
+    "DoubleShiftQR::apply_YQ(): need to call compute() first" );
 
   uword nrow = Y.n_rows;
   for(uword i = 0; i < n - 2; i++)

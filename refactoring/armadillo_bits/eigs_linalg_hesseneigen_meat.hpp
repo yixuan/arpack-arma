@@ -43,8 +43,8 @@ inline
 void
 UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
   {
-  if(!mat.is_square())
-    throw std::invalid_argument("UpperHessenbergEigen: matrix must be square");
+  arma_debug_check( (mat.is_square() == false),
+    "UpperHessenbergEigen::compute(): matrix must be square" );
 
   n = mat.n_rows;
   mat_Z.set_size(n, n);
@@ -72,7 +72,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
   delete [] wi;
 
   if(info < 0)
-    throw std::logic_error("Lapack lahqr: failed to compute all the eigenvalues");
+    arma_stop("lapack::lahqr(): failed to compute all the eigenvalues");
 
   char side = 'R', howmny = 'B';
   eT* work = new eT[3 * n];
@@ -83,7 +83,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
   delete [] work;
 
   if(info < 0)
-    throw std::invalid_argument("Lapack trevc: illegal value");
+    arma_stop("lapack::trevc(): illegal value");
 
   computed = true;
   }
@@ -95,8 +95,8 @@ inline
 Col< std::complex<eT> >
 UpperHessenbergEigen<eT>::eigenvalues()
   {
-  if(!computed)
-    throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
+  arma_debug_check( (computed == false),
+    "UpperHessenbergEigen::eigenvalues(): need to call compute() first" );
 
   return evals;
   }
@@ -108,8 +108,8 @@ inline
 Mat< std::complex<eT> >
 UpperHessenbergEigen<eT>::eigenvectors()
   {
-  if(!computed)
-    throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
+  arma_debug_check( (computed == false),
+    "UpperHessenbergEigen::eigenvectors(): need to call compute() first" );
 
   eT prec = std::pow(std::numeric_limits<eT>::epsilon(), eT(2.0) / 3);
   Mat< std::complex<eT> > evecs(n, n);

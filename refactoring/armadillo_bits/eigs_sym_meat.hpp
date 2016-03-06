@@ -266,11 +266,10 @@ SymEigsSolver<eT, SelectionRule, OpType>::SymEigsSolver(OpType* op_, uword nev_,
   , niter(0)
   , prec(std::pow(std::numeric_limits<eT>::epsilon(), eT(2.0) / 3))
   {
-  if(nev_ < 1 || nev_ > dim_n - 1)
-    throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
-
-  if(ncv_ <= nev_ || ncv_ > dim_n)
-    throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
+  arma_debug_check( (nev_ < 1 || nev_ > dim_n - 1),
+    "SymEigsSolver: nev must satisfy 1 <= nev <= n - 1, n is the size of matrix" );
+  arma_debug_check( (ncv_ <= nev_ || ncv_ > dim_n),
+    "SymEigsSolver: ncv must satisfy nev < ncv <= n, n is the size of matrix" );
   }
 
 
@@ -295,8 +294,8 @@ SymEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   // The first column of fac_V
   Col<eT> v(fac_V.colptr(0), dim_n, false);
   eT rnorm = norm(r);
-  if(rnorm < prec)
-    throw std::invalid_argument("initial residual vector cannot be zero");
+  arma_debug_check( (rnorm < prec),
+    "SymEigsSolver::init(): initial residual vector cannot be zero" );
   v = r / rnorm;
 
   Col<eT> w(dim_n);

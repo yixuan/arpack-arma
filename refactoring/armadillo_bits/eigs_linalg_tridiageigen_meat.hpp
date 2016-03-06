@@ -33,8 +33,8 @@ inline
 void
 TridiagEigen<eT>::compute(const Mat<eT>& mat)
   {
-  if(!mat.is_square())
-    throw std::invalid_argument("TridiagEigen: matrix must be square");
+  arma_debug_check( (mat.is_square() == false),
+    "TridiagEigen::compute(): matrix must be square" );
 
   n = mat.n_rows;
   main_diag = mat.diag();
@@ -73,9 +73,9 @@ TridiagEigen<eT>::compute(const Mat<eT>& mat)
   delete [] iwork;
 
   if(info < 0)
-    throw std::invalid_argument("Lapack stedc: illegal value");
+    arma_stop("lapack::stedc(): illegal value");
   if(info > 0)
-    throw std::logic_error("Lapack stedc: failed to compute all the eigenvalues");
+    arma_stop("lapack::stedc(): failed to compute all the eigenvalues");
 
   computed = true;
   }
@@ -87,8 +87,8 @@ inline
 Col<eT>
 TridiagEigen<eT>::eigenvalues()
   {
-  if(!computed)
-    throw std::logic_error("TridiagEigen: need to call compute() first");
+  arma_debug_check( (computed == false),
+    "TridiagEigen::eigenvalues(): need to call compute() first" );
 
   // After calling compute(), main_diag will contain the eigenvalues.
   return main_diag;
@@ -101,8 +101,8 @@ inline
 Mat<eT>
 TridiagEigen<eT>::eigenvectors()
   {
-  if(!computed)
-    throw std::logic_error("TridiagEigen: need to call compute() first");
+  arma_debug_check( (computed == false),
+    "TridiagEigen::eigenvectors(): need to call compute() first" );
 
   return evecs;
   }
