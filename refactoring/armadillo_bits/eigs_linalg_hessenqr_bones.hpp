@@ -1,8 +1,11 @@
-// Copyright (C) 2015 Yixuan Qiu
+// Copyright (C) 2013-2015 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// -------------------------------------------------------------------
+//
+// Written by Yixuan Qiu
 
 
 //! Perform the QR decomposition of an upper Hessenberg matrix.
@@ -44,8 +47,8 @@ class UpperHessenbergQR
 
 
 
-// Perform the QR decomposition of a tridiagonal matrix, a special
-// case of upper Hessenberg matrices.
+//! Perform the QR decomposition of a tridiagonal matrix, a special
+//! case of upper Hessenberg matrices.
 template<typename eT>
 class TridiagQR : public UpperHessenbergQR<eT>
   {

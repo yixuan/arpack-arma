@@ -7,6 +7,7 @@
 //
 // Written by Conrad Sanderson - http://conradsanderson.id.au
 // Written by Ryan Curtin
+// Written by Yixuan Qiu
 
 
 //! \addtogroup sp_auxlib
