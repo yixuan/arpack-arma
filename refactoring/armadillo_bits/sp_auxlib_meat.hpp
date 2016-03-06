@@ -519,7 +519,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
     arma_ignore(form_str);
     arma_ignore(default_tol);
 
-    arma_stop("eigs_gen(): use of ARPACK must be enabled");
+    arma_stop("eigs_gen(): use of ARPACK must be enabled for decomposition of compelx matrices");
     return false;
     }
   #endif
