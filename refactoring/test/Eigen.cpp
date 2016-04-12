@@ -7,8 +7,8 @@ using arma::mat;
 using arma::vec;
 using arma::cx_vec;
 using arma::cx_mat;
-using arma::UpperHessenbergEigen;
-using arma::TridiagEigen;
+using arma::alt_eigs::UpperHessenbergEigen;
+using arma::alt_eigs::TridiagEigen;
 
 TEST_CASE("Eigen decomposition of upper Hessenberg matrix", "[Eigen]")
 {

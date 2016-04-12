@@ -7,10 +7,10 @@
 typedef arma::mat Matrix;
 typedef arma::vec Vector;
 typedef arma::sp_mat SpMatrix;
-using arma::SymEigsSolver;
-using arma::EigsSelect;
-using arma::DenseGenMatProd;
-using arma::SparseGenMatProd;
+using arma::alt_eigs::SymEigsSolver;
+using arma::alt_eigs::EigsSelect;
+using arma::alt_eigs::DenseGenMatProd;
+using arma::alt_eigs::SparseGenMatProd;
 
 // Traits to obtain operation type from matrix type
 template <typename MatType>
