@@ -29,20 +29,14 @@ class DenseGenMatProd
   {}
 
   //! Return the number of rows of the underlying matrix.
-  arma_inline uword rows()
-    {
-    return mat.n_rows;
-    }
+  arma_inline uword rows() const { return mat.n_rows; }
 
   //! Return the number of columns of the underlying matrix.
-  arma_inline uword cols()
-    {
-    return mat.n_cols;
-    }
+  arma_inline uword cols() const { return mat.n_cols; }
 
   //! Perform the matrix-vector multiplication operation \f$y=Ax\f$.
   // y_out = A * x_in
-  arma_inline void perform_op(eT* x_in, eT* y_out)
+  arma_inline void perform_op(eT* x_in, eT* y_out) const
     {
     Col<eT> x(x_in , mat.n_cols, false);
     Col<eT> y(y_out, mat.n_rows, false);

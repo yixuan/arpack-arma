@@ -74,16 +74,10 @@ class SymEigsSolver
   inline uword compute(uword maxit = 1000, eT tol = 1e-10);
 
   //! Returning the number of iterations used in the computation.
-  arma_inline uword num_iterations()
-    {
-    return niter;
-    }
+  arma_inline uword num_iterations() { return niter; }
 
   //! Returning the number of matrix operations used in the computation.
-  arma_inline uword num_operations()
-    {
-    return nmatop;
-    }
+  arma_inline uword num_operations() { return nmatop; }
 
   //! Returning the converged eigenvalues.
   inline Col<eT> eigenvalues();
@@ -91,10 +85,7 @@ class SymEigsSolver
   //! Returning the eigenvectors associated with the converged eigenvalues.
   inline Mat<eT> eigenvectors(uword nvec);
   //! Returning all converged eigenvectors.
-  arma_inline Mat<eT> eigenvectors()
-    {
-    return eigenvectors(nev);
-    }
+  arma_inline Mat<eT> eigenvectors() { return eigenvectors(nev); }
   };
 
 

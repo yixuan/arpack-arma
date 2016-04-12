@@ -99,8 +99,7 @@ template<typename eT>
 Mat<eT>
 UpperHessenbergQR<eT>::matrix_RQ()
   {
-  arma_debug_check( (computed == false),
-    "UpperHessenbergQR::matrix_RQ(): need to call compute() first" );
+  arma_debug_check( (computed == false), "UpperHessenbergQR::matrix_RQ(): need to call compute() first" );
 
   // Make a copy of the R matrix
   Mat<eT> RQ = trimatu(mat_T);
@@ -140,8 +139,7 @@ inline
 void
 UpperHessenbergQR<eT>::apply_YQ(Mat<eT>& Y)
   {
-  arma_debug_check( (computed == false),
-    "UpperHessenbergQR::apply_YQ(): need to call compute() first" );
+  arma_debug_check( (computed == false), "UpperHessenbergQR::apply_YQ(): need to call compute() first" );
 
   eT *c = rot_cos.memptr(),
      *s = rot_sin.memptr();
@@ -283,8 +281,7 @@ template<typename eT>
 Mat<eT>
 TridiagQR<eT>::matrix_RQ()
   {
-  arma_debug_check( (this->computed == false),
-    "TridiagQR::matrix_RQ(): need to call compute() first" );
+  arma_debug_check( (this->computed == false), "TridiagQR::matrix_RQ(): need to call compute() first" );
 
   // Make a copy of the R matrix
   Mat<eT> RQ(this->n, this->n, fill::zeros);
