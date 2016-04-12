@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 template<typename eT, int SelectionRule, typename OpType>
 inline
 void
@@ -414,3 +418,6 @@ GenEigsSolver<eT, SelectionRule, OpType>::eigenvectors(uword nvec)
 
   return res;
   }
+
+
+}  // namespace alt_eigs

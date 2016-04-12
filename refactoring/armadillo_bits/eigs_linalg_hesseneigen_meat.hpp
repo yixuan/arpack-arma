@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 template<typename eT>
 arma_inline
 bool
@@ -147,3 +151,6 @@ UpperHessenbergEigen<eT>::eigenvectors()
 
   return evecs;
   }
+
+
+}  // namespace alt_eigs

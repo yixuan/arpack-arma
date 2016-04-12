@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 //! Calculate the eigenvalues and eigenvectors of an upper Hessenberg matrix.
 //! This class is a wrapper of the Lapack functions `_lahqr` and `_trevc`.
 template<typename eT>
@@ -44,3 +48,6 @@ class UpperHessenbergEigen
   //! Retrieve the eigenvectors.
   inline Mat< std::complex<eT> > eigenvectors();
   };
+
+
+}  // namespace alt_eigs

@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 //! This class implements the eigen solver for general real matrices.
 template<typename eT, int SelectionRule, typename OpType>
 class GenEigsSolver
@@ -101,3 +105,6 @@ class GenEigsSolver
       return eigenvectors(nev);
       }
   };
+
+
+}  // namespace alt_eigs

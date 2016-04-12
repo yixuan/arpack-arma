@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 //! This class implements the eigen solver for real symmetric matrices.
 template<typename eT, int SelectionRule, typename OpType>
 class SymEigsSolver
@@ -92,3 +96,6 @@ class SymEigsSolver
     return eigenvectors(nev);
     }
   };
+
+
+}  // namespace alt_eigs

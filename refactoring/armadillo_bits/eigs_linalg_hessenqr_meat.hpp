@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 template<typename eT>
 inline
 UpperHessenbergQR<eT>::UpperHessenbergQR()
@@ -316,3 +320,6 @@ TridiagQR<eT>::matrix_RQ()
 
   return RQ;
   }
+
+
+}  // namespace alt_eigs

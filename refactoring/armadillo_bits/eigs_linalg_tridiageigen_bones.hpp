@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 //! Calculate the eigenvalues and eigenvectors of a symmetric tridiagonal matrix.
 //! This class is a wrapper of the Lapack functions `_steqr`.
 template<typename eT>
@@ -41,3 +45,6 @@ class TridiagEigen
   //! Retrieve the eigenvectors.
   inline Mat<eT> eigenvectors();
   };
+
+
+}  // namespace alt_eigs

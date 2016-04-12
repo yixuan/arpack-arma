@@ -10,6 +10,11 @@
 
 #include <utility>    // std::pair
 
+
+namespace alt_eigs
+{
+
+
 //! The enumeration of selection rules of desired eigenvalues.
 struct EigsSelect
   {
@@ -204,3 +209,6 @@ class SortEigenvalue
     return ind;
     }
   };
+
+
+}  // namespace alt_eigs

@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 //! Perform the QR decomposition of an upper Hessenberg matrix.
 template<typename eT>
 class UpperHessenbergQR
@@ -69,3 +73,6 @@ class TridiagQR : public UpperHessenbergQR<eT>
   //! which is a tridiagonal matrix.
   inline Mat<eT> matrix_RQ();
   };
+
+
+}  // namespace alt_eigs

@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 template<typename eT>
 inline
 TridiagEigen<eT>::TridiagEigen()
@@ -106,3 +110,6 @@ TridiagEigen<eT>::eigenvectors()
 
   return evecs;
   }
+
+
+}  // namespace alt_eigs

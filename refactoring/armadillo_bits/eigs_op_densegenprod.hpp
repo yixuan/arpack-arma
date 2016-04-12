@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 //! Define matrix operations on existing matrix objects
 template<typename eT>
 class DenseGenMatProd
@@ -45,3 +49,6 @@ class DenseGenMatProd
     y = mat * x;
     }
   };
+
+
+}  // namespace alt_eigs

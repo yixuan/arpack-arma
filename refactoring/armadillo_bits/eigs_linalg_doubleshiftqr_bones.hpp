@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 template<typename eT>
 class DoubleShiftQR
   {
@@ -59,3 +63,6 @@ class DoubleShiftQR
 
   inline void apply_YQ(Mat<eT>& Y);
   };
+
+
+}  // namespace alt_eigs

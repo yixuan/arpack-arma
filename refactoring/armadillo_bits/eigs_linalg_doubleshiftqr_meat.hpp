@@ -8,6 +8,10 @@
 // Written by Yixuan Qiu
 
 
+namespace alt_eigs
+{
+
+
 template<typename eT>
 inline
 void
@@ -360,3 +364,6 @@ DoubleShiftQR<eT>::apply_YQ(Mat<eT>& Y)
     }
   apply_XP(Y, 0, n - 2, nrow, 2, n - 2);
   }
+
+
+}  // namespace alt_eigs
