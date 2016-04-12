@@ -61,30 +61,27 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
 
   blas_int want_T = 1, want_Z = 1;
   blas_int ilo = 1, ihi = n, iloz = 1, ihiz = n;
-  eT* wr = new eT[n];
-  eT* wi = new eT[n];
+  podarray<eT> wr(n);
+  podarray<eT> wi(n);
   blas_int info;
   lapack::lahqr(&want_T, &want_Z, &n, &ilo, &ihi,
-                mat_T.memptr(), &n, wr, wi, &iloz, &ihiz,
+                mat_T.memptr(), &n, wr.memptr(), wi.memptr(), &iloz, &ihiz,
                 mat_Z.memptr(), &n, &info);
 
   for(blas_int i = 0; i < n; i++)
     {
     evals[i] = std::complex<eT>(wr[i], wi[i]);
     }
-  delete [] wr;
-  delete [] wi;
 
   if(info < 0)
     arma_stop("lapack::lahqr(): failed to compute all the eigenvalues");
 
   char side = 'R', howmny = 'B';
-  eT* work = new eT[3 * n];
+  podarray<eT> work(3 * n);
   blas_int m;
 
   lapack::trevc(&side, &howmny, (blas_int*) NULL, &n, mat_T.memptr(), &n,
-                (eT*) NULL, &n, mat_Z.memptr(), &n, &n, &m, work, &info);
-  delete [] work;
+                (eT*) NULL, &n, mat_Z.memptr(), &n, &n, &m, work.memptr(), &info);
 
   if(info < 0)
     arma_stop("lapack::trevc(): illegal value");

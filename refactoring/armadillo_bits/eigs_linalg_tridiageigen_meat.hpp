@@ -67,14 +67,11 @@ TridiagEigen<eT>::compute(const Mat<eT>& mat)
     liwork = 3 + 5 * n;
   }
 
-  eT *work = new eT[lwork];
-  blas_int *iwork = new int[liwork];
+  podarray<eT> work(lwork);
+  podarray<blas_int> iwork(liwork);
 
   lapack::stedc(&compz, &n, main_diag.memptr(), sub_diag.memptr(),
-                evecs.memptr(), &n, work, &lwork, iwork, &liwork, &info);
-
-  delete [] work;
-  delete [] iwork;
+                evecs.memptr(), &n, work.memptr(), &lwork, iwork.memptr(), &liwork, &info);
 
   if(info < 0)
     arma_stop("lapack::stedc(): illegal value");
