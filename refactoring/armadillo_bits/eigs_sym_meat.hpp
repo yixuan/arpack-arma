@@ -17,8 +17,7 @@ inline
 void
 SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_m, const Col<eT>& fk)
   {
-  if(to_m <= from_k)
-    return;
+  if(to_m <= from_k) { return; }
 
   fac_f = fk;
 
@@ -51,10 +50,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
     v = fac_f / beta;
 
     // Note that H[i+1, i] equals to the unrestarted beta
-    if(restart)
-      fac_H(i, i - 1) = 0.0;
-    else
-      fac_H(i, i - 1) = beta;
+    if(restart) { fac_H(i, i - 1) = 0.0; } else { fac_H(i, i - 1) = beta; }
 
     // w <- A * v, v = fac_V.col(i)
     op->perform_op(v.memptr(), w.memptr());
@@ -67,9 +63,13 @@ SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
     // f <- w - V * V' * w = w - H[i+1, i] * V{i} - H[i+1, i+1] * V{i+1}
     // If restarting, we know that H[i+1, i] = 0
     if(restart)
+      {
       fac_f = w - Hii * v;
+      }
     else
+      {
       fac_f = w - fac_H(i, i - 1) * fac_V.col(i - 1) - Hii * v;
+      }
 
     beta = std::sqrt(dot(fac_f, fac_f));
 
@@ -103,8 +103,7 @@ inline
 void
 SymEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
   {
-  if(k >= ncv)
-    return;
+  if(k >= ncv) { return; }
 
   TridiagQR<eT> decomp;
   Mat<eT> Q = eye< Mat<eT> >(ncv, ncv);
@@ -176,10 +175,14 @@ SymEigsSolver<eT, SelectionRule, OpType>::nev_adjusted(uword nconv)
   // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
   nev_new = nev + std::min(nconv, (ncv - nev) / 2);
   if(nev == 1 && ncv >= 6)
+    {
     nev_new = ncv / 2;
+    }
   else
   if(nev == 1 && ncv > 2)
+    {
     nev_new = 2;
+    }
 
   return nev_new;
   }
@@ -213,10 +216,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::retrieve_ritzpair()
       {
       // If i is even, pick values from the left (large values)
       // If i is odd, pick values from the right (small values)
-      if(i % 2 == 0)
-        ind[i] = ind_copy[i / 2];
-      else
-        ind[i] = ind_copy[ncv - 1 - i / 2];
+      if(i % 2 == 0) { ind[i] = ind_copy[i / 2]; } else { ind[i] = ind_copy[ncv - 1 - i / 2]; }
       }
     }
 
@@ -270,10 +270,8 @@ SymEigsSolver<eT, SelectionRule, OpType>::SymEigsSolver(OpType* op_, uword nev_,
   , niter(0)
   , prec(std::pow(std::numeric_limits<eT>::epsilon(), eT(2.0) / 3))
   {
-  arma_debug_check( (nev_ < 1 || nev_ > dim_n - 1),
-    "SymEigsSolver: nev must satisfy 1 <= nev <= n - 1, n is the size of matrix" );
-  arma_debug_check( (ncv_ <= nev_ || ncv_ > dim_n),
-    "SymEigsSolver: ncv must satisfy nev < ncv <= n, n is the size of matrix" );
+  arma_debug_check( (nev_ < 1 || nev_ > dim_n - 1), "SymEigsSolver: nev must satisfy 1 <= nev <= n - 1, n is the size of matrix" );
+  arma_debug_check( (ncv_ <= nev_ || ncv_ > dim_n), "SymEigsSolver: ncv must satisfy nev < ncv <= n, n is the size of matrix" );
   }
 
 
@@ -298,8 +296,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   // The first column of fac_V
   Col<eT> v(fac_V.colptr(0), dim_n, false);
   eT rnorm = norm(r);
-  arma_debug_check( (rnorm < prec),
-    "SymEigsSolver::init(): initial residual vector cannot be zero" );
+  arma_debug_check( (rnorm < prec), "SymEigsSolver::init(): initial residual vector cannot be zero" );
   v = r / rnorm;
 
   Col<eT> w(dim_n);
@@ -337,8 +334,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::compute(uword maxit, eT tol)
   for(i = 0; i < maxit; i++)
     {
     nconv = num_converged(tol);
-    if(nconv >= nev)
-      break;
+    if(nconv >= nev) { break; }
 
     nev_adj = nev_adjusted(nconv);
     restart(nev_adj);
@@ -361,8 +357,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::eigenvalues()
   uword nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
   Col<eT> res(nconv);
 
-  if(!nconv)
-    return res;
+  if(!nconv) { return res; }
 
   uword j = 0;
   for(uword i = 0; i < nev; i++)
@@ -388,8 +383,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::eigenvectors(uword nvec)
   nvec = std::min(nvec, nconv);
   Mat<eT> res(dim_n, nvec);
 
-  if(!nvec)
-    return res;
+  if(!nvec) { return res; }
 
   Mat<eT> ritz_vec_conv(ncv, nvec);
   uword j = 0;

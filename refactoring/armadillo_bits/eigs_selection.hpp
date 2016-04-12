@@ -203,8 +203,7 @@ class SortEigenvalue
   inline std::vector<uword> index()
     {
     std::vector<uword> ind(pair_sort.size());
-    for(uword i = 0; i < ind.size(); i++)
-      ind[i] = pair_sort[i].second;
+    for(uword i = 0; i < ind.size(); i++) { ind[i] = pair_sort[i].second; }
 
     return ind;
     }

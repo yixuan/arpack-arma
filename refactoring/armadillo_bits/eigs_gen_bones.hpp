@@ -46,15 +46,9 @@ class GenEigsSolver
   // Arnoldi factorization starting from step-k
   inline void factorize_from(uword from_k, uword to_m, const Col<eT>& fk);
 
-  arma_inline static bool is_complex(std::complex<eT> v, eT eps)
-    {
-    return std::abs(v.imag()) > eps;
-    }
+  arma_inline static bool is_complex(std::complex<eT> v, eT eps) { return std::abs(v.imag()) > eps; }
 
-  arma_inline static bool is_conj(std::complex<eT> v1, std::complex<eT> v2, eT eps)
-    {
-    return std::abs(v1 - std::conj(v2)) < eps;
-    }
+  arma_inline static bool is_conj(std::complex<eT> v1, std::complex<eT> v2, eT eps) { return std::abs(v1 - std::conj(v2)) < eps; }
 
   // Implicitly restarted Arnoldi factorization
   inline void restart(uword k);
@@ -83,16 +77,10 @@ class GenEigsSolver
     inline uword compute(uword maxit = 1000, eT tol = 1e-10);
 
     //! Returning the number of iterations used in the computation.
-    arma_inline int num_iterations()
-      {
-      return niter;
-      }
+    arma_inline int num_iterations() { return niter; }
 
     //! Returning the number of matrix operations used in the computation.
-    arma_inline int num_operations()
-      {
-      return nmatop;
-      }
+    arma_inline int num_operations() { return nmatop; }
 
     //! Returning the converged eigenvalues.
     inline Col< std::complex<eT> > eigenvalues();
@@ -100,10 +88,7 @@ class GenEigsSolver
     //! Returning the eigenvectors associated with the converged eigenvalues.
     inline Mat< std::complex<eT> > eigenvectors(uword nvec);
     //! Returning all converged eigenvectors.
-    arma_inline Mat< std::complex<eT> > eigenvectors()
-      {
-      return eigenvectors(nev);
-      }
+    arma_inline Mat< std::complex<eT> > eigenvectors() { return eigenvectors(nev); }
   };
 
 

@@ -44,10 +44,10 @@ DoubleShiftQR<eT>::compute_reflector(const eT& x1, const eT& x2, const eT& x3, u
   eT x_norm = std::sqrt(x1_new * x1_new + tmp);
   // Double check the norm of new x
   if(x_norm < prec)
-  {
-      nr[ind] = 1;
-      return;
-  }
+    {
+    nr[ind] = 1;
+    return;
+    }
   u[0] = x1_new / x_norm;
   u[1] = x2 / x_norm;
   u[2] = x3 / x_norm;
@@ -138,8 +138,7 @@ inline
 void
 DoubleShiftQR<eT>::apply_PX(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
   {
-  if(ref_nr[u_ind] == 1)
-    return;
+  if(ref_nr[u_ind] == 1) { return; }
 
   eT* u = ref_u.memptr() + 3 * u_ind;
 
@@ -177,8 +176,7 @@ inline
 void
 DoubleShiftQR<eT>::apply_PX(eT *x, uword u_ind)
   {
-  if(ref_nr[u_ind] == 1)
-    return;
+  if(ref_nr[u_ind] == 1) { return; }
 
   eT u0 = ref_u(0, u_ind),
      u1 = ref_u(1, u_ind),
@@ -190,8 +188,7 @@ DoubleShiftQR<eT>::apply_PX(eT *x, uword u_ind)
   dot2 *= 2;
   x[0] -= dot2 * u0;
   x[1] -= dot2 * u1;
-  if(!nr_is_2)
-    x[2] -= dot2 * u2;
+  if(!nr_is_2) { x[2] -= dot2 * u2; }
   }
 
 
@@ -201,8 +198,7 @@ inline
 void
 DoubleShiftQR<eT>::apply_XP(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
   {
-  if(ref_nr[u_ind] == 1)
-    return;
+  if(ref_nr[u_ind] == 1) { return; }
 
   eT* u = ref_u.memptr() + 3 * u_ind;
   uword stride = X.n_rows;
@@ -273,8 +269,7 @@ template<typename eT>
 void
 DoubleShiftQR<eT>::compute(const Mat<eT>& mat, eT s, eT t)
   {
-  arma_debug_check( (mat.is_square() == false),
-    "DoubleShiftQR::compute(): matrix must be square" );
+  arma_debug_check( (mat.is_square() == false), "DoubleShiftQR::compute(): matrix must be square" );
 
   n = mat.n_rows;
   mat_H.set_size(n, n);
@@ -324,8 +319,7 @@ template<typename eT>
 Mat<eT>
 DoubleShiftQR<eT>::matrix_QtHQ()
   {
-  arma_debug_check( (computed == false),
-    "DoubleShiftQR::matrix_QtHQ(): need to call compute() first" );
+  arma_debug_check( (computed == false), "DoubleShiftQR::matrix_QtHQ(): need to call compute() first" );
 
   return mat_H;
   }
@@ -337,8 +331,7 @@ inline
 void
 DoubleShiftQR<eT>::apply_QtY(Col<eT>& y)
   {
-  arma_debug_check( (computed == false),
-    "DoubleShiftQR::apply_QtY(): need to call compute() first" );
+  arma_debug_check( (computed == false), "DoubleShiftQR::apply_QtY(): need to call compute() first" );
 
   eT* y_ptr = y.memptr();
   for(uword i = 0; i < n - 1; i++, y_ptr++)
@@ -354,8 +347,7 @@ inline
 void
 DoubleShiftQR<eT>::apply_YQ(Mat<eT>& Y)
   {
-  arma_debug_check( (computed == false),
-    "DoubleShiftQR::apply_YQ(): need to call compute() first" );
+  arma_debug_check( (computed == false), "DoubleShiftQR::apply_YQ(): need to call compute() first" );
 
   uword nrow = Y.n_rows;
   for(uword i = 0; i < n - 2; i++)

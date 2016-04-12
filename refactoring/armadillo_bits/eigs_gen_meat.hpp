@@ -17,8 +17,7 @@ inline
 void
 GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_m, const Col<eT>& fk)
   {
-  if(to_m <= from_k)
-    return;
+  if(to_m <= from_k) { return; }
 
   fac_f = fk;
 
@@ -50,10 +49,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
     fac_V.col(i) = fac_f / beta; // The (i+1)-th column
 
     // Note that H[i+1, i] equals to the unrestarted beta
-    if(restart)
-      fac_H(i, i - 1) = 0.0;
-    else
-      fac_H(i, i - 1) = beta;
+    if(restart) { fac_H(i, i - 1) = 0.0; } else { fac_H(i, i - 1) = beta; }
 
     // w <- A * v, v = fac_V.col(i)
     op->perform_op(fac_V.colptr(i), w.memptr());
@@ -70,8 +66,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
     fac_f = w - Vs * h;
     beta = std::sqrt(dot(fac_f, fac_f));
 
-    if(beta > 0.717 * std::sqrt(dot(h, h)))
-      continue;
+    if(beta > 0.717 * std::sqrt(dot(h, h))) { continue; }
 
     // f/||f|| is going to be the next column of V, so we need to test
     // whether V' * (f/||f||) ~= 0
@@ -100,8 +95,7 @@ inline
 void
 GenEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
   {
-  if(k >= ncv)
-    return;
+  if(k >= ncv) { return; }
 
   DoubleShiftQR<eT> decomp_ds(ncv);
   UpperHessenbergQR<eT> decomp;
@@ -200,13 +194,16 @@ GenEigsSolver<eT, SelectionRule, OpType>::nev_adjusted(uword nconv)
   // Adjust nev_new again, according to dnaup2.f line 660~674 in ARPACK
   nev_new = nev_new + std::min(nconv, (ncv - nev_new) / 2);
   if(nev_new == 1 && ncv >= 6)
+    {
     nev_new = ncv / 2;
+    }
   else
   if(nev_new == 1 && ncv > 3)
+    {
     nev_new = 2;
+    }
 
-  if(nev_new > ncv - 2)
-    nev_new = ncv - 2;
+  if(nev_new > ncv - 2) { nev_new = ncv - 2; }
 
   // Examine conjugate pairs again
   if(is_complex(ritz_val[nev_new - 1], prec) &&
@@ -282,10 +279,8 @@ GenEigsSolver<eT, SelectionRule, OpType>::GenEigsSolver(OpType* op_, uword nev_,
   , niter(0)
   , prec(std::pow(std::numeric_limits<eT>::epsilon(), eT(2.0) / 3))
   {
-  arma_debug_check( (nev_ < 1 || nev_ > dim_n - 2),
-    "GenEigsSolver: nev must satisfy 1 <= nev <= n - 2, n is the size of matrix" );
-  arma_debug_check( (ncv_ < nev_ + 2 || ncv_ > dim_n),
-    "GenEigsSolver: ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix" );
+  arma_debug_check( (nev_ < 1 || nev_ > dim_n - 2),    "GenEigsSolver: nev must satisfy 1 <= nev <= n - 2, n is the size of matrix" );
+  arma_debug_check( (ncv_ < nev_ + 2 || ncv_ > dim_n), "GenEigsSolver: ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix" );
   }
 
 
@@ -310,8 +305,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   // The first column of fac_V
   Col<eT> v(fac_V.colptr(0), dim_n, false);
   eT rnorm = norm(r);
-  arma_debug_check( (rnorm < prec),
-    "GenEigsSolver::init(): initial residual vector cannot be zero" );
+  arma_debug_check( (rnorm < prec), "GenEigsSolver::init(): initial residual vector cannot be zero" );
   v = r / rnorm;
 
   Col<eT> w(dim_n);
@@ -349,8 +343,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::compute(uword maxit, eT tol)
   for(i = 0; i < maxit; i++)
     {
     nconv = num_converged(tol);
-    if(nconv >= nev)
-      break;
+    if(nconv >= nev) { break; }
 
     nev_adj = nev_adjusted(nconv);
     restart(nev_adj);
@@ -373,8 +366,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::eigenvalues()
   uword nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
   Col< std::complex<eT> > res(nconv);
 
-  if(!nconv)
-    return res;
+  if(!nconv) { return res; }
 
   uword j = 0;
   for(uword i = 0; i < nev; i++)
@@ -400,8 +392,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::eigenvectors(uword nvec)
   nvec = std::min(nvec, nconv);
   Mat<std::complex<eT>> res(dim_n, nvec);
 
-  if(!nvec)
-    return res;
+  if(!nvec) { return res; }
 
   Mat< std::complex<eT> > ritz_vec_conv(ncv, nvec);
   uword j = 0;

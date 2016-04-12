@@ -47,8 +47,7 @@ inline
 void
 UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
   {
-  arma_debug_check( (mat.is_square() == false),
-    "UpperHessenbergEigen::compute(): matrix must be square" );
+  arma_debug_check( (mat.is_square() == false), "UpperHessenbergEigen::compute(): matrix must be square" );
 
   n = mat.n_rows;
   mat_Z.set_size(n, n);
@@ -73,8 +72,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
     evals[i] = std::complex<eT>(wr[i], wi[i]);
     }
 
-  if(info < 0)
-    arma_stop("lapack::lahqr(): failed to compute all the eigenvalues");
+  if(info < 0) { arma_stop("lapack::lahqr(): failed to compute all the eigenvalues"); }
 
   char side = 'R', howmny = 'B';
   podarray<eT> work(3 * n);
@@ -83,8 +81,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
   lapack::trevc(&side, &howmny, (blas_int*) NULL, &n, mat_T.memptr(), &n,
                 (eT*) NULL, &n, mat_Z.memptr(), &n, &n, &m, work.memptr(), &info);
 
-  if(info < 0)
-    arma_stop("lapack::trevc(): illegal value");
+  if(info < 0) { arma_stop("lapack::trevc(): illegal value"); }
 
   computed = true;
   }
@@ -96,8 +93,7 @@ inline
 Col< std::complex<eT> >
 UpperHessenbergEigen<eT>::eigenvalues()
   {
-  arma_debug_check( (computed == false),
-    "UpperHessenbergEigen::eigenvalues(): need to call compute() first" );
+  arma_debug_check( (computed == false), "UpperHessenbergEigen::eigenvalues(): need to call compute() first" );
 
   return evals;
   }
@@ -109,8 +105,7 @@ inline
 Mat< std::complex<eT> >
 UpperHessenbergEigen<eT>::eigenvectors()
   {
-  arma_debug_check( (computed == false),
-    "UpperHessenbergEigen::eigenvectors(): need to call compute() first" );
+  arma_debug_check( (computed == false), "UpperHessenbergEigen::eigenvectors(): need to call compute() first" );
 
   eT prec = std::pow(std::numeric_limits<eT>::epsilon(), eT(2.0) / 3);
   Mat< std::complex<eT> > evecs(n, n);
