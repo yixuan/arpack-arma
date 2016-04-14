@@ -22,7 +22,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
   fac_f = fk;
 
   Col<eT> w(dim_n);
-  eT beta = std::sqrt(dot(fac_f, fac_f)), Hii = 0.0;
+  eT beta = norm(fac_f), Hii = 0.0;
   // Keep the upperleft k x k submatrix of H and set other elements to 0
   fac_H.tail_cols(ncv - from_k).zeros();
   fac_H.submat(span(from_k, ncv - 1), span(0, from_k - 1)).zeros();
@@ -40,7 +40,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
       Col<eT> Vf = Vs.t() * fac_f;
       fac_f -= Vs * Vf;
       // beta <- ||f||
-      beta = std::sqrt(arma::dot(fac_f, fac_f));
+      beta = norm(fac_f);
 
       restart = true;
       }
@@ -71,7 +71,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
       fac_f = w - fac_H(i, i - 1) * fac_V.col(i - 1) - Hii * v;
       }
 
-    beta = std::sqrt(dot(fac_f, fac_f));
+    beta = norm(fac_f);
 
     // f/||f|| is going to be the next column of V, so we need to test
     // whether V' * (f/||f||) ~= 0
@@ -88,7 +88,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
       fac_H(i, i - 1) = fac_H(i - 1, i);
       fac_H(i, i) += Vf[i];
       // beta <- ||f||
-      beta = std::sqrt(dot(fac_f, fac_f));
+      beta = norm(fac_f);
 
       Vf = Vs.t() * fac_f;
       count++;

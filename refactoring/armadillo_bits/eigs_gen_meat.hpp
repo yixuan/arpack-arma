@@ -22,7 +22,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
   fac_f = fk;
 
   Col<eT> w(dim_n);
-  eT beta = std::sqrt(dot(fac_f, fac_f));
+  eT beta = norm(fac_f);
   // Keep the upperleft k x k submatrix of H and set other elements to 0
   fac_H.tail_cols(ncv - from_k).zeros();
   fac_H.submat(span(from_k, ncv - 1), span(0, from_k - 1)).zeros();
@@ -40,7 +40,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
       Col<eT> Vf = Vs.t() * fac_f;
       fac_f -= Vs * Vf;
       // beta <- ||f||
-      beta = std::sqrt(arma::dot(fac_f, fac_f));
+      beta = norm(fac_f);
 
       restart = true;
       }
@@ -64,9 +64,9 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
 
     // f <- w - V * h
     fac_f = w - Vs * h;
-    beta = std::sqrt(dot(fac_f, fac_f));
+    beta = norm(fac_f);
 
-    if(beta > 0.717 * std::sqrt(dot(h, h))) { continue; }
+    if(beta > 0.717 * norm(h)) { continue; }
 
     // f/||f|| is going to be the next column of V, so we need to test
     // whether V' * (f/||f||) ~= 0
@@ -80,7 +80,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
       // h <- h + Vf
       h += Vf;
       // beta <- ||f||
-      beta = std::sqrt(dot(fac_f, fac_f));
+      beta = norm(fac_f);
 
       Vf = Vs.t() * fac_f;
       count++;
