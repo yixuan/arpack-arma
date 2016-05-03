@@ -30,7 +30,7 @@ template <typename MatType, int SelectionRule>
 void run_test(MatType &mat, int k, int m)
 {
     typename OpTypeTrait<MatType>::OpType op(mat);
-    SymEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType> eigs(&op, k, m);
+    SymEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType> eigs(op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
