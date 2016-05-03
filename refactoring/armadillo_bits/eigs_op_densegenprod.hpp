@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,8 +24,8 @@ class DenseGenMatProd
   public:
 
   //! Constructor to create the matrix operation object.
-  inline DenseGenMatProd(Mat<eT>& mat_)
-    : op_mat(mat_.memptr(), mat_.n_rows, mat_.n_cols, false)
+  inline DenseGenMatProd(Mat<eT>& mat_obj)
+    : op_mat(mat_obj.memptr(), mat_obj.n_rows, mat_obj.n_cols, false)
   {}
 
   //! Return the number of rows of the underlying matrix.

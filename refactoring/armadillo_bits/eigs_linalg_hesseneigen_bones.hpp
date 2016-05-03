@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,11 +36,11 @@ class UpperHessenbergEigen
   inline UpperHessenbergEigen();
 
   //! Constructor to create an object that calculates the eigenvalues
-  //! and eigenvectors of an upper Hessenberg matrix `mat`.
-  inline UpperHessenbergEigen(const Mat<eT>& mat);
+  //! and eigenvectors of an upper Hessenberg matrix `mat_obj`.
+  inline UpperHessenbergEigen(const Mat<eT>& mat_obj);
 
   //! Compute the eigenvalue decomposition of an upper Hessenberg matrix.
-  inline void compute(const Mat<eT>& mat);
+  inline void compute(const Mat<eT>& mat_obj);
 
   //! Retrieve the eigenvalues.
   inline Col< std::complex<eT> > eigenvalues();

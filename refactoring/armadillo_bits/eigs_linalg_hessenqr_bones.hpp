@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,11 +35,11 @@ class UpperHessenbergQR
   inline UpperHessenbergQR();
 
   //! Constructor to create an object that performs and stores the
-  //! QR decomposition of an upper Hessenberg matrix `mat`.
-  inline UpperHessenbergQR(const Mat<eT>& mat);
+  //! QR decomposition of an upper Hessenberg matrix `mat_obj`.
+  inline UpperHessenbergQR(const Mat<eT>& mat_obj);
 
   //! Conduct the QR factorization of an upper Hessenberg matrix.
-  virtual void compute(const Mat<eT>& mat);
+  virtual void compute(const Mat<eT>& mat_obj);
 
   //! Return the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$,
   //! which is an upper Hessenberg matrix.
@@ -63,11 +63,11 @@ class TridiagQR : public UpperHessenbergQR<eT>
   inline TridiagQR();
 
   //! Constructor to create an object that performs and stores the
-  //! QR decomposition of a tridiagonal matrix `mat`.
-  inline TridiagQR(const Mat<eT>& mat);
+  //! QR decomposition of a tridiagonal matrix `mat_obj`.
+  inline TridiagQR(const Mat<eT>& mat_obj);
 
   //! Conduct the QR factorization of a tridiagonal matrix.
-  inline void compute(const Mat<eT>& mat);
+  inline void compute(const Mat<eT>& mat_obj);
 
   //! Return the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$,
   //! which is a tridiagonal matrix.

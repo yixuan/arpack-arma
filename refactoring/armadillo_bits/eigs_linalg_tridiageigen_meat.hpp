@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,11 +23,11 @@ TridiagEigen<eT>::TridiagEigen()
 
 template<typename eT>
 inline
-TridiagEigen<eT>::TridiagEigen(const Mat<eT>& mat)
-  : n(mat.n_rows)
+TridiagEigen<eT>::TridiagEigen(const Mat<eT>& mat_obj)
+  : n(mat_obj.n_rows)
   , computed(false)
   {
-  compute(mat);
+  compute(mat_obj);
   }
 
 
@@ -35,13 +35,13 @@ TridiagEigen<eT>::TridiagEigen(const Mat<eT>& mat)
 template<typename eT>
 inline
 void
-TridiagEigen<eT>::compute(const Mat<eT>& mat)
+TridiagEigen<eT>::compute(const Mat<eT>& mat_obj)
   {
-  arma_debug_check( (mat.is_square() == false), "TridiagEigen::compute(): matrix must be square" );
+  arma_debug_check( (mat_obj.is_square() == false), "TridiagEigen::compute(): matrix must be square" );
 
-  n = mat.n_rows;
-  main_diag = mat.diag();
-  sub_diag = mat.diag(-1);
+  n = mat_obj.n_rows;
+  main_diag = mat_obj.diag();
+  sub_diag = mat_obj.diag(-1);
   evecs.set_size(n, n);
 
   char compz = 'I';

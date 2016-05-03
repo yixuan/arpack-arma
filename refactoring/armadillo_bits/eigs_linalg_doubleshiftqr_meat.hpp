@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -248,8 +248,8 @@ DoubleShiftQR<eT>::DoubleShiftQR(uword size)
 
 template<typename eT>
 inline
-DoubleShiftQR<eT>::DoubleShiftQR(const Mat<eT>& mat, eT s, eT t)
-  : n(mat.n_rows)
+DoubleShiftQR<eT>::DoubleShiftQR(const Mat<eT>& mat_obj, eT s, eT t)
+  : n(mat_obj.n_rows)
   , mat_H(n, n)
   , shift_s(s)
   , shift_t(t)
@@ -260,26 +260,26 @@ DoubleShiftQR<eT>::DoubleShiftQR(const Mat<eT>& mat, eT s, eT t)
   , eps_abs(std::min(std::pow(prec, eT(0.75)), n * prec))
   , computed(false)
   {
-  compute(mat, s, t);
+  compute(mat_obj, s, t);
   }
 
 
 
 template<typename eT>
 void
-DoubleShiftQR<eT>::compute(const Mat<eT>& mat, eT s, eT t)
+DoubleShiftQR<eT>::compute(const Mat<eT>& mat_obj, eT s, eT t)
   {
-  arma_debug_check( (mat.is_square() == false), "DoubleShiftQR::compute(): matrix must be square" );
+  arma_debug_check( (mat_obj.is_square() == false), "DoubleShiftQR::compute(): matrix must be square" );
 
-  n = mat.n_rows;
+  n = mat_obj.n_rows;
   mat_H.set_size(n, n);
   shift_s = s;
   shift_t = t;
   ref_u.set_size(3, n);
   ref_nr.set_size(n);
 
-  // Make a copy of mat
-  std::copy(mat.memptr(), mat.memptr() + mat.n_elem, mat_H.memptr());
+  // Make a copy of mat_obj
+  std::copy(mat_obj.memptr(), mat_obj.memptr() + mat_obj.n_elem, mat_H.memptr());
 
   // Obtain the indices of zero elements in the subdiagonal,
   // so that H can be divided into several blocks

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,11 +33,11 @@ class TridiagEigen
   inline TridiagEigen();
 
   //! Constructor to create an object that calculates the eigenvalues
-  //! and eigenvectors of a symmetric tridiagonal matrix `mat`.
-  inline TridiagEigen(const Mat<eT>& mat);
+  //! and eigenvectors of a symmetric tridiagonal matrix `mat_obj`.
+  inline TridiagEigen(const Mat<eT>& mat_obj);
 
   //! Compute the eigenvalue decomposition of a symmetric tridiagonal matrix.
-  inline void compute(const Mat<eT>& mat);
+  inline void compute(const Mat<eT>& mat_obj);
 
   //! Retrieve the eigenvalues.
   inline Col<eT> eigenvalues();

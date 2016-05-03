@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,29 +23,29 @@ UpperHessenbergQR<eT>::UpperHessenbergQR()
 
 template<typename eT>
 inline
-UpperHessenbergQR<eT>::UpperHessenbergQR(const Mat<eT>& mat)
-  : n(mat.n_rows)
+UpperHessenbergQR<eT>::UpperHessenbergQR(const Mat<eT>& mat_obj)
+  : n(mat_obj.n_rows)
   , mat_T(n, n)
   , rot_cos(n - 1)
   , rot_sin(n - 1)
   , computed(false)
   {
-  compute(mat);
+  compute(mat_obj);
   }
 
 
 
 template<typename eT>
 void
-UpperHessenbergQR<eT>::compute(const Mat<eT>& mat)
+UpperHessenbergQR<eT>::compute(const Mat<eT>& mat_obj)
   {
-  n = mat.n_rows;
+  n = mat_obj.n_rows;
   mat_T.set_size(n, n);
   rot_cos.set_size(n - 1);
   rot_sin.set_size(n - 1);
 
-  // Make a copy of mat
-  std::copy(mat.memptr(), mat.memptr() + mat.n_elem, mat_T.memptr());
+  // Make a copy of mat_obj
+  std::copy(mat_obj.memptr(), mat_obj.memptr() + mat_obj.n_elem, mat_T.memptr());
 
   eT xi, xj, r, c, s, eps = std::numeric_limits<eT>::epsilon();
   eT *Tii, *ptr;
@@ -173,10 +173,10 @@ TridiagQR<eT>::TridiagQR()
 
 template<typename eT>
 inline
-TridiagQR<eT>::TridiagQR(const Mat<eT>& mat)
+TridiagQR<eT>::TridiagQR(const Mat<eT>& mat_obj)
   : UpperHessenbergQR<eT>()
   {
-  this->compute(mat);
+  this->compute(mat_obj);
   }
 
 
@@ -184,17 +184,17 @@ TridiagQR<eT>::TridiagQR(const Mat<eT>& mat)
 template<typename eT>
 inline
 void
-TridiagQR<eT>::compute(const Mat<eT>& mat)
+TridiagQR<eT>::compute(const Mat<eT>& mat_obj)
   {
-  this->n = mat.n_rows;
+  this->n = mat_obj.n_rows;
   this->mat_T.set_size(this->n, this->n);
   this->rot_cos.set_size(this->n - 1);
   this->rot_sin.set_size(this->n - 1);
 
   this->mat_T.zeros();
-  this->mat_T.diag() = mat.diag();
-  this->mat_T.diag(1) = mat.diag(-1);
-  this->mat_T.diag(-1) = mat.diag(-1);
+  this->mat_T.diag() = mat_obj.diag();
+  this->mat_T.diag(1) = mat_obj.diag(-1);
+  this->mat_T.diag(-1) = mat_obj.diag(-1);
 
   // A number of pointers to avoid repeated address calculation
   eT *Tii = this->mat_T.memptr(),  // pointer to T[i, i]

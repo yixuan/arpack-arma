@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,11 +33,11 @@ UpperHessenbergEigen<eT>::UpperHessenbergEigen()
 
 template<typename eT>
 inline
-UpperHessenbergEigen<eT>::UpperHessenbergEigen(const Mat<eT>& mat)
-  : n(mat.n_rows)
+UpperHessenbergEigen<eT>::UpperHessenbergEigen(const Mat<eT>& mat_obj)
+  : n(mat_obj.n_rows)
   , computed(false)
   {
-  compute(mat);
+  compute(mat_obj);
   }
 
 
@@ -45,18 +45,18 @@ UpperHessenbergEigen<eT>::UpperHessenbergEigen(const Mat<eT>& mat)
 template<typename eT>
 inline
 void
-UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat)
+UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat_obj)
   {
-  arma_debug_check( (mat.is_square() == false), "UpperHessenbergEigen::compute(): matrix must be square" );
+  arma_debug_check( (mat_obj.is_square() == false), "UpperHessenbergEigen::compute(): matrix must be square" );
 
-  n = mat.n_rows;
+  n = mat_obj.n_rows;
   mat_Z.set_size(n, n);
   mat_T.set_size(n, n);
   evals.set_size(n);
 
   mat_Z.eye();
-  // mat_T = mat;
-  std::copy(mat.memptr(), mat.memptr() + mat.n_elem, mat_T.memptr());
+  // mat_T = mat_obj;
+  std::copy(mat_obj.memptr(), mat_obj.memptr() + mat_obj.n_elem, mat_T.memptr());
 
   blas_int want_T = 1, want_Z = 1;
   blas_int ilo = 1, ihi = n, iloz = 1, ihiz = n;
