@@ -58,7 +58,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat_obj)
 
   for(blas_int i = 0; i < n; i++)
     {
-    evals[i] = std::complex<eT>(wr[i], wi[i]);
+    evals(i) = std::complex<eT>(wr[i], wi[i]);
     }
 
   if(info < 0) { arma_stop("lapack::lahqr(): failed to compute all the eigenvalues"); }
@@ -101,7 +101,7 @@ UpperHessenbergEigen<eT>::eigenvectors()
   std::complex<eT>* col_ptr = evecs.memptr();
   for(blas_int i = 0; i < n; i++)
     {
-    if(cx_attrib<eT>::is_real(evals[i], prec))
+    if(cx_attrib<eT>::is_real(evals(i), prec))
       {
       // For real eigenvector, normalize and copy
       eT z_norm = norm(mat_Z.col(i));

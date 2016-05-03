@@ -111,7 +111,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
   for(uword i = k; i < ncv; i++)
     {
     // QR decomposition of H-mu*I, mu is the shift
-    fac_H.diag() -= ritz_val[i];
+    fac_H.diag() -= ritz_val(i);
     decomp.compute(fac_H);
 
     // Q -> Q * Qi
@@ -121,7 +121,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
     // Since QR = H - mu * I, we have H = QR + mu * I
     // and therefore Q'HQ = RQ + mu * I
     fac_H = decomp.matrix_RQ();
-    fac_H.diag() += ritz_val[i];
+    fac_H.diag() += ritz_val(i);
     }
 
   // V -> VQ, only need to update the first k+1 columns
@@ -155,7 +155,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::num_converged(eT tol)
   const eT f_norm = norm(fac_f);
   for(uword i = 0; i < nev; i++)
     {
-    eT thresh = tol * std::max(prec, std::abs(ritz_val[i]));
+    eT thresh = tol * std::max(prec, std::abs(ritz_val(i)));
     eT resid = std::abs(ritz_vec(ncv - 1, i)) * f_norm;
     ritz_conv[i] = (resid < thresh);
     }
@@ -223,7 +223,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::retrieve_ritzpair()
   // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
   for(uword i = 0; i < ncv; i++)
     {
-    ritz_val[i] = evals[ind[i]];
+    ritz_val(i) = evals(ind[i]);
     }
   for(uword i = 0; i < nev; i++)
     {
@@ -247,7 +247,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
 
   for(uword i = 0; i < nev; i++)
     {
-    new_ritz_val[i] = ritz_val[ind[i]];
+    new_ritz_val(i) = ritz_val(ind[i]);
     new_ritz_vec.col(i) = ritz_vec.col(ind[i]);
     new_ritz_conv[i] = ritz_conv[ind[i]];
     }
@@ -364,7 +364,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::eigenvalues()
     {
     if(ritz_conv[i])
       {
-      res[j] = ritz_val[i];
+      res(i) = ritz_val(i);
       j++;
       }
     }

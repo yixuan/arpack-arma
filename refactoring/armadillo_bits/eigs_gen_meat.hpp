@@ -103,7 +103,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
 
   for(uword i = k; i < ncv; i++)
     {
-    if(cx_attrib<eT>::is_complex(ritz_val[i], prec) && cx_attrib<eT>::is_conj(ritz_val[i], ritz_val[i + 1], prec))
+    if(cx_attrib<eT>::is_complex(ritz_val(i), prec) && cx_attrib<eT>::is_conj(ritz_val(i), ritz_val(i + 1), prec))
       {
       // H - mu * I = Q1 * R1
       // H <- R1 * Q1 + mu * I = Q1' * H * Q1
@@ -111,8 +111,8 @@ GenEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
       // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
       //
       // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
-      eT s = 2 * ritz_val[i].real();
-      eT t = std::norm(ritz_val[i]);
+      eT s = 2 * ritz_val(i).real();
+      eT t = std::norm(ritz_val(i));
       decomp_ds.compute(fac_H, s, t);
 
       // Q -> Q * Qi
@@ -125,14 +125,14 @@ GenEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
     else
       {
       // QR decomposition of H - mu * I, mu is real
-      fac_H.diag() -= ritz_val[i].real();
+      fac_H.diag() -= ritz_val(i).real();
       decomp.compute(fac_H);
 
       // Q -> Q * Qi
       decomp.apply_YQ(Q);
       // H -> Q'HQ = RQ + mu * I
       fac_H = decomp.matrix_RQ();
-      fac_H.diag() += ritz_val[i].real();
+      fac_H.diag() += ritz_val(i).real();
       }
     }
   // V -> VQ
@@ -167,7 +167,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::num_converged(eT tol)
   const eT f_norm = arma::norm(fac_f);
   for(uword i = 0; i < nev; i++)
     {
-    eT thresh = tol * std::max(prec, std::abs(ritz_val[i]));
+    eT thresh = tol * std::max(prec, std::abs(ritz_val(i)));
     eT resid = std::abs(ritz_vec(ncv - 1, i)) * f_norm;
     ritz_conv[i] = (resid < thresh);
     }
@@ -186,8 +186,8 @@ GenEigsSolver<eT, SelectionRule, OpType>::nev_adjusted(uword nconv)
 
   // Increase nev by one if ritz_val[nev - 1] and
   // ritz_val[nev] are conjugate pairs
-  if(cx_attrib<eT>::is_complex(ritz_val[nev - 1], prec) &&
-     cx_attrib<eT>::is_conj(ritz_val[nev - 1], ritz_val[nev], prec))
+  if(cx_attrib<eT>::is_complex(ritz_val(nev - 1), prec) &&
+     cx_attrib<eT>::is_conj(ritz_val(nev - 1), ritz_val(nev), prec))
     {
     nev_new = nev + 1;
     }
@@ -206,8 +206,8 @@ GenEigsSolver<eT, SelectionRule, OpType>::nev_adjusted(uword nconv)
   if(nev_new > ncv - 2) { nev_new = ncv - 2; }
 
   // Examine conjugate pairs again
-  if(cx_attrib<eT>::is_complex(ritz_val[nev_new - 1], prec) &&
-     cx_attrib<eT>::is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
+  if(cx_attrib<eT>::is_complex(ritz_val(nev_new - 1), prec) &&
+     cx_attrib<eT>::is_conj(ritz_val(nev_new - 1), ritz_val(nev_new), prec))
     {
     nev_new++;
     }
@@ -232,7 +232,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::retrieve_ritzpair()
   // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
   for(uword i = 0; i < ncv; i++)
     {
-    ritz_val[i] = evals[ind[i]];
+    ritz_val(i) = evals(ind[i]);
     }
   for(uword i = 0; i < nev; i++)
     {
@@ -256,7 +256,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
 
   for(uword i = 0; i < nev; i++)
     {
-    new_ritz_val[i] = ritz_val[ind[i]];
+    new_ritz_val(i) = ritz_val(ind[i]);
     new_ritz_vec.col(i) = ritz_vec.col(ind[i]);
     new_ritz_conv[i] = ritz_conv[ind[i]];
     }
@@ -373,7 +373,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::eigenvalues()
     {
     if(ritz_conv[i])
       {
-      res[j] = ritz_val[i];
+      res(j) = ritz_val(i);
       j++;
       }
     }
@@ -390,7 +390,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::eigenvectors(uword nvec)
   {
   uword nconv = std::count(ritz_conv.begin(), ritz_conv.end(), true);
   nvec = std::min(nvec, nconv);
-  Mat<std::complex<eT>> res(dim_n, nvec);
+  Mat< std::complex<eT> > res(dim_n, nvec);
 
   if(!nvec) { return res; }
 
