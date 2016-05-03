@@ -269,7 +269,7 @@ template<typename eT>
 void
 DoubleShiftQR<eT>::compute(const Mat<eT>& mat_obj, eT s, eT t)
   {
-  arma_debug_check( (mat_obj.is_square() == false), "DoubleShiftQR::compute(): matrix must be square" );
+  arma_debug_check( (mat_obj.is_square() == false), "alt_eigs::DoubleShiftQR::compute(): matrix must be square" );
 
   n = mat_obj.n_rows;
   mat_H.set_size(n, n);
@@ -319,7 +319,7 @@ template<typename eT>
 Mat<eT>
 DoubleShiftQR<eT>::matrix_QtHQ()
   {
-  arma_debug_check( (computed == false), "DoubleShiftQR::matrix_QtHQ(): need to call compute() first" );
+  arma_debug_check( (computed == false), "alt_eigs::DoubleShiftQR::matrix_QtHQ(): need to call compute() first" );
 
   return mat_H;
   }
@@ -331,7 +331,7 @@ inline
 void
 DoubleShiftQR<eT>::apply_QtY(Col<eT>& y)
   {
-  arma_debug_check( (computed == false), "DoubleShiftQR::apply_QtY(): need to call compute() first" );
+  arma_debug_check( (computed == false), "alt_eigs::DoubleShiftQR::apply_QtY(): need to call compute() first" );
 
   eT* y_ptr = y.memptr();
   for(uword i = 0; i < n - 1; i++, y_ptr++)
@@ -347,7 +347,7 @@ inline
 void
 DoubleShiftQR<eT>::apply_YQ(Mat<eT>& Y)
   {
-  arma_debug_check( (computed == false), "DoubleShiftQR::apply_YQ(): need to call compute() first" );
+  arma_debug_check( (computed == false), "alt_eigs::DoubleShiftQR::apply_YQ(): need to call compute() first" );
 
   uword nrow = Y.n_rows;
   for(uword i = 0; i < n - 2; i++)

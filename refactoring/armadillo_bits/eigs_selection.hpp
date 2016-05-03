@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -58,7 +58,7 @@ struct SortingTarget
   {
   arma_inline static typename get_pod_type<eT>::result get(const eT& val)
     {
-    throw std::invalid_argument("incompatible selection rule");
+    arma_stop("alt_eigs::SortingTarget: incompatible selection rule");
     return -std::abs(val);
     }
   };

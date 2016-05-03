@@ -37,7 +37,7 @@ inline
 void
 UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat_obj)
   {
-  arma_debug_check( (mat_obj.is_square() == false), "UpperHessenbergEigen::compute(): matrix must be square" );
+  arma_debug_check( (mat_obj.is_square() == false), "alt_eigs::UpperHessenbergEigen::compute(): matrix must be square" );
 
   n = mat_obj.n_rows;
   mat_Z.set_size(n, n);
@@ -82,7 +82,7 @@ inline
 Col< std::complex<eT> >
 UpperHessenbergEigen<eT>::eigenvalues()
   {
-  arma_debug_check( (computed == false), "UpperHessenbergEigen::eigenvalues(): need to call compute() first" );
+  arma_debug_check( (computed == false), "alt_eigs::UpperHessenbergEigen::eigenvalues(): need to call compute() first" );
 
   return evals;
   }
@@ -94,7 +94,7 @@ inline
 Mat< std::complex<eT> >
 UpperHessenbergEigen<eT>::eigenvectors()
   {
-  arma_debug_check( (computed == false), "UpperHessenbergEigen::eigenvectors(): need to call compute() first" );
+  arma_debug_check( (computed == false), "alt_eigs::UpperHessenbergEigen::eigenvectors(): need to call compute() first" );
 
   eT prec = std::pow(std::numeric_limits<eT>::epsilon(), eT(2.0) / 3);
   Mat< std::complex<eT> > evecs(n, n);

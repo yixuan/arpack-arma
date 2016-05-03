@@ -37,7 +37,7 @@ inline
 void
 TridiagEigen<eT>::compute(const Mat<eT>& mat_obj)
   {
-  arma_debug_check( (mat_obj.is_square() == false), "TridiagEigen::compute(): matrix must be square" );
+  arma_debug_check( (mat_obj.is_square() == false), "alt_eigs::TridiagEigen::compute(): matrix must be square" );
 
   n = mat_obj.n_rows;
   main_diag = mat_obj.diag();
@@ -85,7 +85,7 @@ inline
 Col<eT>
 TridiagEigen<eT>::eigenvalues()
   {
-  arma_debug_check( (computed == false), "TridiagEigen::eigenvalues(): need to call compute() first" );
+  arma_debug_check( (computed == false), "alt_eigs::TridiagEigen::eigenvalues(): need to call compute() first" );
 
   // After calling compute(), main_diag will contain the eigenvalues.
   return main_diag;
@@ -98,7 +98,7 @@ inline
 Mat<eT>
 TridiagEigen<eT>::eigenvectors()
   {
-  arma_debug_check( (computed == false), "TridiagEigen::eigenvectors(): need to call compute() first" );
+  arma_debug_check( (computed == false), "alt_eigs::TridiagEigen::eigenvectors(): need to call compute() first" );
 
   return evecs;
   }
