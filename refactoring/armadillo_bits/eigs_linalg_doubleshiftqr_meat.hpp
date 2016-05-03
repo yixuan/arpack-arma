@@ -279,7 +279,7 @@ DoubleShiftQR<eT>::compute(const Mat<eT>& mat_obj, eT s, eT t)
   ref_nr.set_size(n);
 
   // Make a copy of mat_obj
-  std::copy(mat_obj.memptr(), mat_obj.memptr() + mat_obj.n_elem, mat_H.memptr());
+  mat_H = mat_obj;
 
   // Obtain the indices of zero elements in the subdiagonal,
   // so that H can be divided into several blocks

@@ -45,8 +45,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat_obj)
   evals.set_size(n);
 
   mat_Z.eye();
-  // mat_T = mat_obj;
-  std::copy(mat_obj.memptr(), mat_obj.memptr() + mat_obj.n_elem, mat_T.memptr());
+  mat_T = mat_obj;
 
   blas_int want_T = 1, want_Z = 1;
   blas_int ilo = 1, ihi = n, iloz = 1, ihiz = n;

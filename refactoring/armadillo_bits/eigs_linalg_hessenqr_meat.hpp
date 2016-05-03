@@ -45,7 +45,7 @@ UpperHessenbergQR<eT>::compute(const Mat<eT>& mat_obj)
   rot_sin.set_size(n - 1);
 
   // Make a copy of mat_obj
-  std::copy(mat_obj.memptr(), mat_obj.memptr() + mat_obj.n_elem, mat_T.memptr());
+  mat_T = mat_obj;
 
   eT xi, xj, r, c, s, eps = std::numeric_limits<eT>::epsilon();
   eT *Tii, *ptr;
