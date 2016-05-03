@@ -17,23 +17,20 @@ inline
 void
 DoubleShiftQR<eT>::compute_reflector(const eT& x1, const eT& x2, const eT& x3, uword ind)
   {
-  eT* u = ref_u.memptr() + 3 * ind;
-  unsigned short *nr = ref_nr.memptr();
-
   // In general case the reflector affects 3 rows
-  nr[ind] = 3;
+  ref_nr(ind) = 3;
   // If x3 is zero, decrease nr by 1
   if(std::abs(x3) < prec)
     {
     // If x2 is also zero, nr will be 1, and we can exit this function
     if(std::abs(x2) < prec)
       {
-      nr[ind] = 1;
+      ref_nr(ind) = 1;
       return;
       }
     else
       {
-      nr[ind] = 2;
+      ref_nr(ind) = 2;
       }
     }
 
@@ -45,12 +42,12 @@ DoubleShiftQR<eT>::compute_reflector(const eT& x1, const eT& x2, const eT& x3, u
   // Double check the norm of new x
   if(x_norm < prec)
     {
-    nr[ind] = 1;
+    ref_nr(ind) = 1;
     return;
     }
-  u[0] = x1_new / x_norm;
-  u[1] = x2 / x_norm;
-  u[2] = x3 / x_norm;
+  ref_u(0, ind) = x1_new / x_norm;
+  ref_u(1, ind) = x2 / x_norm;
+  ref_u(2, ind) = x3 / x_norm;
   }
 
 
@@ -75,7 +72,7 @@ DoubleShiftQR<eT>::update_block(uword il, uword iu)
   // If block size == 1, there is no need to apply reflectors
   if(bsize == 1)
     {
-    ref_nr[il] = 1;
+    ref_nr(il) = 1;
     return;
     }
 
@@ -94,7 +91,7 @@ DoubleShiftQR<eT>::update_block(uword il, uword iu)
     apply_PX(mat_H, il, il, 2, n - il, il);
     apply_XP(mat_H, 0, il, il + 2, 2, il);
 
-    ref_nr[il + 1] = 1;
+    ref_nr(il + 1) = 1;
     return;
     }
 
@@ -128,7 +125,7 @@ DoubleShiftQR<eT>::update_block(uword il, uword iu)
   apply_PX(mat_H, iu - 1, iu - 2, 2, n + 2 - iu, iu - 1);
   apply_XP(mat_H, 0, iu - 1, il + bsize, 2, iu - 1);
 
-  ref_nr[iu] = 1;
+  ref_nr(iu) = 1;
   }
 
 
@@ -138,33 +135,34 @@ inline
 void
 DoubleShiftQR<eT>::apply_PX(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
   {
-  if(ref_nr[u_ind] == 1) { return; }
+  if(ref_nr(u_ind) == 1) { return; }
 
-  eT* u = ref_u.memptr() + 3 * u_ind;
+  // Householder reflectors at index u_ind
+  Col<eT> u(ref_u.colptr(u_ind), 3, false);
 
   const uword stride = X.n_rows;
-  const eT u0_2 = 2 * u[0];
-  const eT u1_2 = 2 * u[1];
+  const eT u0_2 = 2 * u(0);
+  const eT u1_2 = 2 * u(1);
 
-  eT* xptr = X.colptr(oj) + oi;
-  if(ref_nr[u_ind] == 2 || nrow == 2)
+  eT* xptr = &X(oi, oj);
+  if(ref_nr(u_ind) == 2 || nrow == 2)
     {
     for(uword i = 0; i < ncol; i++, xptr += stride)
       {
       eT tmp = u0_2 * xptr[0] + u1_2 * xptr[1];
-      xptr[0] -= tmp * u[0];
-      xptr[1] -= tmp * u[1];
+      xptr[0] -= tmp * u(0);
+      xptr[1] -= tmp * u(1);
       }
     }
   else
     {
-    const eT u2_2 = 2 * u[2];
+    const eT u2_2 = 2 * u(2);
     for(uword i = 0; i < ncol; i++, xptr += stride)
       {
       eT tmp = u0_2 * xptr[0] + u1_2 * xptr[1] + u2_2 * xptr[2];
-      xptr[0] -= tmp * u[0];
-      xptr[1] -= tmp * u[1];
-      xptr[2] -= tmp * u[2];
+      xptr[0] -= tmp * u(0);
+      xptr[1] -= tmp * u(1);
+      xptr[2] -= tmp * u(2);
       }
     }
   }
@@ -176,14 +174,14 @@ inline
 void
 DoubleShiftQR<eT>::apply_PX(eT *x, uword u_ind)
   {
-  if(ref_nr[u_ind] == 1) { return; }
+  if(ref_nr(u_ind) == 1) { return; }
 
   eT u0 = ref_u(0, u_ind),
      u1 = ref_u(1, u_ind),
      u2 = ref_u(2, u_ind);
 
   // When the reflector only contains two elements, u2 has been set to zero
-  bool nr_is_2 = (ref_nr[u_ind] == 2);
+  bool nr_is_2 = (ref_nr(u_ind) == 2);
   eT dot2 = x[0] * u0 + x[1] * u1 + (nr_is_2 ? 0 : (x[2] * u2));
   dot2 *= 2;
   x[0] -= dot2 * u0;
@@ -198,15 +196,17 @@ inline
 void
 DoubleShiftQR<eT>::apply_XP(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
   {
-  if(ref_nr[u_ind] == 1) { return; }
+  if(ref_nr(u_ind) == 1) { return; }
 
-  eT* u = ref_u.memptr() + 3 * u_ind;
+  // Householder reflectors at index u_ind
+  Col<eT> u(ref_u.colptr(u_ind), 3, false);
   uword stride = X.n_rows;
-  const eT u0_2 = 2 * u[0];
-  const eT u1_2 = 2 * u[1];
-  eT* X0 = X.colptr(oj) + oi, *X1 = X0 + stride;  // X0 => X(oi, oj), X1 => X(oi, oj + 1)
+  const eT u0_2 = 2 * u(0);
+  const eT u1_2 = 2 * u(1);
+  eT* X0 = &X(oi, oj);
+  eT* X1 = X0 + stride;  // X0 => X(oi, oj), X1 => X(oi, oj + 1)
 
-  if(ref_nr[u_ind] == 2 || ncol == 2)
+  if(ref_nr(u_ind) == 2 || ncol == 2)
     {
     // tmp = 2 * u0 * X0 + 2 * u1 * X1
     // X0 => X0 - u0 * tmp
@@ -214,20 +214,20 @@ DoubleShiftQR<eT>::apply_XP(Mat<eT> &X, uword oi, uword oj, uword nrow, uword nc
     for(uword i = 0; i < nrow; i++)
       {
       eT tmp = u0_2 * X0[i] + u1_2 * X1[i];
-      X0[i] -= tmp * u[0];
-      X1[i] -= tmp * u[1];
+      X0[i] -= tmp * u(0);
+      X1[i] -= tmp * u(1);
       }
     }
   else
     {
     eT* X2 = X1 + stride;  // X2 => X(oi, oj + 2)
-    const eT u2_2 = 2 * u[2];
+    const eT u2_2 = 2 * u(2);
     for(uword i = 0; i < nrow; i++)
       {
       eT tmp = u0_2 * X0[i] + u1_2 * X1[i] + u2_2 * X2[i];
-      X0[i] -= tmp * u[0];
-      X1[i] -= tmp * u[1];
-      X2[i] -= tmp * u[2];
+      X0[i] -= tmp * u(0);
+      X1[i] -= tmp * u(1);
+      X2[i] -= tmp * u(2);
       }
     }
   }
