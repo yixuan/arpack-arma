@@ -18,7 +18,7 @@ class GenEigsSolver
   {
   protected:
 
-  OpType*                 op;        // object to conduct matrix operation, e.g. matrix-vector product
+  const OpType&           op;        // object to conduct matrix operation, e.g. matrix-vector product
   const uword             nev;       // number of eigenvalues requested
   Col< std::complex<eT> > ritz_val;  // ritz values
 
@@ -61,7 +61,7 @@ class GenEigsSolver
 
   public:
     //! Constructor to create a solver object.
-    inline GenEigsSolver(OpType* op_, uword nev_, uword ncv_);
+    inline GenEigsSolver(const OpType& op_, uword nev_, uword ncv_);
 
     //! Providing the initial residual vector for the algorithm.
     inline void init(eT* init_resid);

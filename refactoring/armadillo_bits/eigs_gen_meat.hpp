@@ -52,7 +52,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
     if(restart) { fac_H(i, i - 1) = 0.0; } else { fac_H(i, i - 1) = beta; }
 
     // w <- A * v, v = fac_V.col(i)
-    op->perform_op(fac_V.colptr(i), w.memptr());
+    op.perform_op(fac_V.colptr(i), w.memptr());
     nmatop++;
 
     // First i+1 columns of V
@@ -270,10 +270,10 @@ GenEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
 
 template<typename eT, int SelectionRule, typename OpType>
 inline
-GenEigsSolver<eT, SelectionRule, OpType>::GenEigsSolver(OpType* op_, uword nev_, uword ncv_)
+GenEigsSolver<eT, SelectionRule, OpType>::GenEigsSolver(const OpType& op_, uword nev_, uword ncv_)
   : op(op_)
   , nev(nev_)
-  , dim_n(op->rows())
+  , dim_n(op.rows())
   , ncv(ncv_ > dim_n ? dim_n : ncv_)
   , nmatop(0)
   , niter(0)
@@ -309,7 +309,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   v = r / rnorm;
 
   Col<eT> w(dim_n);
-  op->perform_op(v.memptr(), w.memptr());
+  op.perform_op(v.memptr(), w.memptr());
   nmatop++;
 
   fac_H(0, 0) = dot(v, w);

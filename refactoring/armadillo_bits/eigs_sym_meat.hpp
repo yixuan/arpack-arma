@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,7 +53,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
     if(restart) { fac_H(i, i - 1) = 0.0; } else { fac_H(i, i - 1) = beta; }
 
     // w <- A * v, v = fac_V.col(i)
-    op->perform_op(v.memptr(), w.memptr());
+    op.perform_op(v.memptr(), w.memptr());
     nmatop++;
 
     Hii = dot(v, w);
@@ -261,10 +261,10 @@ SymEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
 
 template<typename eT, int SelectionRule, typename OpType>
 inline
-SymEigsSolver<eT, SelectionRule, OpType>::SymEigsSolver(OpType* op_, uword nev_, uword ncv_)
+SymEigsSolver<eT, SelectionRule, OpType>::SymEigsSolver(const OpType& op_, uword nev_, uword ncv_)
   : op(op_)
   , nev(nev_)
-  , dim_n(op->rows())
+  , dim_n(op.rows())
   , ncv(ncv_ > dim_n ? dim_n : ncv_)
   , nmatop(0)
   , niter(0)
@@ -300,7 +300,7 @@ SymEigsSolver<eT, SelectionRule, OpType>::init(eT* init_resid)
   v = r / rnorm;
 
   Col<eT> w(dim_n);
-  op->perform_op(v.memptr(), w.memptr());
+  op.perform_op(v.memptr(), w.memptr());
   nmatop++;
 
   fac_H(0, 0) = dot(v, w);

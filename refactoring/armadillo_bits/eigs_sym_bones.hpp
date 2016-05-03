@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,7 +18,7 @@ class SymEigsSolver
   {
   protected:
 
-  OpType*           op;        // object to conduct matrix operation, e.g. matrix-vector product
+  const OpType&     op;        // object to conduct matrix operation, e.g. matrix-vector product
   const uword       nev;       // number of eigenvalues requested
   Col<eT>           ritz_val;  // ritz values
 
@@ -62,7 +62,7 @@ class SymEigsSolver
   public:
 
   //! Constructor to create a solver object.
-  inline SymEigsSolver(OpType* op_, uword nev_, uword ncv_);
+  inline SymEigsSolver(const OpType& op_, uword nev_, uword ncv_);
 
   //! Providing the initial residual vector for the algorithm.
   inline void init(eT* init_resid);

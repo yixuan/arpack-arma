@@ -141,7 +141,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
 
     arma_debug_check( (form_val != form_lm) && (form_val != form_sm) && (form_val != form_la) && (form_val != form_sa), "eigs_sym(): unknown form specified" );
 
-    alt_eigs::SparseGenMatProd<eT> op(X.get_ref());
+    const alt_eigs::SparseGenMatProd<eT> op(X.get_ref());
     uword n = op.rows();
     uword ncv = n_eigvals + 2 + 1;
     if(ncv < (2 * n_eigvals + 1)) { ncv = 2 * n_eigvals + 1; }
@@ -153,7 +153,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
 
     if(form_val == form_lm)
       {
-      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::LARGEST_MAGN, alt_eigs::SparseGenMatProd<eT> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::LARGEST_MAGN, alt_eigs::SparseGenMatProd<eT> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -162,7 +162,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
     else
     if(form_val == form_sm)
       {
-      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::SMALLEST_MAGN, alt_eigs::SparseGenMatProd<eT> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::SMALLEST_MAGN, alt_eigs::SparseGenMatProd<eT> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -171,7 +171,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
     else
     if(form_val == form_la)
       {
-      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::LARGEST_ALGE, alt_eigs::SparseGenMatProd<eT> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::LARGEST_ALGE, alt_eigs::SparseGenMatProd<eT> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -179,7 +179,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
       }
     else
       {
-      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::SMALLEST_ALGE, alt_eigs::SparseGenMatProd<eT> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::SymEigsSolver< eT, alt_eigs::EigsSelect::SMALLEST_ALGE, alt_eigs::SparseGenMatProd<eT> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -333,7 +333,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
 
     arma_debug_check( (form_val == form_none), "eigs_gen(): unknown form specified" );
 
-    alt_eigs::SparseGenMatProd<T> op(X.get_ref());
+    const alt_eigs::SparseGenMatProd<T> op(X.get_ref());
     uword n = op.rows();
     uword ncv = n_eigvals + 2 + 1;
     if(ncv < (2 * n_eigvals + 1)) { ncv = 2 * n_eigvals + 1; }
@@ -345,7 +345,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
 
     if(form_val == form_lm)
       {
-      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::LARGEST_MAGN, alt_eigs::SparseGenMatProd<T> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::LARGEST_MAGN, alt_eigs::SparseGenMatProd<T> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -354,7 +354,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
     else
     if(form_val == form_sm)
       {
-      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::SMALLEST_MAGN, alt_eigs::SparseGenMatProd<T> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::SMALLEST_MAGN, alt_eigs::SparseGenMatProd<T> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -363,7 +363,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
     else
     if(form_val == form_lr)
       {
-      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::LARGEST_REAL, alt_eigs::SparseGenMatProd<T> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::LARGEST_REAL, alt_eigs::SparseGenMatProd<T> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -372,7 +372,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
     else
     if(form_val == form_sr)
       {
-      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::SMALLEST_REAL, alt_eigs::SparseGenMatProd<T> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::SMALLEST_REAL, alt_eigs::SparseGenMatProd<T> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -381,7 +381,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
     else
     if(form_val == form_li)
       {
-      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::LARGEST_IMAG, alt_eigs::SparseGenMatProd<T> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::LARGEST_IMAG, alt_eigs::SparseGenMatProd<T> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
@@ -389,7 +389,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
       }
     else
       {
-      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::SMALLEST_IMAG, alt_eigs::SparseGenMatProd<T> > eigs(&op, n_eigvals, ncv);
+      alt_eigs::GenEigsSolver< T, alt_eigs::EigsSelect::SMALLEST_IMAG, alt_eigs::SparseGenMatProd<T> > eigs(op, n_eigvals, ncv);
       eigs.init();
       nconv = eigs.compute(1000, tol);
       eigval = eigs.eigenvalues();
