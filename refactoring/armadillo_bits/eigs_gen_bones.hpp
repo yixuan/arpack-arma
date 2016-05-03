@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,10 +45,6 @@ class GenEigsSolver
 
   // Arnoldi factorization starting from step-k
   inline void factorize_from(uword from_k, uword to_m, const Col<eT>& fk);
-
-  arma_inline static bool is_complex(std::complex<eT> v, eT eps) { return std::abs(v.imag()) > eps; }
-
-  arma_inline static bool is_conj(std::complex<eT> v1, std::complex<eT> v2, eT eps) { return std::abs(v1 - std::conj(v2)) < eps; }
 
   // Implicitly restarted Arnoldi factorization
   inline void restart(uword k);

@@ -26,8 +26,6 @@ class UpperHessenbergEigen
   Col< std::complex<eT> > evals;  // eigenvalues of H
   bool                    computed;
 
-  static arma_inline bool is_real(std::complex<eT> v, eT eps);
-
 
   public:
 

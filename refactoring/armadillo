@@ -303,6 +303,7 @@ namespace arma
   #include "armadillo_bits/spglue_times_bones.hpp"
   #include "armadillo_bits/spglue_join_bones.hpp"
 
+  #include "armadillo_bits/eigs_cx_attrib.hpp"
   #include "armadillo_bits/eigs_linalg_hessenqr_bones.hpp"
   #include "armadillo_bits/eigs_linalg_doubleshiftqr_bones.hpp"
   #include "armadillo_bits/eigs_linalg_hesseneigen_bones.hpp"

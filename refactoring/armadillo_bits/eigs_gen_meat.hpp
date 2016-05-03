@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2015 National ICT Australia (NICTA)
+// Copyright (C) 2016 National ICT Australia (NICTA)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -103,7 +103,7 @@ GenEigsSolver<eT, SelectionRule, OpType>::restart(uword k)
 
   for(uword i = k; i < ncv; i++)
     {
-    if(is_complex(ritz_val[i], prec) && is_conj(ritz_val[i], ritz_val[i + 1], prec))
+    if(cx_attrib<eT>::is_complex(ritz_val[i], prec) && cx_attrib<eT>::is_conj(ritz_val[i], ritz_val[i + 1], prec))
       {
       // H - mu * I = Q1 * R1
       // H <- R1 * Q1 + mu * I = Q1' * H * Q1
@@ -186,8 +186,8 @@ GenEigsSolver<eT, SelectionRule, OpType>::nev_adjusted(uword nconv)
 
   // Increase nev by one if ritz_val[nev - 1] and
   // ritz_val[nev] are conjugate pairs
-  if(is_complex(ritz_val[nev - 1], prec) &&
-     is_conj(ritz_val[nev - 1], ritz_val[nev], prec))
+  if(cx_attrib<eT>::is_complex(ritz_val[nev - 1], prec) &&
+     cx_attrib<eT>::is_conj(ritz_val[nev - 1], ritz_val[nev], prec))
     {
     nev_new = nev + 1;
     }
@@ -206,8 +206,8 @@ GenEigsSolver<eT, SelectionRule, OpType>::nev_adjusted(uword nconv)
   if(nev_new > ncv - 2) { nev_new = ncv - 2; }
 
   // Examine conjugate pairs again
-  if(is_complex(ritz_val[nev_new - 1], prec) &&
-     is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
+  if(cx_attrib<eT>::is_complex(ritz_val[nev_new - 1], prec) &&
+     cx_attrib<eT>::is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
     {
     nev_new++;
     }

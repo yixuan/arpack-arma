@@ -13,16 +13,6 @@ namespace alt_eigs
 
 
 template<typename eT>
-arma_inline
-bool
-UpperHessenbergEigen<eT>::is_real(std::complex<eT> v, eT eps)
-  {
-  return std::abs(v.imag()) <= eps;
-  }
-
-
-
-template<typename eT>
 inline
 UpperHessenbergEigen<eT>::UpperHessenbergEigen()
   : n(0)
@@ -112,7 +102,7 @@ UpperHessenbergEigen<eT>::eigenvectors()
   std::complex<eT>* col_ptr = evecs.memptr();
   for(blas_int i = 0; i < n; i++)
     {
-    if(is_real(evals[i], prec))
+    if(cx_attrib<eT>::is_real(evals[i], prec))
       {
       // For real eigenvector, normalize and copy
       eT z_norm = norm(mat_Z.col(i));
