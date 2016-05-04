@@ -34,7 +34,12 @@ GenEigsSolver<eT, SelectionRule, OpType>::factorize_from(uword from_k, uword to_
     // to the current V, which we call a restart
     if(beta < prec)
       {
-      fac_f.randu();
+      // Generate new random vector for fac_f
+      blas_int idist = 2;
+      blas_int iseed[4] = {1, 3, 5, 7};
+      iseed[0] = (i + 100) % 4095;
+      blas_int n = dim_n;
+      lapack::larnv(&idist, iseed, &n, fac_f.memptr());
       // f <- f - V * V' * f, so that f is orthogonal to V
       Mat<eT> Vs(fac_V.memptr(), dim_n, i, false); // First i columns
       Col<eT> Vf = Vs.t() * fac_f;
