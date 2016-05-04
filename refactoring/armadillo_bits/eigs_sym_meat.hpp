@@ -314,8 +314,11 @@ inline
 void
 SymEigsSolver<eT, SelectionRule, OpType>::init()
   {
-  Col<eT> init_resid(dim_n, fill::randu);
-  init_resid -= 0.5;
+  podarray<eT> init_resid(dim_n);
+  blas_int idist = 2;                // Uniform(-1, 1)
+  blas_int iseed[4] = {1, 3, 5, 7};  // Fixed random seed
+  blas_int n = dim_n;
+  lapack::larnv(&idist, iseed, &n, init_resid.memptr());
   init(init_resid.memptr());
   }
 

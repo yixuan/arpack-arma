@@ -167,6 +167,9 @@
   #define arma_strevc strevc
   #define arma_dtrevc dtrevc
 
+  #define arma_slarnv slarnv
+  #define arma_dlarnv dlarnv
+
 #else
 
   #define arma_sgetrf SGETRF
@@ -319,6 +322,9 @@
 
   #define arma_strevc STREVC
   #define arma_dtrevc DTREVC
+
+  #define arma_slarnv SLARNV
+  #define arma_dlarnv DLARNV
 
 #endif
 
@@ -524,6 +530,10 @@ extern "C"
   // calculate eigenvectors of a Schur form matrix
   void arma_fortran(arma_strevc)(char* side, char* howmny, blas_int* select, blas_int* n, float*  t, blas_int* ldt, float*  vl, blas_int* ldvl, float*  vr, blas_int* ldvr, blas_int* mm, blas_int* m, float*  work, blas_int* info);
   void arma_fortran(arma_dtrevc)(char* side, char* howmny, blas_int* select, blas_int* n, double* t, blas_int* ldt, double* vl, blas_int* ldvl, double* vr, blas_int* ldvr, blas_int* mm, blas_int* m, double* work, blas_int* info);
+
+  // generate a vector of random numbers
+  void arma_fortran(arma_slarnv)(blas_int* idist, blas_int* iseed, blas_int* n, float*  x);
+  void arma_fortran(arma_dlarnv)(blas_int* idist, blas_int* iseed, blas_int* n, double* x);
   }
 
 
