@@ -17,7 +17,7 @@ template <int SelectionRule>
 void run_test(Matrix &mat, int k, int m)
 {
     DenseGenMatProd<double> op(mat);
-    GenEigsSolver<double, SelectionRule, DenseGenMatProd<double>> eigs(op, k, m);
+    GenEigsSolver< double, SelectionRule, DenseGenMatProd<double> > eigs(op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
