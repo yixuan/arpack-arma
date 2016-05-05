@@ -23,23 +23,25 @@ class DenseGenMatProd
 
   public:
 
+  //! Number of rows of the underlying matrix.
+  const uword n_rows;
+
+  //! Number of columns of the underlying matrix.
+  const uword n_cols;
+
   //! Constructor to create the matrix operation object.
   inline DenseGenMatProd(Mat<eT>& mat_obj)
     : op_mat(mat_obj.memptr(), mat_obj.n_rows, mat_obj.n_cols, false)
+    , n_rows(mat_obj.n_rows)
+    , n_cols(mat_obj.n_cols)
   {}
-
-  //! Return the number of rows of the underlying matrix.
-  arma_inline uword rows() const { return op_mat.n_rows; }
-
-  //! Return the number of columns of the underlying matrix.
-  arma_inline uword cols() const { return op_mat.n_cols; }
 
   //! Perform the matrix-vector multiplication operation \f$y=Ax\f$.
   // y_out = A * x_in
   arma_inline void perform_op(eT* x_in, eT* y_out) const
     {
-    Col<eT> x(x_in , op_mat.n_cols, false);
-    Col<eT> y(y_out, op_mat.n_rows, false);
+    Col<eT> x(x_in , n_cols, false);
+    Col<eT> y(y_out, n_rows, false);
     y = op_mat * x;
     }
   };

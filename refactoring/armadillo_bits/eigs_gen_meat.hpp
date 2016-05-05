@@ -278,7 +278,7 @@ inline
 GenEigsSolver<eT, SelectionRule, OpType>::GenEigsSolver(const OpType& op_, uword nev_, uword ncv_)
   : op(op_)
   , nev(nev_)
-  , dim_n(op.rows())
+  , dim_n(op.n_rows)
   , ncv(ncv_ > dim_n ? dim_n : ncv_)
   , nmatop(0)
   , niter(0)

@@ -142,7 +142,7 @@ sp_auxlib::eigs_sym(Col<eT>& eigval, Mat<eT>& eigvec, const SpBase<eT, T1>& X, c
     arma_debug_check( (form_val != form_lm) && (form_val != form_sm) && (form_val != form_la) && (form_val != form_sa), "eigs_sym(): unknown form specified" );
 
     const alt_eigs::SparseGenMatProd<eT> op(X.get_ref());
-    uword n = op.rows();
+    uword n = op.n_rows;
     uword ncv = n_eigvals + 2 + 1;
     if(ncv < (2 * n_eigvals + 1)) { ncv = 2 * n_eigvals + 1; }
     if(ncv > n)                   { ncv = n; }
@@ -334,7 +334,7 @@ sp_auxlib::eigs_gen(Col< std::complex<T> >& eigval, Mat< std::complex<T> >& eigv
     arma_debug_check( (form_val == form_none), "eigs_gen(): unknown form specified" );
 
     const alt_eigs::SparseGenMatProd<T> op(X.get_ref());
-    uword n = op.rows();
+    uword n = op.n_rows;
     uword ncv = n_eigvals + 2 + 1;
     if(ncv < (2 * n_eigvals + 1)) { ncv = 2 * n_eigvals + 1; }
     if(ncv > n)                   { ncv = n; }
