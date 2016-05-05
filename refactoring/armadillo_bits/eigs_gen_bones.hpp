@@ -60,31 +60,32 @@ class GenEigsSolver
 
 
   public:
-    //! Constructor to create a solver object.
-    inline GenEigsSolver(const OpType& op_, uword nev_, uword ncv_);
 
-    //! Providing the initial residual vector for the algorithm.
-    inline void init(eT* init_resid);
+  //! Constructor to create a solver object.
+  inline GenEigsSolver(const OpType& op_, uword nev_, uword ncv_);
 
-    //! Providing a random initial residual vector.
-    inline void init();
+  //! Providing the initial residual vector for the algorithm.
+  inline void init(eT* init_resid);
 
-    //! Conducting the major computation procedure.
-    inline uword compute(uword maxit = 1000, eT tol = 1e-10);
+  //! Providing a random initial residual vector.
+  inline void init();
 
-    //! Returning the number of iterations used in the computation.
-    arma_inline int num_iterations() { return niter; }
+  //! Conducting the major computation procedure.
+  inline uword compute(uword maxit = 1000, eT tol = 1e-10);
 
-    //! Returning the number of matrix operations used in the computation.
-    arma_inline int num_operations() { return nmatop; }
+  //! Returning the number of iterations used in the computation.
+  arma_inline int num_iterations() { return niter; }
 
-    //! Returning the converged eigenvalues.
-    inline Col< std::complex<eT> > eigenvalues();
+  //! Returning the number of matrix operations used in the computation.
+  arma_inline int num_operations() { return nmatop; }
 
-    //! Returning the eigenvectors associated with the converged eigenvalues.
-    inline Mat< std::complex<eT> > eigenvectors(uword nvec);
-    //! Returning all converged eigenvectors.
-    arma_inline Mat< std::complex<eT> > eigenvectors() { return eigenvectors(nev); }
+  //! Returning the converged eigenvalues.
+  inline Col< std::complex<eT> > eigenvalues();
+
+  //! Returning the eigenvectors associated with the converged eigenvalues.
+  inline Mat< std::complex<eT> > eigenvectors(uword nvec);
+  //! Returning all converged eigenvectors.
+  arma_inline Mat< std::complex<eT> > eigenvectors() { return eigenvectors(nev); }
   };
 
 
