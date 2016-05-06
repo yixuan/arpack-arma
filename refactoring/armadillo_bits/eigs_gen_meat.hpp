@@ -252,7 +252,8 @@ inline
 void
 GenEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
   {
-  SortEigenvalue< std::complex<eT>, EigsSelect::LARGEST_MAGN > sorting(ritz_val.memptr(), nev);
+  // Sort Ritz values according to SelectionRule, in consistence with ARPACK
+  SortEigenvalue< std::complex<eT>, SelectionRule > sorting(ritz_val.memptr(), nev);
   std::vector<uword> ind = sorting.index();
 
   Col< std::complex<eT> > new_ritz_val(ncv);

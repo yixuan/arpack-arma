@@ -243,7 +243,8 @@ inline
 void
 SymEigsSolver<eT, SelectionRule, OpType>::sort_ritzpair()
   {
-  SortEigenvalue<eT, EigsSelect::LARGEST_MAGN> sorting(ritz_val.memptr(), nev);
+  // Sort Ritz values in ascending algebraic order to be consistent with ARPACK
+  SortEigenvalue<eT, EigsSelect::SMALLEST_ALGE> sorting(ritz_val.memptr(), nev);
   std::vector<uword> ind = sorting.index();
 
   Col<eT>           new_ritz_val(ncv);
