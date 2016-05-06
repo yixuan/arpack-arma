@@ -110,7 +110,7 @@ public:
         delete [] wr;
         delete [] wi;
 
-        if(info < 0)
+        if(info > 0)
             throw std::logic_error("Lapack lahqr: failed to compute all the eigenvalues");
 
         char side = 'R', howmny = 'B';

@@ -61,7 +61,7 @@ UpperHessenbergEigen<eT>::compute(const Mat<eT>& mat_obj)
     evals(i) = std::complex<eT>(wr[i], wi[i]);
     }
 
-  if(info < 0) { arma_stop("lapack::lahqr(): failed to compute all the eigenvalues"); }
+  if(info > 0) { arma_stop("lapack::lahqr(): failed to compute all the eigenvalues"); }
 
   char side = 'R', howmny = 'B';
   podarray<eT> work(3 * n);
