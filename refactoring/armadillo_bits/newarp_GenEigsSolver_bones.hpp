@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -74,19 +74,20 @@ class GenEigsSolver
   inline uword compute(uword maxit = 1000, eT tol = 1e-10);
 
   //! Returning the number of iterations used in the computation.
-  arma_inline int num_iterations() { return niter; }
+  inline int num_iterations() { return niter; }
 
   //! Returning the number of matrix operations used in the computation.
-  arma_inline int num_operations() { return nmatop; }
+  inline int num_operations() { return nmatop; }
 
   //! Returning the converged eigenvalues.
   inline Col< std::complex<eT> > eigenvalues();
 
   //! Returning the eigenvectors associated with the converged eigenvalues.
   inline Mat< std::complex<eT> > eigenvectors(uword nvec);
+  
   //! Returning all converged eigenvectors.
-  arma_inline Mat< std::complex<eT> > eigenvectors() { return eigenvectors(nev); }
+  inline Mat< std::complex<eT> > eigenvectors() { return eigenvectors(nev); }
   };
 
 
-}  // namespace alt_eigs
+}  // namespace newarp

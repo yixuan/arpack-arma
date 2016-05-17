@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -18,7 +18,7 @@ class DoubleShiftQR
   private:
 
   uword               n;        // Dimension of the matrix
-  Mat<eT>             mat_H;    // A copy of the matrix to be factorized
+  Mat<eT>             mat_H;    // A copy of the matrix to be factorised
   eT                  shift_s;  // Shift constant
   eT                  shift_t;  // Shift constant
   Mat<eT>             ref_u;    // Householder reflectors
@@ -29,7 +29,7 @@ class DoubleShiftQR
   const eT            prec;     // Approximately zero
   const eT            eps_rel;
   const eT            eps_abs;
-  bool                computed; // Whether matrix has been factorized
+  bool                computed; // Whether matrix has been factorised
 
   inline      void compute_reflector(const eT& x1, const eT& x2, const eT& x3, uword ind);
   arma_inline void compute_reflector(const eT* x, uword ind);
@@ -39,14 +39,14 @@ class DoubleShiftQR
 
   // P = I - 2 * u * u' = P'
   // PX = X - 2 * u * (u'X)
-  inline void apply_PX(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind);
+  inline void apply_PX(Mat<eT>& X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind);
 
   // x is a pointer to a vector
   // Px = x - 2 * dot(x, u) * u
   inline void apply_PX(eT* x, uword u_ind);
 
   // XP = X - 2 * (X * u) * u'
-  inline void apply_XP(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind);
+  inline void apply_XP(Mat<eT>& X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind);
 
 
   public:
@@ -65,4 +65,4 @@ class DoubleShiftQR
   };
 
 
-}  // namespace alt_eigs
+}  // namespace newarp

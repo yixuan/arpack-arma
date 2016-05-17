@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -48,4 +48,4 @@ class UpperHessenbergEigen
   };
 
 
-}  // namespace alt_eigs
+}  // namespace newarp

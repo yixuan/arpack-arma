@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -17,7 +17,9 @@ inline
 UpperHessenbergQR<eT>::UpperHessenbergQR()
   : n(0)
   , computed(false)
-  {}
+  {
+  arma_extra_debug_sigprint();
+  }
 
 
 
@@ -30,6 +32,8 @@ UpperHessenbergQR<eT>::UpperHessenbergQR(const Mat<eT>& mat_obj)
   , rot_sin(n - 1)
   , computed(false)
   {
+  arma_extra_debug_sigprint();
+  
   compute(mat_obj);
   }
 
@@ -39,6 +43,8 @@ template<typename eT>
 void
 UpperHessenbergQR<eT>::compute(const Mat<eT>& mat_obj)
   {
+  arma_extra_debug_sigprint();
+  
   n = mat_obj.n_rows;
   mat_T.set_size(n, n);
   rot_cos.set_size(n - 1);
@@ -88,7 +94,7 @@ UpperHessenbergQR<eT>::compute(const Mat<eT>& mat_obj)
       }
     }
 
-    computed = true;
+  computed = true;
   }
 
 
@@ -97,7 +103,9 @@ template<typename eT>
 Mat<eT>
 UpperHessenbergQR<eT>::matrix_RQ()
   {
-  arma_debug_check( (computed == false), "alt_eigs::UpperHessenbergQR::matrix_RQ(): need to call compute() first" );
+  arma_extra_debug_sigprint();
+  
+  arma_debug_check( (computed == false), "newarp::UpperHessenbergQR::matrix_RQ(): need to call compute() first" );
 
   // Make a copy of the R matrix
   Mat<eT> RQ = trimatu(mat_T);
@@ -124,7 +132,7 @@ UpperHessenbergQR<eT>::matrix_RQ()
     RQ(span(0, i + 1), i + 1) = (*s) * Yi + (*c) * RQ(span(0, i + 1), i + 1); */
     }
 
-    return RQ;
+  return RQ;
   }
 
 
@@ -134,7 +142,9 @@ inline
 void
 UpperHessenbergQR<eT>::apply_YQ(Mat<eT>& Y)
   {
-  arma_debug_check( (computed == false), "alt_eigs::UpperHessenbergQR::apply_YQ(): need to call compute() first" );
+  arma_extra_debug_sigprint();
+  
+  arma_debug_check( (computed == false), "newarp::UpperHessenbergQR::apply_YQ(): need to call compute() first" );
 
   eT *Y_col_i, *Y_col_i1;
   uword nrow = Y.n_rows;
@@ -159,7 +169,9 @@ template<typename eT>
 inline
 TridiagQR<eT>::TridiagQR()
   : UpperHessenbergQR<eT>()
-  {}
+  {
+  arma_extra_debug_sigprint();
+  }
 
 
 
@@ -168,6 +180,8 @@ inline
 TridiagQR<eT>::TridiagQR(const Mat<eT>& mat_obj)
   : UpperHessenbergQR<eT>()
   {
+  arma_extra_debug_sigprint();
+  
   this->compute(mat_obj);
   }
 
@@ -178,14 +192,16 @@ inline
 void
 TridiagQR<eT>::compute(const Mat<eT>& mat_obj)
   {
+  arma_extra_debug_sigprint();
+  
   this->n = mat_obj.n_rows;
   this->mat_T.set_size(this->n, this->n);
   this->rot_cos.set_size(this->n - 1);
   this->rot_sin.set_size(this->n - 1);
 
   this->mat_T.zeros();
-  this->mat_T.diag() = mat_obj.diag();
-  this->mat_T.diag(1) = mat_obj.diag(-1);
+  this->mat_T.diag()   = mat_obj.diag();
+  this->mat_T.diag(1)  = mat_obj.diag(-1);
   this->mat_T.diag(-1) = mat_obj.diag(-1);
 
   eT xi, xj, r, c, s, tmp, eps = std::numeric_limits<eT>::epsilon();
@@ -246,7 +262,9 @@ template<typename eT>
 Mat<eT>
 TridiagQR<eT>::matrix_RQ()
   {
-  arma_debug_check( (this->computed == false), "alt_eigs::TridiagQR::matrix_RQ(): need to call compute() first" );
+  arma_extra_debug_sigprint();
+  
+  arma_debug_check( (this->computed == false), "newarp::TridiagQR::matrix_RQ(): need to call compute() first" );
 
   // Make a copy of the R matrix
   Mat<eT> RQ(this->n, this->n, fill::zeros);
@@ -281,4 +299,4 @@ TridiagQR<eT>::matrix_RQ()
   }
 
 
-}  // namespace alt_eigs
+}  // namespace newarp

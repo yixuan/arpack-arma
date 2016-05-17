@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -47,4 +47,4 @@ class TridiagEigen
   };
 
 
-}  // namespace alt_eigs
+}  // namespace newarp

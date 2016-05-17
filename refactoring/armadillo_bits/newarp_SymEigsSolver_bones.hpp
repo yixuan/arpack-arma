@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -44,7 +44,7 @@ class SymEigsSolver
                                // e.g. ~= 1e-16 for the "double" type
 
   // Arnoldi factorization starting from step-k
-  inline void factorize_from(uword from_k, uword to_m, const Col<eT>& fk);
+  inline void factorise_from(uword from_k, uword to_m, const Col<eT>& fk);
 
   // Implicitly restarted Arnoldi factorization
   inline void restart(uword k);
@@ -74,10 +74,10 @@ class SymEigsSolver
   inline uword compute(uword maxit = 1000, eT tol = 1e-10);
 
   //! Returning the number of iterations used in the computation.
-  arma_inline uword num_iterations() { return niter; }
+  inline uword num_iterations() { return niter; }
 
   //! Returning the number of matrix operations used in the computation.
-  arma_inline uword num_operations() { return nmatop; }
+  inline uword num_operations() { return nmatop; }
 
   //! Returning the converged eigenvalues.
   inline Col<eT> eigenvalues();
@@ -85,8 +85,8 @@ class SymEigsSolver
   //! Returning the eigenvectors associated with the converged eigenvalues.
   inline Mat<eT> eigenvectors(uword nvec);
   //! Returning all converged eigenvectors.
-  arma_inline Mat<eT> eigenvectors() { return eigenvectors(nev); }
+  inline Mat<eT> eigenvectors() { return eigenvectors(nev); }
   };
 
 
-}  // namespace alt_eigs
+}  // namespace newarp

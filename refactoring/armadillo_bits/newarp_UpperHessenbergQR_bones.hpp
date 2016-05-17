@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -75,4 +75,4 @@ class TridiagQR : public UpperHessenbergQR<eT>
   };
 
 
-}  // namespace alt_eigs
+}  // namespace newarp

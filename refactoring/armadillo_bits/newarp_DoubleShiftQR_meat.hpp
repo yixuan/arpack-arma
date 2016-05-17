@@ -8,7 +8,7 @@
 // Written by Yixuan Qiu
 
 
-namespace alt_eigs
+namespace newarp
 {
 
 
@@ -17,6 +17,8 @@ inline
 void
 DoubleShiftQR<eT>::compute_reflector(const eT& x1, const eT& x2, const eT& x3, uword ind)
   {
+  arma_extra_debug_sigprint();
+  
   // In general case the reflector affects 3 rows
   ref_nr(ind) = 3;
   // If x3 is zero, decrease nr by 1
@@ -56,6 +58,8 @@ arma_inline
 void
 DoubleShiftQR<eT>::compute_reflector(const eT* x, uword ind)
   {
+  arma_extra_debug_sigprint();
+  
   compute_reflector(x[0], x[1], x[2], ind);
   }
 
@@ -66,6 +70,8 @@ inline
 void
 DoubleShiftQR<eT>::update_block(uword il, uword iu)
   {
+  arma_extra_debug_sigprint();
+  
   // Block size
   uword bsize = iu - il + 1;
 
@@ -133,8 +139,10 @@ DoubleShiftQR<eT>::update_block(uword il, uword iu)
 template<typename eT>
 inline
 void
-DoubleShiftQR<eT>::apply_PX(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
+DoubleShiftQR<eT>::apply_PX(Mat<eT>& X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
   {
+  arma_extra_debug_sigprint();
+  
   if(ref_nr(u_ind) == 1) { return; }
 
   // Householder reflectors at index u_ind
@@ -172,8 +180,10 @@ DoubleShiftQR<eT>::apply_PX(Mat<eT> &X, uword oi, uword oj, uword nrow, uword nc
 template<typename eT>
 inline
 void
-DoubleShiftQR<eT>::apply_PX(eT *x, uword u_ind)
+DoubleShiftQR<eT>::apply_PX(eT* x, uword u_ind)
   {
+  arma_extra_debug_sigprint();
+  
   if(ref_nr(u_ind) == 1) { return; }
 
   eT u0 = ref_u(0, u_ind),
@@ -194,8 +204,10 @@ DoubleShiftQR<eT>::apply_PX(eT *x, uword u_ind)
 template<typename eT>
 inline
 void
-DoubleShiftQR<eT>::apply_XP(Mat<eT> &X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
+DoubleShiftQR<eT>::apply_XP(Mat<eT>& X, uword oi, uword oj, uword nrow, uword ncol, uword u_ind)
   {
+  arma_extra_debug_sigprint();
+  
   if(ref_nr(u_ind) == 1) { return; }
 
   // Householder reflectors at index u_ind
@@ -242,7 +254,9 @@ DoubleShiftQR<eT>::DoubleShiftQR(uword size)
   , eps_rel(std::pow(prec, eT(0.75)))
   , eps_abs(std::min(std::pow(prec, eT(0.75)), n * prec))
   , computed(false)
-  {}
+  {
+  arma_extra_debug_sigprint();
+  }
 
 
 
@@ -260,6 +274,8 @@ DoubleShiftQR<eT>::DoubleShiftQR(const Mat<eT>& mat_obj, eT s, eT t)
   , eps_abs(std::min(std::pow(prec, eT(0.75)), n * prec))
   , computed(false)
   {
+  arma_extra_debug_sigprint();
+  
   compute(mat_obj, s, t);
   }
 
@@ -269,7 +285,9 @@ template<typename eT>
 void
 DoubleShiftQR<eT>::compute(const Mat<eT>& mat_obj, eT s, eT t)
   {
-  arma_debug_check( (mat_obj.is_square() == false), "alt_eigs::DoubleShiftQR::compute(): matrix must be square" );
+  arma_extra_debug_sigprint();
+  
+  arma_debug_check( (mat_obj.is_square() == false), "newarp::DoubleShiftQR::compute(): matrix must be square" );
 
   n = mat_obj.n_rows;
   mat_H.set_size(n, n);
@@ -319,7 +337,9 @@ template<typename eT>
 Mat<eT>
 DoubleShiftQR<eT>::matrix_QtHQ()
   {
-  arma_debug_check( (computed == false), "alt_eigs::DoubleShiftQR::matrix_QtHQ(): need to call compute() first" );
+  arma_extra_debug_sigprint();
+  
+  arma_debug_check( (computed == false), "newarp::DoubleShiftQR::matrix_QtHQ(): need to call compute() first" );
 
   return mat_H;
   }
@@ -331,7 +351,9 @@ inline
 void
 DoubleShiftQR<eT>::apply_QtY(Col<eT>& y)
   {
-  arma_debug_check( (computed == false), "alt_eigs::DoubleShiftQR::apply_QtY(): need to call compute() first" );
+  arma_extra_debug_sigprint();
+  
+  arma_debug_check( (computed == false), "newarp::DoubleShiftQR::apply_QtY(): need to call compute() first" );
 
   eT* y_ptr = y.memptr();
   for(uword i = 0; i < n - 1; i++, y_ptr++)
@@ -347,15 +369,18 @@ inline
 void
 DoubleShiftQR<eT>::apply_YQ(Mat<eT>& Y)
   {
-  arma_debug_check( (computed == false), "alt_eigs::DoubleShiftQR::apply_YQ(): need to call compute() first" );
+  arma_extra_debug_sigprint();
+  
+  arma_debug_check( (computed == false), "newarp::DoubleShiftQR::apply_YQ(): need to call compute() first" );
 
   uword nrow = Y.n_rows;
   for(uword i = 0; i < n - 2; i++)
     {
     apply_XP(Y, 0, i, nrow, 3, i);
     }
+  
   apply_XP(Y, 0, n - 2, nrow, 2, n - 2);
   }
 
 
-}  // namespace alt_eigs
+}  // namespace newarp
