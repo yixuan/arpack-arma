@@ -8,9 +8,9 @@ typedef arma::mat Matrix;
 typedef arma::vec Vector;
 typedef arma::cx_mat ComplexMatrix;
 typedef arma::cx_vec ComplexVector;
-using arma::alt_eigs::GenEigsSolver;
-using arma::alt_eigs::EigsSelect;
-using arma::alt_eigs::DenseGenMatProd;
+using arma::newarp::GenEigsSolver;
+using arma::newarp::EigsSelect;
+using arma::newarp::DenseGenMatProd;
 
 
 template <int SelectionRule>

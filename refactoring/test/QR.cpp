@@ -5,9 +5,9 @@
 
 using arma::mat;
 using arma::vec;
-using arma::alt_eigs::UpperHessenbergQR;
-using arma::alt_eigs::TridiagQR;
-using arma::alt_eigs::DoubleShiftQR;
+using arma::newarp::UpperHessenbergQR;
+using arma::newarp::TridiagQR;
+using arma::newarp::DoubleShiftQR;
 
 template <typename Solver>
 void run_test(mat &H)
